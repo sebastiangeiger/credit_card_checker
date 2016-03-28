@@ -1,0 +1,23 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= label f, :time_of_sale, class: "control-label" %>
+    <%= datetime_select f, :time_of_sale, class: "form-control" %>
+    <%= error_tag f, :time_of_sale %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :amount_in_cents, class: "control-label" %>
+    <%= number_input f, :amount_in_cents, class: "form-control" %>
+    <%= error_tag f, :amount_in_cents %>
+  </div>
+
+  <div class="form-group">
+    <%= submit "Submit", class: "btn btn-primary" %>
+  </div>
+<% end %>

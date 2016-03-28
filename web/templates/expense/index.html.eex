@@ -1,0 +1,32 @@
+<h2>Listing expenses</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Time of sale</th>
+      <th>Merchant</th>
+      <th>Payment method</th>
+      <th>Amount in cents</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for expense <- @expenses do %>
+    <tr>
+      <td><%= expense.time_of_sale %></td>
+      <td><%= expense.merchant_id %></td>
+      <td><%= expense.payment_method_id %></td>
+      <td><%= expense.amount_in_cents %></td>
+
+      <td class="text-right">
+        <%= link "Show", to: expense_path(@conn, :show, expense), class: "btn btn-default btn-xs" %>
+        <%= link "Edit", to: expense_path(@conn, :edit, expense), class: "btn btn-default btn-xs" %>
+        <%= link "Delete", to: expense_path(@conn, :delete, expense), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<%= link "New expense", to: expense_path(@conn, :new) %>

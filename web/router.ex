@@ -19,6 +19,7 @@ defmodule CreditCardChecker.Router do
     get "/", PageController, :index
     resources "/payment_methods", PaymentMethodController
     resources "/merchants", MerchantController
+    resources "/expenses", ExpenseController
   end
 
   # Other scopes may use custom stacks.
