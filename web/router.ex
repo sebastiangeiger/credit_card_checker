@@ -17,6 +17,7 @@ defmodule CreditCardChecker.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    resources "/payment_methods", PaymentMethodController
   end
 
   # Other scopes may use custom stacks.

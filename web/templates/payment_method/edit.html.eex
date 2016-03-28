@@ -1,0 +1,6 @@
+<h2>Edit payment method</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: payment_method_path(@conn, :update, @payment_method) %>
+
+<%= link "Back", to: payment_method_path(@conn, :index) %>

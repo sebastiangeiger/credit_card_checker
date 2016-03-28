@@ -1,0 +1,13 @@
+<h2>Show payment method</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @payment_method.name %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: payment_method_path(@conn, :edit, @payment_method) %>
+<%= link "Back", to: payment_method_path(@conn, :index) %>
