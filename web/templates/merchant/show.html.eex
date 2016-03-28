@@ -1,0 +1,13 @@
+<h2>Show merchant</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @merchant.name %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: merchant_path(@conn, :edit, @merchant) %>
+<%= link "Back", to: merchant_path(@conn, :index) %>

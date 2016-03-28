@@ -1,0 +1,6 @@
+<h2>Edit merchant</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: merchant_path(@conn, :update, @merchant) %>
+
+<%= link "Back", to: merchant_path(@conn, :index) %>
