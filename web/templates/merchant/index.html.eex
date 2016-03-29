@@ -8,9 +8,9 @@
       <th></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="sem-merchants">
 <%= for merchant <- @merchants do %>
-    <tr>
+    <tr class="sem-merchant">
       <td><%= merchant.name %></td>
 
       <td class="text-right">
