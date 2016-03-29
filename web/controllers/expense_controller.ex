@@ -12,7 +12,10 @@ defmodule CreditCardChecker.ExpenseController do
 
   def new(conn, _params) do
     changeset = Expense.changeset(%Expense{})
-    render(conn, "new.html", changeset: changeset)
+    merchants = Repo.all(CreditCardChecker.Merchant)
+    |> Enum.map(fn(%{name: name, id: id}) -> {name, id} end)
+    |> Enum.into(%{})
+    render(conn, "new.html", changeset: changeset, merchants: merchants)
   end
 
   def create(conn, %{"expense" => expense_params}) do
