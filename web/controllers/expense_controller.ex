@@ -12,9 +12,6 @@ defmodule CreditCardChecker.ExpenseController do
 
   def new(conn, _params) do
     changeset = Expense.changeset(%Expense{})
-    merchants = Repo.all(CreditCardChecker.Merchant)
-    |> Enum.map(fn(%{name: name, id: id}) -> {name, id} end)
-    |> Enum.into(%{})
     render(conn, "new.html", changeset: changeset, merchants: merchants)
   end
 
@@ -27,7 +24,7 @@ defmodule CreditCardChecker.ExpenseController do
         |> put_flash(:info, "Expense created successfully.")
         |> redirect(to: expense_path(conn, :index))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        render(conn, "new.html", changeset: changeset, merchants: merchants)
     end
   end
 
@@ -39,7 +36,7 @@ defmodule CreditCardChecker.ExpenseController do
   def edit(conn, %{"id" => id}) do
     expense = Repo.get!(Expense, id)
     changeset = Expense.changeset(expense)
-    render(conn, "edit.html", expense: expense, changeset: changeset)
+    render(conn, "edit.html", expense: expense, changeset: changeset, merchants: merchants)
   end
 
   def update(conn, %{"id" => id, "expense" => expense_params}) do
@@ -52,7 +49,7 @@ defmodule CreditCardChecker.ExpenseController do
         |> put_flash(:info, "Expense updated successfully.")
         |> redirect(to: expense_path(conn, :show, expense))
       {:error, changeset} ->
-        render(conn, "edit.html", expense: expense, changeset: changeset)
+        render(conn, "edit.html", expense: expense, changeset: changeset, merchants: merchants)
     end
   end
 
@@ -66,5 +63,11 @@ defmodule CreditCardChecker.ExpenseController do
     conn
     |> put_flash(:info, "Expense deleted successfully.")
     |> redirect(to: expense_path(conn, :index))
+  end
+
+  defp merchants do
+    Repo.all(CreditCardChecker.Merchant)
+    |> Enum.map(fn(%{name: name, id: id}) -> {name, id} end)
+    |> Enum.into(%{})
   end
 end

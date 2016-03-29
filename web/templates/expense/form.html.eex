@@ -6,6 +6,13 @@
   <% end %>
 
   <div class="form-group">
+    <%= label f, :merchant_id, class: "control-label" %>
+    <%= select f, :merchant_id, @merchants, class: "form-control" %>
+    <%= error_tag f, :merchant_id %>
+  </div>
+
+
+  <div class="form-group">
     <%= label f, :time_of_sale, class: "control-label" %>
     <%= datetime_select f, :time_of_sale, class: "form-control" %>
     <%= error_tag f, :time_of_sale %>

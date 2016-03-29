@@ -1,6 +1,7 @@
 <h2>Edit expense</h2>
 
 <%= render "form.html", changeset: @changeset,
+                        merchants: @merchants,
                         action: expense_path(@conn, :update, @expense) %>
 
 <%= link "Back", to: expense_path(@conn, :index) %>
