@@ -66,8 +66,6 @@ defmodule CreditCardChecker.ExpenseController do
   end
 
   defp merchants do
-    Repo.all(CreditCardChecker.Merchant)
-    |> Enum.map(fn(%{name: name, id: id}) -> {name, id} end)
-    |> Enum.into(%{})
+    Repo.all from(m in CreditCardChecker.Merchant, order_by: m.name, select: {m.name, m.id})
   end
 end
