@@ -11,9 +11,9 @@
       <th></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class='sem-expenses'>
 <%= for expense <- @expenses do %>
-    <tr>
+    <tr class='sem-expense'>
       <td><%= expense.time_of_sale %></td>
       <td><%= expense.merchant_id %></td>
       <td><%= expense.payment_method_id %></td>
