@@ -7,7 +7,6 @@ defmodule CreditCardChecker.ExpenseController do
 
   def index(conn, _params) do
     expenses = Repo.all(Expense)
-    |> Expense.decorate
     render(conn, "index.html", expenses: expenses)
   end
 
