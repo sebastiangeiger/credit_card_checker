@@ -15,4 +15,11 @@ defmodule CreditCardChecker.ExpenseTest do
     changeset = Expense.changeset(%Expense{}, @invalid_attrs)
     refute changeset.valid?
   end
+
+  test "changeset with an amount" do
+    attrs = %{"time_of_sale" => "2010-04-17 14:00:00", "amount" => "3.42"}
+    changeset = Expense.changeset(%Expense{}, attrs)
+    assert changeset.valid?
+    assert changeset.changes[:amount_in_cents] == 342
+  end
 end

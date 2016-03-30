@@ -19,9 +19,9 @@
   </div>
 
   <div class="form-group">
-    <%= label f, :amount_in_cents, class: "control-label" %>
-    <%= number_input f, :amount_in_cents, class: "form-control" %>
-    <%= error_tag f, :amount_in_cents %>
+    <%= label f, :amount, class: "control-label" %>
+    <%= number_input f, :amount, class: "form-control", step: "0.01", placeholder: "0.00" %>
+    <%= error_tag f, :amount %>
   </div>
 
   <div class="form-group">

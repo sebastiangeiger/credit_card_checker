@@ -20,7 +20,18 @@ defmodule CreditCardChecker.Expense do
   with no validation performed.
   """
   def changeset(model, params \\ :empty) do
+    params = convert_amount(params)
     model
     |> cast(params, @required_fields, @optional_fields)
+  end
+
+  defp convert_amount(%{"amount" => amount} = params) do
+    {amount, _} = Float.parse(amount)
+    amount_in_cents = round(amount * 100)
+    Map.put(params, "amount_in_cents", amount_in_cents)
+  end
+
+  defp convert_amount(params) do
+    params
   end
 end
