@@ -45,4 +45,12 @@ defmodule CreditCardChecker.Expense do
       changeset
     end
   end
+
+  def decorate(expenses) when is_list(expenses) do
+    Enum.map(expenses, fn(expense) -> decorate(expense) end)
+  end
+
+  def decorate(expense) do
+    %{ expense | "amount": expense.amount_in_cents / 100 }
+  end
 end

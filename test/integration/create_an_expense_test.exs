@@ -5,7 +5,7 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
     assert Enum.count(expenses_list) == 0
     create_expense("3.00")
     assert Enum.count(expenses_list) == 1
-    assert visible_page_text =~ "300"
+    assert visible_page_text =~ "$3.0"
   end
 
   def expenses_list do
