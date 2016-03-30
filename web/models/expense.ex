@@ -30,7 +30,9 @@ defmodule CreditCardChecker.Expense do
   defp convert_amount(%{"amount" => amount} = params) do
     {amount, _} = Float.parse(amount)
     amount_in_cents = round(amount * 100)
-    Map.put(params, "amount_in_cents", amount_in_cents)
+    params
+    |> Map.put("amount_in_cents", amount_in_cents)
+    |> Map.delete("amount")
   end
 
   defp convert_amount(params) do
