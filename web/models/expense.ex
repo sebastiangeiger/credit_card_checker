@@ -4,6 +4,7 @@ defmodule CreditCardChecker.Expense do
   schema "expenses" do
     field :time_of_sale, Ecto.DateTime
     field :amount_in_cents, :integer
+    field :amount, :decimal, virtual: true
     belongs_to :merchant, CreditCardChecker.Merchant
     belongs_to :payment_method, CreditCardChecker.PaymentMethod
 
@@ -23,6 +24,7 @@ defmodule CreditCardChecker.Expense do
     params = convert_amount(params)
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> fill_amount_field
   end
 
   defp convert_amount(%{"amount" => amount} = params) do
@@ -33,5 +35,14 @@ defmodule CreditCardChecker.Expense do
 
   defp convert_amount(params) do
     params
+  end
+
+  defp fill_amount_field(changeset) do
+    if changeset.model.amount_in_cents do
+      new_model = %{ changeset.model | "amount": changeset.model.amount_in_cents / 100 }
+      %{ changeset | model: new_model }
+    else
+      changeset
+    end
   end
 end

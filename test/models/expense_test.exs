@@ -22,4 +22,10 @@ defmodule CreditCardChecker.ExpenseTest do
     assert changeset.valid?
     assert changeset.changes[:amount_in_cents] == 342
   end
+
+  test "load a changeset with an amount" do
+    changeset = Expense.changeset(%Expense{amount_in_cents: 342})
+    assert changeset.model.amount_in_cents== 342
+    assert changeset.model.amount == 3.42
+  end
 end
