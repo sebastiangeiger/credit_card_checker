@@ -25,6 +25,12 @@ defmodule CreditCardChecker.Expense do
     |> cast(params, @required_fields, @optional_fields)
   end
 
+  defp convert_amount(%{"amount" => nil} = params) do
+    params
+    |> Map.put("amount_in_cents", nil)
+    |> Map.delete("amount")
+  end
+
   defp convert_amount(%{"amount" => amount} = params) do
     {amount, _} = Float.parse(amount)
     amount_in_cents = round(amount * 100)
