@@ -7,7 +7,7 @@
 
   <div class="form-group">
     <%= label f, :merchant_id, class: "control-label" %>
-    <%= select f, :merchant_id, @merchants, class: "form-control" %>
+    <%= select f, :merchant_id, @merchants, class: "form-control", prompt: "Select merchant..." %>
     <%= error_tag f, :merchant_id %>
   </div>
 

@@ -17,7 +17,7 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
     go_to_new_expense_form
     options = find_all_elements(:css, "select#expense_merchant_id option")
     |> Enum.map(&visible_text/1)
-    assert options == ["CVS", "Starbucks", "Whole Foods"]
+    assert options == ["Select merchant...", "CVS", "Starbucks", "Whole Foods"]
   end
 
   def expenses_list do
