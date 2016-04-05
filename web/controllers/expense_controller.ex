@@ -13,7 +13,9 @@ defmodule CreditCardChecker.ExpenseController do
   def new(conn, _params) do
     time_of_sale = convert_time(Timex.DateTime.local)
     changeset = Expense.changeset(%Expense{time_of_sale: time_of_sale})
-    render(conn, "new.html", changeset: changeset, merchants: merchants)
+    conn
+    |> assign_merchants
+    |> render("new.html", changeset: changeset)
   end
 
   def create(conn, %{"expense" => expense_params}) do
@@ -25,7 +27,9 @@ defmodule CreditCardChecker.ExpenseController do
         |> put_flash(:info, "Expense created successfully.")
         |> redirect(to: expense_path(conn, :index))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset, merchants: merchants)
+        conn
+        |> assign_merchants
+        |> render("new.html", changeset: changeset)
     end
   end
 
@@ -37,7 +41,9 @@ defmodule CreditCardChecker.ExpenseController do
   def edit(conn, %{"id" => id}) do
     expense = Repo.get!(Expense, id)
     changeset = Expense.changeset(expense)
-    render(conn, "edit.html", expense: expense, changeset: changeset, merchants: merchants)
+    conn
+    |> assign_merchants
+    |> render("edit.html", expense: expense, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "expense" => expense_params}) do
@@ -50,7 +56,9 @@ defmodule CreditCardChecker.ExpenseController do
         |> put_flash(:info, "Expense updated successfully.")
         |> redirect(to: expense_path(conn, :show, expense))
       {:error, changeset} ->
-        render(conn, "edit.html", expense: expense, changeset: changeset, merchants: merchants)
+        conn
+        |> assign_merchants
+        |> render("edit.html", expense: expense, changeset: changeset)
     end
   end
 
@@ -66,8 +74,11 @@ defmodule CreditCardChecker.ExpenseController do
     |> redirect(to: expense_path(conn, :index))
   end
 
-  defp merchants do
-    Repo.all from(m in CreditCardChecker.Merchant, order_by: m.name, select: {m.name, m.id})
+  defp assign_merchants(conn) do
+    query = from m in CreditCardChecker.Merchant,
+      order_by: m.name,
+      select: {m.name, m.id}
+    assign(conn, :merchants, Repo.all(query))
   end
 
   defp convert_time(%Timex.DateTime{year: year, month: month, day: day, hour: hour, minute: minute, second: second}) do
