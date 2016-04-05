@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Hello CreditCardChecker!</title>
+    <title>CreditCardChecker</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 
@@ -15,10 +15,13 @@
     <div class="container">
       <header class="header">
         <nav role="navigation">
-          <ul class="nav nav-pills pull-right">
+          <ul class="nav nav-pills">
+            <% current_path = @conn.request_path %>
+            <%= nav_pill "Expenses", to: expense_path(@conn, :index), current_path: current_path %>
+            <%= nav_pill "Merchants", to: merchant_path(@conn, :index), current_path: current_path %>
+            <%= nav_pill "Payment Methods", to: payment_method_path(@conn, :index), current_path: current_path %>
           </ul>
         </nav>
-        <h1>CC</h1>
       </header>
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
