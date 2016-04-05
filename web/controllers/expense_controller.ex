@@ -6,7 +6,7 @@ defmodule CreditCardChecker.ExpenseController do
   plug :scrub_params, "expense" when action in [:create, :update]
 
   def index(conn, _params) do
-    expenses = Repo.all from e in Expense, preload: [:merchant]
+    expenses = Repo.all from e in Expense, preload: [:merchant, :payment_method]
     render(conn, "index.html", expenses: expenses)
   end
 

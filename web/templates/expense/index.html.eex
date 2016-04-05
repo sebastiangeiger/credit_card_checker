@@ -16,7 +16,7 @@
     <tr class='sem-expense'>
       <td><%= expense.time_of_sale %></td>
       <td><%= expense.merchant.name %></td>
-      <td><%= expense.payment_method_id %></td>
+      <td><%= expense.payment_method.name %></td>
       <td>$<%= in_dollars(expense.amount_in_cents) %></td>
 
       <td class="text-right">

@@ -15,6 +15,7 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
     assert Enum.count(expenses_list) == 1
     assert visible_page_text =~ "$3.13"
     assert visible_page_text =~ "Whole Foods"
+    assert visible_page_text =~ "Amex"
   end
 
   test "can see merchants in the new expense form" do
