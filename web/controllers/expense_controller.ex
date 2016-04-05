@@ -11,7 +11,8 @@ defmodule CreditCardChecker.ExpenseController do
   end
 
   def new(conn, _params) do
-    changeset = Expense.changeset(%Expense{})
+    time_of_sale = convert_time(Timex.DateTime.local)
+    changeset = Expense.changeset(%Expense{time_of_sale: time_of_sale})
     render(conn, "new.html", changeset: changeset, merchants: merchants)
   end
 
@@ -67,5 +68,9 @@ defmodule CreditCardChecker.ExpenseController do
 
   defp merchants do
     Repo.all from(m in CreditCardChecker.Merchant, order_by: m.name, select: {m.name, m.id})
+  end
+
+  defp convert_time(%Timex.DateTime{year: year, month: month, day: day, hour: hour, minute: minute, second: second}) do
+    {{year, month, day}, {hour, minute, second}}
   end
 end

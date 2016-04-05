@@ -19,7 +19,7 @@ defmodule CreditCardChecker.Mixfile do
   def application do
     [mod: {CreditCardChecker, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+                    :phoenix_ecto, :postgrex, :timex]]
   end
 
   # Specifies which paths to compile per environment.
@@ -37,6 +37,7 @@ defmodule CreditCardChecker.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
+     {:timex, "~> 2.1"},
      {:hound, "~> 0.8.2"}]
   end
 
