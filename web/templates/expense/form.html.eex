@@ -11,6 +11,11 @@
     <%= error_tag f, :merchant_id %>
   </div>
 
+  <div class="form-group">
+    <%= label f, :payment_method_id, class: "control-label" %>
+    <%= select f, :payment_method_id, @payment_methods, class: "form-control", prompt: "Select payment method..." %>
+    <%= error_tag f, :payment_method_id %>
+  </div>
 
   <div class="form-group">
     <%= label f, :time_of_sale, class: "control-label" %>

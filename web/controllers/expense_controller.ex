@@ -14,7 +14,7 @@ defmodule CreditCardChecker.ExpenseController do
     time_of_sale = convert_time(Timex.DateTime.local)
     changeset = Expense.changeset(%Expense{time_of_sale: time_of_sale})
     conn
-    |> assign_merchants
+    |> assign_merchants_and_payment_methods
     |> render("new.html", changeset: changeset)
   end
 
@@ -28,7 +28,7 @@ defmodule CreditCardChecker.ExpenseController do
         |> redirect(to: expense_path(conn, :index))
       {:error, changeset} ->
         conn
-        |> assign_merchants
+        |> assign_merchants_and_payment_methods
         |> render("new.html", changeset: changeset)
     end
   end
@@ -42,7 +42,7 @@ defmodule CreditCardChecker.ExpenseController do
     expense = Repo.get!(Expense, id)
     changeset = Expense.changeset(expense)
     conn
-    |> assign_merchants
+    |> assign_merchants_and_payment_methods
     |> render("edit.html", expense: expense, changeset: changeset)
   end
 
@@ -57,7 +57,7 @@ defmodule CreditCardChecker.ExpenseController do
         |> redirect(to: expense_path(conn, :show, expense))
       {:error, changeset} ->
         conn
-        |> assign_merchants
+        |> assign_merchants_and_payment_methods
         |> render("edit.html", expense: expense, changeset: changeset)
     end
   end
@@ -74,11 +74,24 @@ defmodule CreditCardChecker.ExpenseController do
     |> redirect(to: expense_path(conn, :index))
   end
 
+  defp assign_merchants_and_payment_methods(conn) do
+    conn
+    |> assign_merchants
+    |> assign_payment_methods
+  end
+
   defp assign_merchants(conn) do
     query = from m in CreditCardChecker.Merchant,
       order_by: m.name,
       select: {m.name, m.id}
     assign(conn, :merchants, Repo.all(query))
+  end
+
+  defp assign_payment_methods(conn) do
+    query = from m in CreditCardChecker.PaymentMethod,
+              order_by: m.name,
+              select: {m.name, m.id}
+    assign(conn, :payment_methods, Repo.all(query))
   end
 
   defp convert_time(%Timex.DateTime{year: year, month: month, day: day, hour: hour, minute: minute, second: second}) do
