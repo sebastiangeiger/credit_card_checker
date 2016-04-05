@@ -3,8 +3,14 @@ defmodule CreditCardChecker.ExpenseControllerTest do
 
   alias CreditCardChecker.Expense
   alias CreditCardChecker.Merchant
-  @valid_attrs %{amount_in_cents: 42, time_of_sale: "2010-04-17 14:00:00"}
+  @valid_attrs %{amount_in_cents: 42, time_of_sale: "2010-04-17 14:00:00",
+                 merchant_id: 123}
   @invalid_attrs %{}
+
+  setup do
+    Repo.insert!(%Merchant{name: "Whole Foods", id: 123})
+    :ok
+  end
 
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, expense_path(conn, :index)
@@ -17,15 +23,8 @@ defmodule CreditCardChecker.ExpenseControllerTest do
   end
 
   test "assigns merchants in the new action", %{conn: conn} do
-    merchant = create_merchant!("Whole Foods")
     conn = get conn, expense_path(conn, :new)
-    assert conn.assigns[:merchants] == [{"Whole Foods", merchant.id}]
-  end
-
-  defp create_merchant!(name) do
-    {:ok, merchant} = Merchant.changeset(%Merchant{}, %{name: name})
-                      |> Repo.insert
-    merchant
+    assert conn.assigns[:merchants] == [{"Whole Foods", 123}]
   end
 
   test "creates resource and redirects when data is valid", %{conn: conn} do
