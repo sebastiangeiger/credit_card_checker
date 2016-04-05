@@ -10,7 +10,7 @@ defmodule CreditCardChecker.Expense do
     timestamps
   end
 
-  @required_fields ~w(time_of_sale amount_in_cents merchant_id)
+  @required_fields ~w(time_of_sale amount_in_cents merchant_id payment_method_id)
   @optional_fields ~w()
 
   @doc """

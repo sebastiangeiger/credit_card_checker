@@ -3,12 +3,14 @@ defmodule CreditCardChecker.ExpenseControllerTest do
 
   alias CreditCardChecker.Expense
   alias CreditCardChecker.Merchant
+  alias CreditCardChecker.PaymentMethod
   @valid_attrs %{amount_in_cents: 42, time_of_sale: "2010-04-17 14:00:00",
-                 merchant_id: 123}
+                 merchant_id: 123, payment_method_id: 456}
   @invalid_attrs %{}
 
   setup do
     Repo.insert!(%Merchant{name: "Whole Foods", id: 123})
+    Repo.insert!(%PaymentMethod{name: "Visa", id: 456})
     :ok
   end
 

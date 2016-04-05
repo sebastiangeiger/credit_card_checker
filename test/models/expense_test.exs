@@ -4,7 +4,7 @@ defmodule CreditCardChecker.ExpenseTest do
   alias CreditCardChecker.Expense
 
   @valid_attrs %{amount_in_cents: 42, time_of_sale: "2010-04-17 14:00:00",
-                 merchant_id: 123}
+                 merchant_id: 123, payment_method_id: 456}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
@@ -18,7 +18,8 @@ defmodule CreditCardChecker.ExpenseTest do
   end
 
   test "changeset with an amount" do
-    attrs = %{"time_of_sale" => "2010-04-17 14:00:00", "amount" => "3.42", "merchant_id" => "123"}
+    attrs = %{"time_of_sale" => "2010-04-17 14:00:00", "amount" => "3.42",
+              "merchant_id" => "123", "payment_method_id" => "456"}
     changeset = Expense.changeset(%Expense{}, attrs)
     assert changeset.valid?
     assert changeset.changes[:amount_in_cents] == 342
