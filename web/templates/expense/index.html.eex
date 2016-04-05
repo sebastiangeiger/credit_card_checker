@@ -15,7 +15,7 @@
 <%= for expense <- @expenses do %>
     <tr class='sem-expense'>
       <td><%= expense.time_of_sale %></td>
-      <td><%= expense.merchant_id %></td>
+      <td><%= expense.merchant.name %></td>
       <td><%= expense.payment_method_id %></td>
       <td>$<%= in_dollars(expense.amount_in_cents) %></td>
 
