@@ -35,6 +35,7 @@ defmodule CreditCardChecker.ExpenseController do
 
   def show(conn, %{"id" => id}) do
     expense = Repo.get!(Expense, id)
+    |> Repo.preload([:merchant, :payment_method])
     render(conn, "show.html", expense: expense)
   end
 

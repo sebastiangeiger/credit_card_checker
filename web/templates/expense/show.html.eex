@@ -9,20 +9,21 @@
 
   <li>
     <strong>Merchant:</strong>
-    <%= @expense.merchant_id %>
+    <%= @expense.merchant.name %>
   </li>
 
   <li>
     <strong>Payment method:</strong>
-    <%= @expense.payment_method_id %>
+    <%= @expense.payment_method.name %>
   </li>
 
   <li>
-    <strong>Amount in cents:</strong>
-    <%= @expense.amount_in_cents %>
+    <strong>Amount::</strong>
+    $<%= in_dollars(@expense.amount_in_cents) %>
   </li>
 
 </ul>
 
 <%= link "Edit", to: expense_path(@conn, :edit, @expense) %>
+<%= link "Delete", to: expense_path(@conn, :delete, @expense), method: :delete, data: [confirm: "Are you sure?"] %>
 <%= link "Back", to: expense_path(@conn, :index) %>

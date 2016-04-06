@@ -21,8 +21,6 @@
 
       <td class="text-right">
         <%= link "Show", to: expense_path(@conn, :show, expense), class: "btn btn-default btn-xs" %>
-        <%= link "Edit", to: expense_path(@conn, :edit, expense), class: "btn btn-default btn-xs" %>
-        <%= link "Delete", to: expense_path(@conn, :delete, expense), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
       </td>
     </tr>
 <% end %>

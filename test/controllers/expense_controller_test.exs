@@ -41,7 +41,8 @@ defmodule CreditCardChecker.ExpenseControllerTest do
   end
 
   test "shows chosen resource", %{conn: conn} do
-    expense = Repo.insert! %Expense{}
+    expense = Expense.changeset(%Expense{}, @valid_attrs)
+    |> Repo.insert!
     conn = get conn, expense_path(conn, :show, expense)
     assert html_response(conn, 200) =~ "Show expense"
   end
