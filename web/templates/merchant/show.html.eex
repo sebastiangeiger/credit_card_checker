@@ -10,4 +10,5 @@
 </ul>
 
 <%= link "Edit", to: merchant_path(@conn, :edit, @merchant) %>
+<%= link "Delete", to: merchant_path(@conn, :delete, @merchant), method: :delete, data: [confirm: "Are you sure?"] %>
 <%= link "Back", to: merchant_path(@conn, :index) %>

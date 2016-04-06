@@ -10,4 +10,5 @@
 </ul>
 
 <%= link "Edit", to: payment_method_path(@conn, :edit, @payment_method) %>
+<%= link "Delete", to: payment_method_path(@conn, :delete, @payment_method), method: :delete, data: [confirm: "Are you sure?"] %>
 <%= link "Back", to: payment_method_path(@conn, :index) %>

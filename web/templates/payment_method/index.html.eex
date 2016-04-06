@@ -13,8 +13,6 @@
 
       <td class="text-right">
         <%= link "Show", to: payment_method_path(@conn, :show, payment_method), class: "btn btn-default btn-xs" %>
-        <%= link "Edit", to: payment_method_path(@conn, :edit, payment_method), class: "btn btn-default btn-xs" %>
-        <%= link "Delete", to: payment_method_path(@conn, :delete, payment_method), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
       </td>
     </tr>
 <% end %>
