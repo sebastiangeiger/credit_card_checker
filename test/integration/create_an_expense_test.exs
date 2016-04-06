@@ -9,9 +9,16 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
     create_merchant("Whole Foods")
     create_payment_method("Amex")
     assert Enum.count(expenses_list) == 0
-    create_expense(%{amount: "3.13",
-                     merchant: "Whole Foods",
-                     payment_method: "Amex"})
+    go_to_new_expense_form
+    select_option("expense_merchant_id", "Whole Foods")
+    select_option("expense_payment_method_id", "Amex")
+    find_element(:css, "input#expense_amount")
+    |> fill_field("3.13")
+    find_element(:css, "input[value='Submit']")
+    |> submit_element
+    alert_text = find_element(:css, ".alert")
+                  |> visible_text
+    assert alert_text =~ "Expense created successfully."
     assert Enum.count(expenses_list) == 1
     assert visible_page_text =~ "$3.13"
     assert visible_page_text =~ "Whole Foods"
@@ -38,29 +45,15 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
     assert options == ["Select payment method...", "Golden Visa", "Mastercard", "Personal Visa"]
   end
 
-  def expenses_list do
+  defp expenses_list do
     navigate_to("/expenses")
     find_all_elements(:css, ".sem-expenses .sem-expense")
   end
 
-  def go_to_new_expense_form do
+  defp go_to_new_expense_form do
     navigate_to("/expenses")
     find_element(:link_text, "New expense")
     |> click
-  end
-
-  def create_expense(%{amount: money_amount, merchant: merchant_name,
-                       payment_method: payment_method}) do
-    go_to_new_expense_form
-    select_option("expense_merchant_id", merchant_name)
-    select_option("expense_payment_method_id", payment_method)
-    find_element(:css, "input#expense_amount")
-    |> fill_field(money_amount)
-    find_element(:css, "input[value='Submit']")
-    |> submit_element
-    alert_text = find_element(:css, ".alert")
-                  |> visible_text
-    assert alert_text =~ "Expense created successfully."
   end
 
   defp select_option(css_id, value) do
