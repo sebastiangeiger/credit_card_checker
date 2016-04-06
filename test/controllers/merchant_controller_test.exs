@@ -2,12 +2,14 @@ defmodule CreditCardChecker.MerchantControllerTest do
   use CreditCardChecker.ConnCase
 
   alias CreditCardChecker.Merchant
-  @valid_attrs %{name: "some content"}
+  @valid_attrs %{name: "Whole Foods"}
   @invalid_attrs %{}
 
   test "lists all entries on index", %{conn: conn} do
+    Merchant.changeset(%Merchant{}, @valid_attrs)
+    |> Repo.insert!
     conn = get conn, merchant_path(conn, :index)
-    assert html_response(conn, 200) =~ "Listing merchants"
+    assert html_response(conn, 200) =~ "Whole Foods"
   end
 
   test "renders form for new resources", %{conn: conn} do

@@ -2,12 +2,14 @@ defmodule CreditCardChecker.PaymentMethodControllerTest do
   use CreditCardChecker.ConnCase
 
   alias CreditCardChecker.PaymentMethod
-  @valid_attrs %{name: "some content"}
+  @valid_attrs %{name: "My Visa Card"}
   @invalid_attrs %{}
 
   test "lists all entries on index", %{conn: conn} do
+    PaymentMethod.changeset(%PaymentMethod{}, @valid_attrs)
+    |> Repo.insert!
     conn = get conn, payment_method_path(conn, :index)
-    assert html_response(conn, 200) =~ "Listing payment methods"
+    assert html_response(conn, 200) =~ "My Visa Card"
   end
 
   test "renders form for new resources", %{conn: conn} do

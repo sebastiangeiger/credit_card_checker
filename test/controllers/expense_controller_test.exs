@@ -15,8 +15,10 @@ defmodule CreditCardChecker.ExpenseControllerTest do
   end
 
   test "lists all entries on index", %{conn: conn} do
+    Expense.changeset(%Expense{}, @valid_attrs)
+    |> Repo.insert!
     conn = get conn, expense_path(conn, :index)
-    assert html_response(conn, 200) =~ "Listing expenses"
+    assert html_response(conn, 200) =~ "$0.42"
   end
 
   test "renders form for new resources", %{conn: conn} do
