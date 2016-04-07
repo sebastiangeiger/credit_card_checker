@@ -39,30 +39,6 @@ defmodule CreditCardChecker.ExpenseController do
     render(conn, "show.html", expense: expense)
   end
 
-  def edit(conn, %{"id" => id}) do
-    expense = Repo.get!(Expense, id)
-    changeset = Expense.changeset(expense)
-    conn
-    |> assign_merchants_and_payment_methods
-    |> render("edit.html", expense: expense, changeset: changeset)
-  end
-
-  def update(conn, %{"id" => id, "expense" => expense_params}) do
-    expense = Repo.get!(Expense, id)
-    changeset = Expense.changeset(expense, expense_params)
-
-    case Repo.update(changeset) do
-      {:ok, expense} ->
-        conn
-        |> put_flash(:info, "Expense updated successfully.")
-        |> redirect(to: expense_path(conn, :show, expense))
-      {:error, changeset} ->
-        conn
-        |> assign_merchants_and_payment_methods
-        |> render("edit.html", expense: expense, changeset: changeset)
-    end
-  end
-
   def delete(conn, %{"id" => id}) do
     expense = Repo.get!(Expense, id)
 

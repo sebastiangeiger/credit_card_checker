@@ -55,25 +55,6 @@ defmodule CreditCardChecker.ExpenseControllerTest do
     end
   end
 
-  test "renders form for editing chosen resource", %{conn: conn} do
-    expense = Repo.insert! %Expense{}
-    conn = get conn, expense_path(conn, :edit, expense)
-    assert html_response(conn, 200) =~ "Edit expense"
-  end
-
-  test "updates chosen resource and redirects when data is valid", %{conn: conn} do
-    expense = Repo.insert! %Expense{}
-    conn = put conn, expense_path(conn, :update, expense), expense: @valid_attrs
-    assert redirected_to(conn) == expense_path(conn, :show, expense)
-    assert Repo.get_by(Expense, @valid_attrs)
-  end
-
-  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-    expense = Repo.insert! %Expense{}
-    conn = put conn, expense_path(conn, :update, expense), expense: @invalid_attrs
-    assert html_response(conn, 200) =~ "Edit expense"
-  end
-
   test "deletes chosen resource", %{conn: conn} do
     expense = Repo.insert! %Expense{}
     conn = delete conn, expense_path(conn, :delete, expense)

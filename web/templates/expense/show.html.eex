@@ -24,6 +24,5 @@
 
 </ul>
 
-<%= link "Edit", to: expense_path(@conn, :edit, @expense) %>
 <%= link "Delete", to: expense_path(@conn, :delete, @expense), method: :delete, data: [confirm: "Are you sure?"] %>
 <%= link "Back", to: expense_path(@conn, :index) %>
