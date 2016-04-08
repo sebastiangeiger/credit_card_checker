@@ -1,0 +1,10 @@
+<%= if @conn.assigns.current_user do %>
+  <li class="pull-right">
+    <%= @conn.assigns.current_user.email %>
+    <%= link "Sign Out", to: "/sessions", method: :delete %>
+  </li>
+<% else %>
+  <li class="pull-right">
+    <%= link "Sign In", to: session_path(@conn, :new) %>
+  </li>
+<% end %>

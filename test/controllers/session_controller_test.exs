@@ -33,4 +33,12 @@ defmodule CreditCardChecker.SessionControllerTest do
     assert is_nil(get_session(conn, :user_email))
     assert html_response(conn, 200) =~ "<h2>Sign In</h2>"
   end
+
+  test "can destroy a session", %{conn: conn} do
+    conn = post conn, session_path(conn, :create), session: @valid_attrs
+    conn = delete conn, session_path(conn, :delete)
+    assert is_nil(get_session(conn, :user_email))
+    assert is_nil(conn.assigns.current_user)
+    assert redirected_to(conn) == session_path(conn, :new)
+  end
 end

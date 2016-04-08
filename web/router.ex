@@ -22,6 +22,7 @@ defmodule CreditCardChecker.Router do
     resources "/merchants", MerchantController
     resources "/expenses", ExpenseController, only: [:new, :create, :index, :show, :delete]
     resources "/sessions", SessionController, only: [:new, :create]
+    delete "/sessions", SessionController, :delete
   end
 
   # Other scopes may use custom stacks.

@@ -20,5 +20,19 @@ defmodule CreditCardChecker.SessionController do
       |> render("new.html")
     end
   end
+
+  def delete(conn, _params) do
+    if get_session(conn, :user_email) do
+      conn
+      |> delete_session(:user_email)
+      |> assign(:current_user, nil)
+      |> configure_session(renew: true)
+      |> put_flash(:info, "Signed out successfully")
+    else
+      conn
+      |> put_flash(:error, "You were never signed in")
+    end
+    |> redirect(to: session_path(conn, :new))
+  end
 end
 

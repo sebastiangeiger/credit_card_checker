@@ -21,4 +21,14 @@ defmodule CreditCardChecker.AuthTestHelper do
     find_element(:css, "input[value='Sign In']")
     |> submit_element
   end
+
+  def sign_out_through_app do
+    navigate_to("/sessions/new")
+    sign_out_links = find_all_elements(:link_text, "Sign Out")
+    if Enum.count(sign_out_links) > 0 do
+      sign_out_links
+      |> List.first
+      |> click
+    end
+  end
 end
