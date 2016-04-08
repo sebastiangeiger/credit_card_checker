@@ -7,6 +7,6 @@ defmodule CreditCardChecker.SessionControllerTest do
 
   test "renders form for sign in", %{conn: conn} do
     conn = get conn, session_path(conn, :new)
-    assert text_response(conn, 200) =~ "Sign In"
+    assert html_response(conn, 200) =~ "Sign In"
   end
 end
