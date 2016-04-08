@@ -13,6 +13,7 @@ defmodule CreditCardChecker.SessionController do
       |> assign(:current_user, %User{email: email})
       |> put_session(:user_email, email)
       |> configure_session(renew: true)
+      |> put_flash(:info, "Signed in successfully")
       |> redirect(to: expense_path(conn, :index))
     else
       conn

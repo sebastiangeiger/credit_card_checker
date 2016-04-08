@@ -1,5 +1,6 @@
 defmodule CreditCardChecker.MerchantController do
   use CreditCardChecker.Web, :controller
+  plug :authenticate
 
   alias CreditCardChecker.Merchant
 
@@ -63,5 +64,16 @@ defmodule CreditCardChecker.MerchantController do
     conn
     |> put_flash(:info, "Merchant deleted successfully.")
     |> redirect(to: merchant_path(conn, :index))
+  end
+
+  defp authenticate(conn, _opts) do
+    if conn.assigns.current_user do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be logged in to access that page")
+      |> redirect(to: session_path(conn, :new))
+      |> halt()
+    end
   end
 end

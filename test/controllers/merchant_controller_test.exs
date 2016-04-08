@@ -2,8 +2,14 @@ defmodule CreditCardChecker.MerchantControllerTest do
   use CreditCardChecker.ConnCase
 
   alias CreditCardChecker.Merchant
+  import CreditCardChecker.AuthTestHelper, only: [sign_in: 1]
+
   @valid_attrs %{name: "Whole Foods"}
   @invalid_attrs %{}
+
+  setup %{conn: conn} do
+    {:ok, %{conn: sign_in(conn)}}
+  end
 
   test "lists all entries on index", %{conn: conn} do
     Merchant.changeset(%Merchant{}, @valid_attrs)

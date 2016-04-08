@@ -29,7 +29,8 @@ defmodule CreditCardChecker.SessionControllerTest do
 
   test "can't create a session with wrong password", %{conn: conn} do
     conn = post conn, session_path(conn, :create), session: @invalid_attrs
-    refute Dict.has_key?(conn.assigns, :current_user)
+    assert is_nil(conn.assigns.current_user)
+    assert is_nil(get_session(conn, :user_email))
     assert html_response(conn, 200) =~ "<h2>Sign In</h2>"
   end
 end
