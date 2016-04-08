@@ -11,6 +11,8 @@ defmodule CreditCardChecker.SessionController do
     if email == "email@example.com" && password == "super_secret" do
       conn
       |> assign(:current_user, %User{email: email})
+      |> put_session(:user_email, email)
+      |> configure_session(renew: true)
       |> redirect(to: expense_path(conn, :index))
     else
       conn
