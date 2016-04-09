@@ -1,5 +1,5 @@
-<h2>Sign In</h2>
-<%= form_for @conn, session_path(@conn, :create), [as: :session], fn f -> %>
+<h2>Register</h2>
+<%= form_for @changeset, user_path(@conn, :create), fn f -> %>
   <div class="form-group">
     <%= text_input f, :email, placeholder: "Email", class: "form-control" %>
   </div>
@@ -7,6 +7,5 @@
     <%= password_input f, :password, placeholder: "Password", class: "form-control" %>
   </div>
 
-  <%= submit "Sign In", class: "btn btn-primary" %>
+  <%= submit "Register", class: "btn btn-primary" %>
 <% end %>
-<%= link "Register", to: user_path(@conn, :new) %>
