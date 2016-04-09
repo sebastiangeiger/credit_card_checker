@@ -1,10 +1,10 @@
 defmodule CreditCardChecker.MerchantController do
   use CreditCardChecker.Web, :controller
 
-  plug CreditCardChecker.RequireAuthenticated
 
   alias CreditCardChecker.Merchant
 
+  plug CreditCardChecker.RequireAuthenticated
   plug :scrub_params, "merchant" when action in [:create, :update]
 
   def index(conn, _params) do

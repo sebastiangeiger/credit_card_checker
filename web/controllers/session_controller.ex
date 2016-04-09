@@ -4,6 +4,9 @@ defmodule CreditCardChecker.SessionController do
 
   alias CreditCardChecker.User
 
+  plug CreditCardChecker.RequireAuthenticated when action == :delete
+  plug :scrub_params, "session" when action in [:create, :update]
+
   def new(conn, _params) do
     render conn, "new.html"
   end
@@ -25,21 +28,16 @@ defmodule CreditCardChecker.SessionController do
   end
 
   def delete(conn, _params) do
-    if get_session(conn, :user_email) do
-      conn
-      |> delete_session(:user_email)
-      |> assign(:current_user, nil)
-      |> configure_session(renew: true)
-      |> put_flash(:info, "Signed out successfully")
-    else
-      conn
-      |> put_flash(:error, "You were never signed in")
-    end
+    conn
+    |> delete_session(:user_email)
+    |> assign(:current_user, nil)
+    |> configure_session(renew: true)
+    |> put_flash(:info, "Signed out successfully")
     |> redirect(to: session_path(conn, :new))
   end
 
   defp user_if_allowed("email@example.com", "super_secret", env) when env == :test do
-    # This is a shortcut for keepin tests fast
+    # This is a shortcut for keeping tests fast
     %User{email: "email@example.com"}
   end
 

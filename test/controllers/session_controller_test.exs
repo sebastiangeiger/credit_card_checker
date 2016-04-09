@@ -1,8 +1,6 @@
 defmodule CreditCardChecker.SessionControllerTest do
   use CreditCardChecker.ConnCase
 
-  alias CreditCardChecker.Session
-  alias CreditCardChecker.User
   @valid_attrs %{email: "email@example.com", password: "super_secret"}
   @invalid_attrs %{email: "email@example.com", password: "wrong"}
 
