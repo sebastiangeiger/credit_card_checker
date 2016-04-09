@@ -2,8 +2,14 @@ defmodule CreditCardChecker.PaymentMethodControllerTest do
   use CreditCardChecker.ConnCase
 
   alias CreditCardChecker.PaymentMethod
+  import CreditCardChecker.AuthTestHelper, only: [sign_in: 1]
+
   @valid_attrs %{name: "My Visa Card"}
   @invalid_attrs %{}
+
+  setup %{conn: conn} do
+    {:ok, %{conn: sign_in(conn)}}
+  end
 
   test "lists all entries on index", %{conn: conn} do
     PaymentMethod.changeset(%PaymentMethod{}, @valid_attrs)

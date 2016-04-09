@@ -1,6 +1,8 @@
 defmodule CreditCardChecker.PaymentMethodController do
   use CreditCardChecker.Web, :controller
 
+  plug CreditCardChecker.RequireAuthenticated
+
   alias CreditCardChecker.PaymentMethod
 
   plug :scrub_params, "payment_method" when action in [:create, :update]
