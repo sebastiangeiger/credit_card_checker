@@ -19,7 +19,7 @@ defmodule CreditCardChecker.Mixfile do
   def application do
     [mod: {CreditCardChecker, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :timex]]
+                    :phoenix_ecto, :postgrex, :timex, :comeonin]]
   end
 
   # Specifies which paths to compile per environment.
@@ -38,7 +38,8 @@ defmodule CreditCardChecker.Mixfile do
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
      {:timex, "~> 2.1"},
-     {:hound, "~> 0.8.2"}]
+     {:hound, "~> 0.8.2"},
+     {:comeonin, "~> 2.4"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
