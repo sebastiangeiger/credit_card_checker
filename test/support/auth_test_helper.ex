@@ -13,11 +13,15 @@ defmodule CreditCardChecker.AuthTestHelper do
   end
 
   def sign_in_through_app do
+    sign_in_through_app(%{email: "email@example.com", password: "super_secret"})
+  end
+
+  def sign_in_through_app(%{email: email, password: password}) do
     navigate_to("/sessions/new")
     find_element(:css, "input#session_email")
-    |> fill_field("email@example.com")
+    |> fill_field(email)
     find_element(:css, "input#session_password")
-    |> fill_field("super_secret")
+    |> fill_field(password)
     find_element(:css, "input[value='Sign In']")
     |> submit_element
   end
