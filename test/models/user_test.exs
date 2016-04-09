@@ -3,7 +3,7 @@ defmodule CreditCardChecker.UserTest do
 
   alias CreditCardChecker.User
 
-  @valid_attrs %{email: "some content", password_hash: "some content"}
+  @valid_attrs %{email: "some content", password: "some content"}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do

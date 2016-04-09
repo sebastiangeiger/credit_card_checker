@@ -3,13 +3,13 @@ defmodule CreditCardChecker.User do
 
   schema "users" do
     field :email, :string
-    field :passwordash, :string, virtual: true
+    field :password, :string, virtual: true
     field :password_hash, :string
 
     timestamps
   end
 
-  @required_fields ~w(password_hash email)
+  @required_fields ~w(email password)
   @optional_fields ~w()
 
   @doc """
@@ -21,5 +21,17 @@ defmodule CreditCardChecker.User do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> validate_length(:email, min: 1)
+    |> validate_length(:password, min: 1)
+    |> put_password_hash
+  end
+
+  defp put_password_hash(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
+        put_change(changeset, :password_hash, Comeonin.Bcrypt.hashpwsalt(password))
+      _ ->
+        changeset
+    end
   end
 end
