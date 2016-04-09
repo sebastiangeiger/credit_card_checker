@@ -1,6 +1,8 @@
 defmodule CreditCardChecker.ExpenseControllerTest do
   use CreditCardChecker.ConnCase
 
+  import CreditCardChecker.AuthTestHelper, only: [sign_in: 1]
+
   alias CreditCardChecker.Expense
   alias CreditCardChecker.Merchant
   alias CreditCardChecker.PaymentMethod
@@ -11,7 +13,7 @@ defmodule CreditCardChecker.ExpenseControllerTest do
   setup do
     Repo.insert!(%Merchant{name: "Whole Foods", id: 123})
     Repo.insert!(%PaymentMethod{name: "Visa", id: 456})
-    :ok
+    {:ok, %{conn: sign_in(conn)}}
   end
 
   test "lists all entries on index", %{conn: conn} do

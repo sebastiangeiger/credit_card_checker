@@ -4,6 +4,7 @@ defmodule CreditCardChecker.ExpenseController do
   alias CreditCardChecker.Expense
 
   plug :scrub_params, "expense" when action in [:create, :update]
+  plug CreditCardChecker.RequireAuthenticated
 
   def index(conn, _params) do
     expenses = Repo.all from e in Expense, preload: [:merchant, :payment_method]
