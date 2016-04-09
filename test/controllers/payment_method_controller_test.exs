@@ -2,20 +2,23 @@ defmodule CreditCardChecker.PaymentMethodControllerTest do
   use CreditCardChecker.ConnCase
 
   alias CreditCardChecker.PaymentMethod
-  import CreditCardChecker.AuthTestHelper, only: [sign_in: 1]
+  import CreditCardChecker.AuthTestHelper, only: [sign_in: 2]
 
   @valid_attrs %{name: "My Visa Card"}
-  @invalid_attrs %{}
+  @invalid_attrs %{name: ""}
 
   setup %{conn: conn} do
-    {:ok, %{conn: sign_in(conn)}}
+    user = create_user(%{email: "somebody@example.com", password: "super_secret"})
+    {:ok, %{conn: sign_in(conn, user), user: user}}
   end
 
-  test "lists all entries on index", %{conn: conn} do
-    PaymentMethod.changeset(%PaymentMethod{}, @valid_attrs)
-    |> Repo.insert!
+  test "lists all entries on index", %{conn: conn, user: user} do
+    create_payment_method(@valid_attrs, user: user)
+    joe = create_user(%{email: "joe@example.com", password: "joespass"})
+    create_payment_method(%{name: "Joes Visa Card"}, user: joe)
     conn = get conn, payment_method_path(conn, :index)
     assert html_response(conn, 200) =~ "My Visa Card"
+    refute html_response(conn, 200) =~ "Joes Visa Card"
   end
 
   test "renders form for new resources", %{conn: conn} do
@@ -34,8 +37,8 @@ defmodule CreditCardChecker.PaymentMethodControllerTest do
     assert html_response(conn, 200) =~ "New payment method"
   end
 
-  test "shows chosen resource", %{conn: conn} do
-    payment_method = Repo.insert! %PaymentMethod{}
+  test "shows chosen resource", %{conn: conn, user: user} do
+    payment_method = create_payment_method(@valid_attrs, user: user)
     conn = get conn, payment_method_path(conn, :show, payment_method)
     assert html_response(conn, 200) =~ "Show payment method"
   end
@@ -46,27 +49,27 @@ defmodule CreditCardChecker.PaymentMethodControllerTest do
     end
   end
 
-  test "renders form for editing chosen resource", %{conn: conn} do
-    payment_method = Repo.insert! %PaymentMethod{}
+  test "renders form for editing chosen resource", %{conn: conn, user: user} do
+    payment_method = create_payment_method(@valid_attrs, user: user)
     conn = get conn, payment_method_path(conn, :edit, payment_method)
     assert html_response(conn, 200) =~ "Edit payment method"
   end
 
-  test "updates chosen resource and redirects when data is valid", %{conn: conn} do
-    payment_method = Repo.insert! %PaymentMethod{}
+  test "updates chosen resource and redirects when data is valid", %{conn: conn, user: user} do
+    payment_method = create_payment_method(@valid_attrs, user: user)
     conn = put conn, payment_method_path(conn, :update, payment_method), payment_method: @valid_attrs
     assert redirected_to(conn) == payment_method_path(conn, :show, payment_method)
     assert Repo.get_by(PaymentMethod, @valid_attrs)
   end
 
-  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-    payment_method = Repo.insert! %PaymentMethod{}
+  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn, user: user} do
+    payment_method = create_payment_method(@valid_attrs, user: user)
     conn = put conn, payment_method_path(conn, :update, payment_method), payment_method: @invalid_attrs
     assert html_response(conn, 200) =~ "Edit payment method"
   end
 
-  test "deletes chosen resource", %{conn: conn} do
-    payment_method = Repo.insert! %PaymentMethod{}
+  test "deletes chosen resource", %{conn: conn, user: user} do
+    payment_method = create_payment_method(@valid_attrs, user: user)
     conn = delete conn, payment_method_path(conn, :delete, payment_method)
     assert redirected_to(conn) == payment_method_path(conn, :index)
     refute Repo.get(PaymentMethod, payment_method.id)

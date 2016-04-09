@@ -1,7 +1,7 @@
 defmodule CreditCardChecker.SessionControllerTest do
   use CreditCardChecker.ConnCase
 
-  import CreditCardChecker.AuthTestHelper, only: [sign_in: 1, create_user: 1]
+  import CreditCardChecker.AuthTestHelper, only: [sign_in: 1]
 
   @valid_attrs %{email: "email@example.com", password: "super_secret"}
   @invalid_attrs %{email: "email@example.com", password: "wrong"}

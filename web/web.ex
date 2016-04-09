@@ -36,6 +36,7 @@ defmodule CreditCardChecker.Web do
 
       import CreditCardChecker.Router.Helpers
       import CreditCardChecker.Gettext
+      import CreditCardChecker.ControllerHelper
     end
   end
 

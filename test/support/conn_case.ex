@@ -26,6 +26,7 @@ defmodule CreditCardChecker.ConnCase do
       import Ecto.Query, only: [from: 1, from: 2]
 
       import CreditCardChecker.Router.Helpers
+      import CreditCardChecker.Factory
 
       # The default endpoint for testing
       @endpoint CreditCardChecker.Endpoint

@@ -6,10 +6,19 @@ defmodule CreditCardChecker.AuthTestHelper do
 
   import Phoenix.ConnTest, only: [post: 3]
   import CreditCardChecker.Router.Helpers, only: [session_path: 2]
+  import CreditCardChecker.Factory, only: [create_user: 1]
+
+  alias CreditCardChecker.User
 
   def sign_in(conn) do
     create_user(@credentials)
     session_params = [session: @credentials]
+    post conn, session_path(conn, :create), session_params
+  end
+
+  def sign_in(conn, %User{email: email, password: password}) do
+    session_params = [session: %{email: email,
+                                 password: password}]
     post conn, session_path(conn, :create), session_params
   end
 
@@ -36,11 +45,5 @@ defmodule CreditCardChecker.AuthTestHelper do
       |> List.first
       |> click
     end
-  end
-
-  def create_user(%{email: _, password: _} = credentials) do
-    %CreditCardChecker.User{}
-    |> CreditCardChecker.User.changeset(credentials)
-    |> CreditCardChecker.Repo.insert!
   end
 end

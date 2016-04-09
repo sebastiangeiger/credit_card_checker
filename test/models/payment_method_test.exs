@@ -3,7 +3,7 @@ defmodule CreditCardChecker.PaymentMethodTest do
 
   alias CreditCardChecker.PaymentMethod
 
-  @valid_attrs %{name: "some content"}
+  @valid_attrs %{name: "some content", user_id: 123}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
