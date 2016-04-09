@@ -36,11 +36,6 @@ defmodule CreditCardChecker.SessionController do
     |> redirect(to: session_path(conn, :new))
   end
 
-  defp user_if_allowed("email@example.com", "super_secret", env) when env == :test do
-    # This is a shortcut for keeping tests fast
-    %User{email: "email@example.com"}
-  end
-
   defp user_if_allowed(email, password, _env) do
     user = Repo.get_by(User, email: email)
     if user && checkpw(password, user.password_hash) do

@@ -2,18 +2,20 @@ defmodule CreditCardChecker.AuthTestHelper do
   use Hound.Helpers
 
   @endpoint CreditCardChecker.Endpoint
+  @credentials %{email: "email@example.com", password: "super_secret"}
 
   import Phoenix.ConnTest, only: [post: 3]
   import CreditCardChecker.Router.Helpers, only: [session_path: 2]
 
   def sign_in(conn) do
-    session_params = [session: %{email: "email@example.com",
-                                 password: "super_secret"}]
+    create_user(@credentials)
+    session_params = [session: @credentials]
     post conn, session_path(conn, :create), session_params
   end
 
   def sign_in_through_app do
-    sign_in_through_app(%{email: "email@example.com", password: "super_secret"})
+    create_user(@credentials)
+    sign_in_through_app(@credentials)
   end
 
   def sign_in_through_app(%{email: email, password: password}) do
@@ -34,5 +36,11 @@ defmodule CreditCardChecker.AuthTestHelper do
       |> List.first
       |> click
     end
+  end
+
+  def create_user(%{email: _, password: _} = credentials) do
+    %CreditCardChecker.User{}
+    |> CreditCardChecker.User.changeset(credentials)
+    |> CreditCardChecker.Repo.insert!
   end
 end
