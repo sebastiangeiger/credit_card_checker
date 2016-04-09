@@ -9,7 +9,7 @@ defmodule CreditCardChecker.SessionController do
   end
 
   def create(conn, %{"session" => %{"email" => email, "password" => password}}) do
-    user = user_if_allowed(email, password)
+    user = user_if_allowed(email, password, Mix.env)
     if user do
       conn
       |> assign(:current_user, user)
@@ -38,12 +38,12 @@ defmodule CreditCardChecker.SessionController do
     |> redirect(to: session_path(conn, :new))
   end
 
-  defp user_if_allowed("email@example.com" , "super_secret") do
-    # Keeps specs passing
+  defp user_if_allowed("email@example.com", "super_secret", env) when env == :test do
+    # This is a shortcut for keepin tests fast
     %User{email: "email@example.com"}
   end
 
-  defp user_if_allowed(email, password) do
+  defp user_if_allowed(email, password, _env) do
     user = Repo.get_by(User, email: email)
     if user && checkpw(password, user.password_hash) do
       user

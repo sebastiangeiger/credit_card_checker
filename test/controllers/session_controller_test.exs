@@ -19,7 +19,7 @@ defmodule CreditCardChecker.SessionControllerTest do
   test "creating session assigns a current user", %{conn: conn} do
     conn = post conn, session_path(conn, :create), session: @valid_attrs
     assert Dict.has_key?(conn.assigns, :current_user)
-    assert conn.assigns.current_user == %User{email: "email@example.com"}
+    assert conn.assigns.current_user.email == "email@example.com"
   end
 
   test "creating session sets user_email in session", %{conn: conn} do
