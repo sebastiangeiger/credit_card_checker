@@ -3,11 +3,12 @@ defmodule CreditCardChecker.Merchant do
 
   schema "merchants" do
     field :name, :string
+    belongs_to :user, CreditCardChecker.User
 
     timestamps
   end
 
-  @required_fields ~w(name)
+  @required_fields ~w(name user_id)
   @optional_fields ~w()
 
   @doc """
@@ -19,5 +20,6 @@ defmodule CreditCardChecker.Merchant do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> foreign_key_constraint(:user_id)
   end
 end

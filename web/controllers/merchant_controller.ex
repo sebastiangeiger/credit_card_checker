@@ -8,7 +8,8 @@ defmodule CreditCardChecker.MerchantController do
   plug :scrub_params, "merchant" when action in [:create, :update]
 
   def index(conn, _params) do
-    merchants = Repo.all(Merchant)
+    merchants = Repo.all(from m in Merchant,
+                         where: m.user_id == ^conn.assigns.current_user.id)
     render(conn, "index.html", merchants: merchants)
   end
 
@@ -18,6 +19,7 @@ defmodule CreditCardChecker.MerchantController do
   end
 
   def create(conn, %{"merchant" => merchant_params}) do
+    merchant_params = add_current_user_id(merchant_params, conn)
     changeset = Merchant.changeset(%Merchant{}, merchant_params)
 
     case Repo.insert(changeset) do
