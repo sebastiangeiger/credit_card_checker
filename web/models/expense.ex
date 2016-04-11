@@ -6,11 +6,12 @@ defmodule CreditCardChecker.Expense do
     field :amount_in_cents, :integer
     belongs_to :merchant, CreditCardChecker.Merchant
     belongs_to :payment_method, CreditCardChecker.PaymentMethod
+    belongs_to :user, CreditCardChecker.User
 
     timestamps
   end
 
-  @required_fields ~w(time_of_sale amount_in_cents merchant_id payment_method_id)
+  @required_fields ~w(time_of_sale amount_in_cents merchant_id payment_method_id user_id)
   @optional_fields ~w()
 
   @doc """
@@ -23,6 +24,7 @@ defmodule CreditCardChecker.Expense do
     params = convert_amount(params)
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> foreign_key_constraint(:user_id)
   end
 
   defp convert_amount(%{"amount" => nil} = params) do

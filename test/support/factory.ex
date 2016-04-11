@@ -20,10 +20,12 @@ defmodule CreditCardChecker.Factory do
 
   def create_expense(attrs,
                      payment_method: %PaymentMethod{id: payment_method_id},
-                     merchant: %Merchant{id: merchant_id}) do
+                     merchant: %Merchant{id: merchant_id},
+                     user: %User{id: user_id}) do
     attrs = attrs
     |> Map.put_new(:payment_method_id, payment_method_id)
     |> Map.put_new(:merchant_id, merchant_id)
+    |> Map.put_new(:user_id, user_id)
     Expense.changeset(%Expense{}, attrs)
     |> Repo.insert!
   end

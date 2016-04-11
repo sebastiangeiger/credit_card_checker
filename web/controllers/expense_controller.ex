@@ -7,7 +7,9 @@ defmodule CreditCardChecker.ExpenseController do
   plug CreditCardChecker.RequireAuthenticated
 
   def index(conn, _params) do
-    expenses = Repo.all from e in Expense, preload: [:merchant, :payment_method]
+    expenses = Repo.all from e in Expense,
+                where: e.user_id == ^conn.assigns.current_user.id,
+                preload: [:merchant, :payment_method]
     render(conn, "index.html", expenses: expenses)
   end
 
@@ -20,6 +22,7 @@ defmodule CreditCardChecker.ExpenseController do
   end
 
   def create(conn, %{"expense" => expense_params}) do
+    expense_params = add_current_user_id(expense_params, conn)
     changeset = Expense.changeset(%Expense{}, expense_params)
 
     case Repo.insert(changeset) do
