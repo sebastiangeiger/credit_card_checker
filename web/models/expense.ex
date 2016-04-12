@@ -25,6 +25,8 @@ defmodule CreditCardChecker.Expense do
     model
     |> cast(params, @required_fields, @optional_fields)
     |> foreign_key_constraint(:user_id)
+    |> foreign_key_constraint(:merchant_id)
+    |> foreign_key_constraint(:payment_method_id)
   end
 
   defp convert_amount(%{"amount" => nil} = params) do
