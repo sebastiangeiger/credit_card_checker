@@ -19,6 +19,20 @@ defmodule CreditCardChecker.ExpenseTest do
     assert {:ok, _} = Repo.insert(Expense.changeset(%Expense{}, attrs))
   end
 
+  test "changeset with somebody else's merchant" do
+    user = create_user(%{email: "somebody@example.com", password: "super_secret"})
+    joe = create_user(%{email: "joe@example.com", password: "super_secret"})
+    merchant = create_merchant(%{name: "Some Merchant"}, user: joe)
+    payment_method = create_payment_method(%{name: "Some Payment Method"}, user: user)
+    attrs = @valid_attrs
+    |> Map.put(:user_id, user.id)
+    |> Map.put(:merchant_id, merchant.id)
+    |> Map.put(:payment_method_id, payment_method.id)
+    expense = Expense.changeset(%Expense{}, attrs)
+    assert {:error, changeset} = Repo.insert(expense)
+    assert changeset.errors[:merchant_id] == "does not belong to the current user"
+  end
+
   test "changeset with invalid attributes" do
     changeset = Expense.changeset(%Expense{}, @invalid_attrs)
     refute changeset.valid?
@@ -29,7 +43,6 @@ defmodule CreditCardChecker.ExpenseTest do
               "merchant_id" => "123", "payment_method_id" => "456",
               "user_id" => "789"}
     changeset = Expense.changeset(%Expense{}, attrs)
-    assert changeset.valid?
     assert changeset.changes[:amount_in_cents] == 342
   end
 end

@@ -27,6 +27,7 @@ defmodule CreditCardChecker.Expense do
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:merchant_id)
     |> foreign_key_constraint(:payment_method_id)
+    |> validate_merchant_belongs_to_user
   end
 
   defp convert_amount(%{"amount" => nil} = params) do
@@ -45,5 +46,29 @@ defmodule CreditCardChecker.Expense do
 
   defp convert_amount(params) do
     params
+  end
+
+  defp validate_merchant_belongs_to_user(changeset) do
+    %{changes: changes, errors: errors} = changeset
+
+    user_id = Map.get(changes, :user_id)
+    merchant_id = Map.get(changes, :merchant_id)
+
+    merchant = if is_nil(merchant_id) do
+      nil
+    else
+      CreditCardChecker.Repo.get(CreditCardChecker.Merchant, merchant_id)
+    end
+
+    new  = if merchant && merchant.user_id == user_id do
+      []
+    else
+      [merchant_id: "does not belong to the current user"]
+    end
+
+    case new do
+      []    -> changeset
+      [_|_] -> %{changeset | errors: new ++ errors, valid?: false}
+    end
   end
 end
