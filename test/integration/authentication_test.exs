@@ -9,6 +9,7 @@ defmodule CreditCardChecker.AuthenticationTest do
 
   @credentials %{email: "somebody@example.com", password: "super_secret"}
 
+  @tag failing_on_ci: true
   test "sign in and sign back out" do
     sign_out_through_app
     navigate_to("/merchants")
