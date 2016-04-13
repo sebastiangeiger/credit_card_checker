@@ -5,3 +5,10 @@ before_script:
 - phantomjs --wd > /dev/null &
 script:
 - mix test --exclude failing_on_ci
+deploy:
+  provider: heroku
+  app: credit-card-checker
+  on:
+    branch: master
+  api_key:
+    secure: P+U3U0AIL/QF34GTYf+aImQ52KofDvbUEFwZSGAivgNzntFK3nTYv+qIvs9O8OE12MaqKUyAnvlrojcxWSsuv01eH3ZH6eOiaHg66AxZvR+XdobazB1iaA1idICezdSTPnFd1dtLexSNENVm/D8KVdyz8kKX+jOHPAWGGOuhfHAMG+X+48BWSAAfszSMccgfvjn7l+vOlMMspgdNq74smjKyjZZdxjmxP/iQfowvXiXIZB2g/Nn5gG0PqEHWV5V6gbk/66CqjmWxt3fxJcAUaSISek7ziMLto51BGWHNvU5yN94h8IrAXV32KM4FegXrUWIccULgv6z2/3E2pjBpSOiuFejqNUcTQ9jCvkxGA0uPH/xx6/oJffRncHErJ/y6Xs26QFVSncLrgiaEKp6YFwbw04HhYJaE9FMSD0KPiWbL/aDV1zFGFlxL5XdkSexXUDGprCnh/eJA1/flpaegvNfjzdiX3SGNijTRXEY19WPZxyKblalsc5b66GmYNHxdeTmjYVVMecFBcb7BE2qKvE+RF+YGtgfeTi5OsnKynDoElixwxi2jLA4ab8CGqz2nLi/muNs2gO4m4lVmHorw3H3xyFXPyAjwZ1ocPqZ3N95Bux/cBw9vkjsteXnYSwfaqRgLbA1J1GnhUk6etCE5/xK0g3xLSAt6jWVqbwfVAx8=
