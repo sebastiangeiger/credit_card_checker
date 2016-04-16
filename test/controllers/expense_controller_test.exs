@@ -24,7 +24,7 @@ defmodule CreditCardChecker.ExpenseControllerTest do
                    merchant: merchant, user: user)
     joe = create_user(%{email: "joe@example.com", password: "super_secret"})
     create_expense(%{amount_in_cents: 33, time_of_sale: "2010-04-17 14:00:00"},
-                   payment_method: payment_method, merchant: merchant, user: joe)
+                    user: joe)
     conn = get conn, expense_path(conn, :index)
     assert html_response(conn, 200) =~ "$0.42"
     refute html_response(conn, 200) =~ "$0.33"
