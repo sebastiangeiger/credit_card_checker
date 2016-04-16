@@ -9,6 +9,7 @@ defmodule CreditCardChecker.ExpenseController do
   def index(conn, _params) do
     expenses = Repo.all from e in Expense,
                 where: e.user_id == ^conn.assigns.current_user.id,
+                order_by: [desc: e.time_of_sale],
                 preload: [:merchant, :payment_method]
     render(conn, "index.html", expenses: expenses)
   end
