@@ -10,18 +10,18 @@
     </tr>
   </thead>
   <tbody class='sem-expenses'>
-<%= for expense <- @expenses do %>
-    <tr class='sem-expense'>
-      <td><%= expense.time_of_sale %></td>
-      <td><%= expense.merchant.name %></td>
-      <td><%= expense.payment_method.name %></td>
-      <td>$<%= in_dollars(expense.amount_in_cents) %></td>
+    <%= for expense <- @expenses do %>
+      <tr class='sem-expense'>
+        <td><%= expense.time_of_sale %></td>
+        <td><%= expense.merchant.name %></td>
+        <td><%= expense.payment_method.name %></td>
+        <td>$<%= in_dollars(expense.amount_in_cents) %></td>
 
-      <td class="text-right">
-        <%= link "Show", to: expense_path(@conn, :show, expense), class: "btn btn-default btn-xs" %>
-      </td>
-    </tr>
-<% end %>
+        <td class="text-right">
+          <%= link "Show", to: expense_path(@conn, :show, expense), class: "btn btn-default btn-xs" %>
+        </td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
 
