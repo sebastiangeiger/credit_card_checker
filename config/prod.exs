@@ -67,3 +67,5 @@ config :credit_card_checker, CreditCardChecker.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: 20,
   ssl: true
+
+config :credit_card_checker, whitelisted_emails: ["sebastian.geiger@gmail.com"]
