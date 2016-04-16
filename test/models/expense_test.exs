@@ -33,6 +33,20 @@ defmodule CreditCardChecker.ExpenseTest do
     assert changeset.errors[:merchant_id] == "does not belong to the current user"
   end
 
+  test "changeset with somebody else's payment_method" do
+    user = create_user(%{email: "somebody@example.com", password: "super_secret"})
+    merchant = create_merchant(%{name: "Some Merchant"}, user: user)
+    joe = create_user(%{email: "joe@example.com", password: "super_secret"})
+    payment_method = create_payment_method(%{name: "Some Payment Method"}, user: joe)
+    attrs = @valid_attrs
+    |> Map.put(:user_id, user.id)
+    |> Map.put(:merchant_id, merchant.id)
+    |> Map.put(:payment_method_id, payment_method.id)
+    expense = Expense.changeset(%Expense{}, attrs)
+    assert {:error, changeset} = Repo.insert(expense)
+    assert changeset.errors[:payment_method_id] == "does not belong to the current user"
+  end
+
   test "changeset with invalid attributes" do
     changeset = Expense.changeset(%Expense{}, @invalid_attrs)
     refute changeset.valid?
