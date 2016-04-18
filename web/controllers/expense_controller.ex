@@ -76,7 +76,9 @@ defmodule CreditCardChecker.ExpenseController do
     assign(conn, :payment_methods, Repo.all(query))
   end
 
-  defp convert_time(%Timex.DateTime{year: year, month: month, day: day, hour: hour, minute: minute, second: second}) do
-    {{year, month, day}, {hour, minute, second}}
+  defp convert_time(%Timex.DateTime{} = date) do
+    date
+    |> Timex.Timezone.convert("America/Los_Angeles")
+    |> Timex.to_erlang_datetime
   end
 end
