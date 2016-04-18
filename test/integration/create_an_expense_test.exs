@@ -59,7 +59,7 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
 
   defp go_to_new_expense_form do
     navigate_to("/expenses")
-    find_element(:link_text, "New expense")
+    find_element(:link_text, "+ New Expense")
     |> click
   end
 

@@ -1,3 +1,7 @@
+<div>
+  <%= link "+ New Expense", to: expense_path(@conn, :new), class: "btn btn-default pull-right" %>
+</div>
+
 <table class="table">
   <tbody class='sem-expenses'>
     <%= for {headline, expenses} <- group_by_month(@expenses) do %>
@@ -19,5 +23,3 @@
     <% end %>
   </tbody>
 </table>
-
-<%= link "New expense", to: expense_path(@conn, :new) %>
