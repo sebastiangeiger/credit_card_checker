@@ -6,7 +6,7 @@
       </tr>
       <%= for expense <- expenses do %>
         <tr class='sem-expense'>
-          <td><%= expense.time_of_sale %></td>
+          <td><%= short_date_format(expense.time_of_sale) %></td>
           <td><%= expense.merchant.name %></td>
           <td><%= expense.payment_method.name %></td>
           <td>$<%= in_dollars(expense.amount_in_cents) %></td>

@@ -35,4 +35,10 @@ defmodule CreditCardChecker.ExpenseView do
                       |> Enum.sort_by(&(&1.time_of_sale), &>=/2)
     {month_name, sorted_expenses}
   end
+
+  def short_date_format(date) do
+    date
+    |> Ecto.DateTime.to_erl
+    |> Timex.format!("%-d. (%H:%M)", :strftime)
+  end
 end
