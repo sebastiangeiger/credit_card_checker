@@ -16,7 +16,7 @@ defmodule CreditCardChecker.ExpenseController do
 
   def new(conn, _params) do
     time_of_sale = convert_time(Timex.DateTime.local)
-    changeset = Expense.changeset(%Expense{time_of_sale: time_of_sale})
+    changeset = Expense.empty_changeset(%Expense{time_of_sale: time_of_sale})
     conn
     |> assign_merchants_and_payment_methods
     |> render("new.html", changeset: changeset)

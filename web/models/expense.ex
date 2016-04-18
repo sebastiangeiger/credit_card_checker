@@ -31,6 +31,10 @@ defmodule CreditCardChecker.Expense do
     |> validate_payment_method_belongs_to_user
   end
 
+  def empty_changeset(model) do
+    cast(model, :empty, @required_fields, @optional_fields)
+  end
+
   defp convert_amount(%{"amount" => nil} = params) do
     params
     |> Map.put("amount_in_cents", nil)
