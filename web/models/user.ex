@@ -24,6 +24,7 @@ defmodule CreditCardChecker.User do
     |> validate_length(:email, min: 1)
     |> validate_length(:password, min: 1)
     |> only_allow_whitelisted_emails
+    |> unique_constraint(:email)
     |> put_password_hash
   end
 
