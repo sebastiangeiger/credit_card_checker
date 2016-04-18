@@ -39,6 +39,6 @@ defmodule CreditCardChecker.ExpenseView do
   def short_date_format(date) do
     date
     |> Ecto.DateTime.to_erl
-    |> Timex.format!("%-d. (%H:%M)", :strftime)
+    |> Timex.format!("%-d.", :strftime)
   end
 end
