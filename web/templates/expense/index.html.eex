@@ -1,14 +1,4 @@
 <table class="table">
-  <thead>
-    <tr>
-      <th>Time of sale</th>
-      <th>Merchant</th>
-      <th>Payment method</th>
-      <th>Amount</th>
-
-      <th></th>
-    </tr>
-  </thead>
   <tbody class='sem-expenses'>
     <%= for {headline, expenses} <- group_by_month(@expenses) do %>
       <tr>

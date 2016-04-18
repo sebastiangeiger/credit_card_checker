@@ -72,3 +72,7 @@ form.link, form.button {
     border-bottom: 0;
   }
 }
+
+table tr:first-child td {
+  border-top-width: 0px;
+}
