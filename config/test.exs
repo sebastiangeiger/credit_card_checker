@@ -17,3 +17,6 @@ config :credit_card_checker, CreditCardChecker.Repo,
   database: "credit_card_checker_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :comeonin, :bcrypt_log_rounds, 1
+config :comeonin, :pbkdf2_rounds, 1
