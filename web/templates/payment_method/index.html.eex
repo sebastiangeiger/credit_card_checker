@@ -12,6 +12,7 @@
       <td><%= payment_method.name %></td>
 
       <td class="text-right">
+        <%= link "Upload Statement", to: payment_method_statement_path(@conn, :new, payment_method), class: "btn btn-warning btn-xs" %>
         <%= link "Show", to: payment_method_path(@conn, :show, payment_method), class: "btn btn-default btn-xs" %>
       </td>
     </tr>

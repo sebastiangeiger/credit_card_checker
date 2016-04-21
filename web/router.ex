@@ -18,7 +18,9 @@ defmodule CreditCardChecker.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
-    resources "/payment_methods", PaymentMethodController, only: [:new, :create, :index, :show]
+    resources "/payment_methods", PaymentMethodController, only: [:new, :create, :index, :show] do
+      resources "/statements", StatementController, only: [:new]
+    end
     resources "/merchants", MerchantController
     resources "/expenses", ExpenseController, only: [:new, :create, :index, :show, :delete]
     resources "/sessions", SessionController, only: [:new, :create]
