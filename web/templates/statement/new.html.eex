@@ -1,0 +1,11 @@
+<h2>Upload statement for "<%= @payment_method.name %>"</h2>
+
+<%= form_for @conn, payment_method_statement_path(@conn, :create, @payment_method), [as: :statement, multipart: true], fn f -> %>
+  <div class="form-group">
+    <%= label f, :file, class: "control-label" %>
+    <%= file_input f, :file %>
+  </div>
+  <%= submit "Upload", class: "btn btn-primary" %>
+<% end %>
+
+<%= link "Back", to: payment_method_path(@conn, :index) %>

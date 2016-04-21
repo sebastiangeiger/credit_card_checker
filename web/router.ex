@@ -19,7 +19,7 @@ defmodule CreditCardChecker.Router do
 
     get "/", PageController, :index
     resources "/payment_methods", PaymentMethodController, only: [:new, :create, :index, :show] do
-      resources "/statements", StatementController, only: [:new]
+      resources "/statements", StatementController, only: [:new, :create]
     end
     resources "/merchants", MerchantController
     resources "/expenses", ExpenseController, only: [:new, :create, :index, :show, :delete]
