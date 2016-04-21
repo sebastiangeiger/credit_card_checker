@@ -4,6 +4,7 @@ defmodule CreditCardChecker.PaymentMethod do
   schema "payment_methods" do
     field :name, :string
     belongs_to :user, CreditCardChecker.User
+    has_many :statement_lines, CreditCardChecker.StatementLine
 
     timestamps
   end

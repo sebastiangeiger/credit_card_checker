@@ -40,7 +40,7 @@ defmodule CreditCardChecker.PaymentMethodControllerTest do
   test "shows chosen resource", %{conn: conn, user: user} do
     payment_method = create_payment_method(@valid_attrs, user: user)
     conn = get conn, payment_method_path(conn, :show, payment_method)
-    assert html_response(conn, 200) =~ "Show payment method"
+    assert html_response(conn, 200) =~ "<h2>My Visa Card</h2>"
   end
 
   test "renders page not found when id is nonexistent", %{conn: conn} do

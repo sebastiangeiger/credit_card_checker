@@ -18,6 +18,7 @@ defmodule CreditCardChecker.UploadAStatementTest do
     |> attach_file("test/fixtures/format_1.csv")
     find_element(:css, "input[value='Upload']")
     |> submit_element
+    assert Enum.count(statement_lines) == 4
   end
 
   defp go_to_new_statement_form do
@@ -29,6 +30,10 @@ defmodule CreditCardChecker.UploadAStatementTest do
   defp attach_file(element, input) do
     session_id = Hound.current_session_id
     Hound.RequestUtils.make_req(:post, "session/#{session_id}/element/#{element}/value", %{value: ["#{input}"]})
+  end
+
+  defp statement_lines do
+    find_all_elements(:css, ".sem-statement-lines .sem-statement-line")
   end
 end
 

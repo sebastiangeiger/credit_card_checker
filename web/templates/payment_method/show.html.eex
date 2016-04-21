@@ -1,10 +1,23 @@
-<h2>Show payment method</h2>
+<h2><%= @payment_method.name %></h2>
 
-<ul>
-
-  <li>
-    <strong>Name:</strong>
-    <%= @payment_method.name %>
-  </li>
-
-</ul>
+<h3>Transactions</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Amount</th>
+      <th>Payee</th>
+      <th>Address</th>
+    </tr>
+  </thead>
+  <tbody class="sem-statement-lines">
+  <%= for line <- @payment_method.statement_lines do %>
+    <tr class="sem-statement-line">
+      <td> <%= line.posted_date %> </td>
+      <td> <%= line.amount_in_cents %> </td>
+      <td> <%= line.payee %> </td>
+      <td> <%= line.address %> </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

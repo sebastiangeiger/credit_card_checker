@@ -34,6 +34,7 @@ defmodule CreditCardChecker.PaymentMethodController do
 
   def show(conn, %{"id" => id}) do
     payment_method = Repo.get!(PaymentMethod, id)
+                      |> Repo.preload([:statement_lines])
     render(conn, "show.html", payment_method: payment_method)
   end
 end
