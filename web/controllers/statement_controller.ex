@@ -25,7 +25,7 @@ defmodule CreditCardChecker.StatementController do
     end)
   end
 
-  defp add_payment_method_id(statement_lines, payment_method_id) do
+  defp add_payment_method_id({:ok, statement_lines}, payment_method_id) do
     add_payment_method_id(statement_lines, String.to_integer(payment_method_id))
   end
 end

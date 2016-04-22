@@ -5,7 +5,7 @@ defmodule CreditCardChecker.StatementParserTest do
   alias CreditCardChecker.StatementLine
 
   test "reading the csv file generates the correct StatementLines" do
-    lines = StatementParser.parse("test/fixtures/format_1.csv")
+    {:ok, lines} = StatementParser.parse("test/fixtures/format_1.csv")
     assert Enum.count(lines) == 4
     line = %StatementLine{
       amount_in_cents: -870,

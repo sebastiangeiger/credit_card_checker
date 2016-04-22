@@ -2,11 +2,12 @@ defmodule CreditCardChecker.StatementParser do
   alias CreditCardChecker.StatementLine
 
   def parse(file) do
-    file
-    |> read
-    |> split_heading_and_body
-    |> convert_to_maps
-    |> convert_to_statement_lines
+    result = file
+              |> read
+              |> split_heading_and_body
+              |> convert_to_maps
+              |> convert_to_statement_lines
+    {:ok, result}
   end
 
   defp read(file) do
