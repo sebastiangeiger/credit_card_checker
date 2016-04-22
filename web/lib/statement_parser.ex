@@ -1,13 +1,26 @@
 defmodule CreditCardChecker.StatementParser do
+  require Logger
   alias CreditCardChecker.StatementLine
 
   def parse(file) do
-    result = file
-              |> read
-              |> split_heading_and_body
-              |> convert_to_maps
-              |> convert_to_statement_lines
-    {:ok, result}
+    try do
+      {:ok, try_to_parse(file)}
+    rescue
+      ArgumentError ->
+        Logger.info("Could not parse '#{file}'")
+        {:error, []}
+      File.Error ->
+        Logger.info("Could not open '#{file}'")
+        {:error, []}
+    end
+  end
+
+  defp try_to_parse(file) do
+    file
+    |> read
+    |> split_heading_and_body
+    |> convert_to_maps
+    |> convert_to_statement_lines
   end
 
   defp read(file) do

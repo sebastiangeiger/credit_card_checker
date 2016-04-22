@@ -16,4 +16,16 @@ defmodule CreditCardChecker.StatementParserTest do
     }
     assert List.first(lines) == line
   end
+
+  test "reading an invalid csv file" do
+    path = "test/fixtures/not_a_valid_csv.csv"
+    assert File.exists?(path)
+    {:error, []} = StatementParser.parse(path)
+  end
+
+  test "reading a file that does not exist" do
+    path = "test/fixtures/i_dont_exist.csv"
+    refute File.exists?(path)
+    {:error, []} = StatementParser.parse(path)
+  end
 end
