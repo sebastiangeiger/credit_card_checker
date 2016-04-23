@@ -2,22 +2,19 @@
 
 <h3>Transactions</h3>
 <table class="table">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Amount</th>
-      <th>Payee</th>
-      <th>Address</th>
-    </tr>
-  </thead>
   <tbody class="sem-statement-lines">
-  <%= for line <- @payment_method.statement_lines do %>
-    <tr class="sem-statement-line">
-      <td> <%= line.posted_date %> </td>
-      <td class="dollar-amount"> <%= in_dollars(line.amount_in_cents) %> </td>
-      <td> <%= line.payee %> </td>
-      <td> <%= line.address %> </td>
-    </tr>
-  <% end %>
+    <%= for {headline, statement_lines} <- group_by_month(@payment_method.statement_lines) do %>
+      <tr>
+        <td colspan=5><h4><%= headline %></h4></td>
+      </tr>
+      <%= for line <- statement_lines do %>
+        <tr class="sem-statement-line">
+          <td> <%= short_date_format(line.posted_date) %> </td>
+          <td class="dollar-amount"> <%= in_dollars(line.amount_in_cents) %> </td>
+          <td> <%= line.payee %> </td>
+          <td> <%= line.address %> </td>
+        </tr>
+      <% end %>
+    <% end %>
   </tbody>
 </table>

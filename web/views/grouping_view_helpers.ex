@@ -9,9 +9,18 @@ defmodule CreditCardChecker.GroupingViewHelpers do
   end
 
   defp month_and_year(expense, sort_criteria) do
-    {{year, month, _}, _} = sort_criteria.(expense)
-                            |> Ecto.DateTime.to_erl
+    {year, month, _} = sort_criteria.(expense)
+                       |> to_erlang_date
     {year, month}
+  end
+
+  defp to_erlang_date(%Ecto.DateTime{} = date_time) do
+    {date, _time} = Ecto.DateTime.to_erl(date_time)
+    date
+  end
+
+  defp to_erlang_date(%Ecto.Date{} = date) do
+    Ecto.Date.to_erl(date)
   end
 
   defp month_name_with_expenses({{year,month}, expenses}) do

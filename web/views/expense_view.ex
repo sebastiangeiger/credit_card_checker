@@ -4,11 +4,7 @@ defmodule CreditCardChecker.ExpenseView do
   alias CreditCardChecker.GroupingViewHelpers
 
   def group_by_month(records) do
-    GroupingViewHelpers.group_by_month(records, &(sort_criteria(&1)))
-  end
-
-  defp sort_criteria(record) do
-    record.time_of_sale
+    GroupingViewHelpers.group_by_month(records, &(&1.time_of_sale))
   end
 
   def short_date_format(date) do
