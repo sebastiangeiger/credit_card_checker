@@ -17,9 +17,9 @@ defmodule CreditCardChecker.StatementController do
         conn
         |> put_flash(:info, "Uploaded #{Enum.count(lines)} statement lines")
         |> redirect(to: payment_method_path(conn, :show, payment_method))
-      _ ->
+      {:error, explanation} ->
         conn
-        |> put_flash(:error, "No file given")
+        |> put_flash(:error, explanation)
         |> render("new.html", payment_method: payment_method)
     end
   end

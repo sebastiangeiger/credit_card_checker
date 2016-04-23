@@ -30,11 +30,27 @@ defmodule CreditCardChecker.StatementControllerTest do
     assert get_flash(conn, :info) == "Uploaded 4 statement lines"
   end
 
-  test "Re-render if file is invalid", %{conn: conn, payment_method: payment_method} do
+  test "Re-render if no file given", %{conn: conn, payment_method: payment_method} do
     conn = post conn,
                 payment_method_statement_path(conn, :create, payment_method),
                 statement: %{}
 
     assert html_response(conn, 200) =~ "No file given"
+  end
+
+  test "Re-render if file does not exist", %{conn: conn, payment_method: payment_method} do
+    conn = post conn,
+                payment_method_statement_path(conn, :create, payment_method),
+                statement: %{file: %Plug.Upload{path: "test/fixtures/does_not_exist.csv"}}
+
+    assert html_response(conn, 200) =~ "No file given"
+  end
+
+  test "Re-render if file can't be parsed", %{conn: conn, payment_method: payment_method} do
+    conn = post conn,
+                payment_method_statement_path(conn, :create, payment_method),
+                statement: %{file: %Plug.Upload{path: "test/fixtures/not_a_valid_csv.csv"}}
+
+    assert html_response(conn, 200) =~ "Could not parse file"
   end
 end

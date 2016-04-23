@@ -1,8 +1,17 @@
 defmodule CreditCardChecker.Statement do
   alias CreditCardChecker.Repo
-  alias CreditCardChecker.StatementLine
 
-  def insert_all(statement_lines) do
+  import CreditCardChecker.StatementParser, only: [parse: 1]
+
+  def insert_all({:ok, statement_lines}) do
+    insert_all(statement_lines)
+  end
+
+  def insert_all({:error, _explanation} = result) do
+    result
+  end
+
+  def insert_all(statement_lines) when is_list(statement_lines) do
     #TODO: Use Repo.insert_all once ecto 2.0 is stable
     Repo.transaction(fn ->
       for statement_line <- statement_lines do
@@ -12,10 +21,6 @@ defmodule CreditCardChecker.Statement do
         end
       end
     end)
-  end
-
-  def parse_file(statement_file) do
-    CreditCardChecker.StatementParser.parse(statement_file)
   end
 
   def parse_and_insert(nil, _payment_method_id)  do
@@ -28,7 +33,7 @@ defmodule CreditCardChecker.Statement do
 
   def parse_and_insert(file, payment_method_id) when is_integer(payment_method_id) do
     file
-    |> parse_file
+    |> parse
     |> add_payment_method_id(payment_method_id)
     |> insert_all
   end
@@ -38,8 +43,13 @@ defmodule CreditCardChecker.Statement do
   end
 
   defp add_payment_method_id({:ok, statement_lines}, payment_method_id) when is_integer(payment_method_id) do
-    Enum.map(statement_lines, fn line ->
+    lines = Enum.map(statement_lines, fn line ->
       %{ line | payment_method_id: payment_method_id }
     end)
+    {:ok, lines}
+  end
+
+  defp add_payment_method_id({:error, _explanation} = result, _payment_method_id) do
+    result
   end
 end

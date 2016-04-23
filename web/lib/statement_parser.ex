@@ -8,10 +8,10 @@ defmodule CreditCardChecker.StatementParser do
     rescue
       ArgumentError ->
         Logger.info("Could not parse '#{file}'")
-        {:error, []}
+        {:error, "Could not parse file"}
       File.Error ->
         Logger.info("Could not open '#{file}'")
-        {:error, []}
+        {:error, "No file given"}
     end
   end
 
