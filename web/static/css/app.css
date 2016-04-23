@@ -76,3 +76,7 @@ form.link, form.button {
 table tr:first-child td {
   border-top-width: 0px;
 }
+
+td.dollar-amount {
+  text-align: right;
+}

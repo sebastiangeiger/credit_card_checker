@@ -14,7 +14,7 @@
   <%= for line <- @payment_method.statement_lines do %>
     <tr class="sem-statement-line">
       <td> <%= line.posted_date %> </td>
-      <td> <%= line.amount_in_cents %> </td>
+      <td class="dollar-amount"> <%= in_dollars(line.amount_in_cents) %> </td>
       <td> <%= line.payee %> </td>
       <td> <%= line.address %> </td>
     </tr>
