@@ -6,7 +6,7 @@ defmodule CreditCardChecker.StatementTest do
   alias CreditCardChecker.Repo
   import CreditCardChecker.Factory, only: [create_user: 1, create_payment_method: 2]
 
-  test "it creates all StatementLines when valid" do
+  test "insert_all creates all StatementLines when valid" do
     lines = [{1, :valid}, {2, :valid}, {3, :valid}]
             |> Enum.map(&statement_line/1)
     {status, _} = Statement.insert_all(lines)
@@ -14,13 +14,22 @@ defmodule CreditCardChecker.StatementTest do
     assert status == :ok
   end
 
-  test "it creates no StatementLines when one is invalid" do
+  test "insert_all creates no StatementLines when one is invalid" do
     lines = [{1, :valid}, {2, :invalid}, {3, :valid}]
             |> Enum.map(&statement_line/1)
     {status, reason} = Statement.insert_all(lines)
     assert Enum.count(Repo.all(StatementLine)) == 0
     assert status == :error
     assert reason == :insertion_failed
+  end
+
+  test "parse_and_insert will ignore StatementLines that are already added" do
+    user = create_user(%{email: "somebody@example.com", password: "secret"})
+    pm = create_payment_method(%{name: "Visa"}, user: user)
+    Statement.parse_and_insert("test/fixtures/format_1.csv", pm.id)
+    assert Enum.count(Repo.all(StatementLine)) == 4
+    Statement.parse_and_insert("test/fixtures/format_1.csv", pm.id)
+    assert Enum.count(Repo.all(StatementLine)) == 4
   end
 
   defp statement_line({i, :valid}) do

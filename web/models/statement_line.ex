@@ -1,5 +1,6 @@
 defmodule CreditCardChecker.StatementLine do
   use CreditCardChecker.Web, :model
+  alias CreditCardChecker.StatementLine
 
   schema "statement_lines" do
     field :amount_in_cents, :integer
@@ -26,4 +27,19 @@ defmodule CreditCardChecker.StatementLine do
     |> cast(params, @required_fields, @optional_fields)
     |> foreign_key_constraint(:payment_method_id)
   end
+
+  def similar?(%StatementLine{} = a, %StatementLine{} = b) do
+    a.posted_date == b.posted_date &&
+      a.payee == b.payee &&
+      a.amount_in_cents == b.amount_in_cents
+  end
+
+  def similar?(%StatementLine{} = a, list) when is_list(list) do
+    Enum.any?(list, &(similar?(&1, a)))
+  end
+
+  def similar?(_, _) do
+    false
+  end
+
 end

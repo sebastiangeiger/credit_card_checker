@@ -1,5 +1,7 @@
 defmodule CreditCardChecker.Statement do
+  require Ecto.Query
   alias CreditCardChecker.Repo
+  alias CreditCardChecker.StatementLine
 
   import CreditCardChecker.StatementParser, only: [parse: 1]
 
@@ -35,6 +37,7 @@ defmodule CreditCardChecker.Statement do
     file
     |> parse
     |> add_payment_method_id(payment_method_id)
+    |> remove_duplicate_statement_lines
     |> insert_all
   end
 
@@ -51,5 +54,23 @@ defmodule CreditCardChecker.Statement do
 
   defp add_payment_method_id({:error, _explanation} = result, _payment_method_id) do
     result
+  end
+
+  defp remove_duplicate_statement_lines({:error, _} = result) do
+    result
+  end
+
+  defp remove_duplicate_statement_lines({:ok,[]}) do
+    {:ok, []}
+  end
+
+  defp remove_duplicate_statement_lines({:ok, new_statement_lines}) when is_list(new_statement_lines) do
+    %StatementLine{payment_method_id: payment_method_id} = List.first(new_statement_lines)
+    existing_statement_lines = Ecto.Query.from(line in StatementLine,
+        where: line.payment_method_id == ^payment_method_id)
+    |> Repo.all
+    lines = Enum.reject(new_statement_lines,
+                        &(StatementLine.similar?(&1, existing_statement_lines)))
+    {:ok, lines}
   end
 end
