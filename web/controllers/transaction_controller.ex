@@ -8,7 +8,8 @@ defmodule CreditCardChecker.TransactionController do
   def unmatched(conn, _params) do
     statement_lines = Repo.all from sl in StatementLine,
                         join: pm in assoc(sl, :payment_method),
-                        where: pm.user_id == ^conn.assigns.current_user.id
+                        where: pm.user_id == ^conn.assigns.current_user.id,
+                        where: sl.amount_in_cents < 0
     render(conn, "unmatched.html", statement_lines: statement_lines)
   end
 end
