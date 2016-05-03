@@ -20,6 +20,7 @@
             <%= nav_pill "Expenses", to: expense_path(@conn, :index), current_path: current_path %>
             <%= nav_pill "Merchants", to: merchant_path(@conn, :index), current_path: current_path %>
             <%= nav_pill "Payment Methods", to: payment_method_path(@conn, :index), current_path: current_path %>
+            <%= nav_pill "Transactions", to: transaction_path(@conn, :unmatched), current_path: current_path %>
             <%= render "user_actions.html", conn: @conn %>
           </ul>
         </nav>
