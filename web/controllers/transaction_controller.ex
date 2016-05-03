@@ -1,6 +1,8 @@
 defmodule CreditCardChecker.TransactionController do
   use CreditCardChecker.Web, :controller
 
+  plug CreditCardChecker.RequireAuthenticated
+
   alias CreditCardChecker.StatementLine
 
   def unmatched(conn, _params) do
