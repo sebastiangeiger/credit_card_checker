@@ -5,6 +5,7 @@ defmodule CreditCardChecker.Factory do
   alias CreditCardChecker.PaymentMethod
   alias CreditCardChecker.Expense
   alias CreditCardChecker.Merchant
+  alias CreditCardChecker.StatementLine
 
   def create_user(%{email: _, password: _} = credentials) do
     %User{}
@@ -43,4 +44,20 @@ defmodule CreditCardChecker.Factory do
     |> Repo.insert!
   end
 
+  def create_statement_line(%{amount: amount} = attrs, opts) do
+    attrs
+    |> Map.delete(:amount)
+    |> Map.put(:amount_in_cents, round(amount * 100))
+    |> create_statement_line(opts)
+  end
+
+  def create_statement_line(attrs, payment_method: %PaymentMethod{id: payment_method_id}) do
+    attrs = Map.merge(attrs, %{
+      posted_date: Ecto.Date.cast!("2016-04-20"),
+      reference_number: "123456",
+      payment_method_id: payment_method_id
+    })
+    StatementLine.changeset(%StatementLine{}, attrs)
+    |> Repo.insert!
+  end
 end

@@ -1,0 +1,18 @@
+<h3>Unmatched Transactions</h3>
+<table class="table">
+  <tbody class="sem-statement-lines">
+    <%= for {headline, statement_lines} <- group_by_month(@statement_lines) do %>
+      <tr>
+        <td colspan=5><h4><%= headline %></h4></td>
+      </tr>
+      <%= for line <- statement_lines do %>
+        <tr class="sem-statement-line">
+          <td> <%= short_date_format(line.posted_date) %> </td>
+          <td class="dollar-amount"> <%= in_dollars(line.amount_in_cents) %> </td>
+          <td> <%= line.payee %> </td>
+          <td> <%= line.address %> </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
