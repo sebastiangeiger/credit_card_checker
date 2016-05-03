@@ -18,4 +18,13 @@ defmodule CreditCardChecker.TransactionControllerTest do
     conn = get conn, transaction_path(conn, :unmatched)
     assert html_response(conn, 200) =~ "Some Payee"
   end
+
+  test "don't show other users statement lines on unmatched", %{conn: conn} do
+    joe = create_user(%{email: "joe@example.com", password: "super_secret"})
+    joes_payment_method = create_payment_method(%{name: "Visa"}, user: joe)
+    create_statement_line(%{payee: "Payee for Joe", amount: 12.34},
+      payment_method: joes_payment_method)
+    conn = get conn, transaction_path(conn, :unmatched)
+    refute html_response(conn, 200) =~ "Payee for Joe"
+  end
 end
