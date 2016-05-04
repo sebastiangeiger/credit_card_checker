@@ -1,9 +1,13 @@
 defmodule CreditCardChecker.Transaction do
   use CreditCardChecker.Web, :model
 
+  alias CreditCardChecker.Repo
+  alias CreditCardChecker.StatementLine
+  alias CreditCardChecker.Expense
+
   schema "transactions" do
-    belongs_to :statement_line, CreditCardChecker.StatementLine
-    belongs_to :expense, CreditCardChecker.Expense
+    belongs_to :statement_line, StatementLine
+    belongs_to :expense, Expense
 
     timestamps
   end
@@ -24,5 +28,24 @@ defmodule CreditCardChecker.Transaction do
     |> foreign_key_constraint(:expense_id)
     |> unique_constraint(:statement_line_id)
     |> unique_constraint(:expense_id)
+    |> validate_amounts_add_up
+  end
+
+  defp validate_amounts_add_up(changeset) do
+    %{changes: changes, errors: errors} = changeset
+    case changes do
+      %{statement_line_id: statement_line_id, expense_id: expense_id} ->
+        statement_line = Repo.get(StatementLine, statement_line_id)
+        expense = Repo.get(Expense, expense_id)
+        if statement_line.amount_in_cents + expense.amount_in_cents == 0 do
+          changeset
+        else
+          new = [base: "Amounts of StatementLine and Expense don't add up"]
+          %{ changeset | errors: new ++ errors, valid?: false }
+        end
+      _ ->
+        new = [base: "Could not find StatementLine and Expense"]
+        %{ changeset | errors: new ++ errors, valid?: false }
+    end
   end
 end

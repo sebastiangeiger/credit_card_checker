@@ -3,14 +3,16 @@ defmodule CreditCardChecker.TransactionTest do
 
   import CreditCardChecker.Factory
   alias CreditCardChecker.Transaction
-  alias CreditCardChecker.StatementLine
-
-  @valid_attrs %{expense_id: 123, statement_line_id: 456}
-  @invalid_attrs %{}
 
   test "changeset with valid attributes" do
-    changeset = Transaction.changeset(%Transaction{}, @valid_attrs)
-    assert changeset.valid?
+    user = create_user(%{email: "somebody@example.com", password: "super_secret"})
+    payment_method = create_payment_method(%{name: "Visa"}, user: user)
+    statement_line = create_statement_line(%{amount: -12, payee: "Some Payee"},
+                                             payment_method: payment_method)
+    expense = create_expense(%{amount: 12}, user: user)
+    transaction = Transaction.changeset(%Transaction{},
+      %{statement_line_id: statement_line.id, expense_id: expense.id})
+    {:ok, _} = Repo.insert(transaction)
   end
 
   test "create two transactions with the same expense" do
@@ -18,7 +20,7 @@ defmodule CreditCardChecker.TransactionTest do
     payment_method = create_payment_method(%{name: "Visa"}, user: user)
     sl_1 = create_statement_line(%{amount: -12, payee: "Some Payee"},
                                              payment_method: payment_method)
-    sl_2 = create_statement_line(%{amount: -20, payee: "Some other Payee"},
+    sl_2 = create_statement_line(%{amount: -12, payee: "Some other Payee"},
                                              payment_method: payment_method)
     expense = create_expense(%{amount: 12}, user: user)
     transaction_1 = Transaction.changeset(%Transaction{},
@@ -36,7 +38,7 @@ defmodule CreditCardChecker.TransactionTest do
     statement_line = create_statement_line(%{amount: -12, payee: "Some Payee"},
                                              payment_method: payment_method)
     expense_1 = create_expense(%{amount: 12}, user: user)
-    expense_2 = create_expense(%{amount: 20}, user: user)
+    expense_2 = create_expense(%{amount: 12}, user: user)
     transaction_1 = Transaction.changeset(%Transaction{},
       %{statement_line_id: statement_line.id, expense_id: expense_1.id})
     {:ok, _} = Repo.insert(transaction_1)
@@ -46,8 +48,15 @@ defmodule CreditCardChecker.TransactionTest do
     assert changeset.errors[:statement_line_id] == "has already been taken"
   end
 
-  test "changeset with invalid attributes" do
-    changeset = Transaction.changeset(%Transaction{}, @invalid_attrs)
-    refute changeset.valid?
+  test "create transaction with expense and statement not adding up" do
+    user = create_user(%{email: "somebody@example.com", password: "super_secret"})
+    payment_method = create_payment_method(%{name: "Visa"}, user: user)
+    statement_line = create_statement_line(%{amount: -12, payee: "Some Payee"},
+                                             payment_method: payment_method)
+    expense = create_expense(%{amount: 13}, user: user)
+    transaction = Transaction.changeset(%Transaction{},
+      %{statement_line_id: statement_line.id, expense_id: expense.id})
+    {:error, changeset} = Repo.insert(transaction)
+    assert changeset.errors[:base] == "Amounts of StatementLine and Expense don't add up"
   end
 end
