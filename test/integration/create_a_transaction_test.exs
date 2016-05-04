@@ -19,6 +19,10 @@ defmodule CreditCardChecker.CreateATransactionTest do
     go_to_unclassified_transactions_page
     assert visible_page_text =~ "WHOLE FDS"
     refute visible_page_text =~ "Whole Foods"
+    find_element(:link_text, "Match")
+    |> click
+    assert visible_page_text =~ "Whole Foods"
+    assert visible_page_text =~ "WHOLE FDS"
   end
 
   defp go_to_unclassified_transactions_page do

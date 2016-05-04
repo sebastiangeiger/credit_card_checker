@@ -27,6 +27,7 @@ defmodule CreditCardChecker.Router do
     delete "/sessions", SessionController, :delete
     resources "/users", UserController, only: [:new, :create]
     get "/transactions/unmatched", TransactionController, :unmatched
+    get "/transactions/match/:id", TransactionController, :match
   end
 
   # Other scopes may use custom stacks.
