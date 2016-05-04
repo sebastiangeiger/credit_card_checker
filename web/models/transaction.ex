@@ -20,5 +20,9 @@ defmodule CreditCardChecker.Transaction do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> foreign_key_constraint(:statement_line_id)
+    |> foreign_key_constraint(:expense_id)
+    |> unique_constraint(:statement_line_id)
+    |> unique_constraint(:expense_id)
   end
 end
