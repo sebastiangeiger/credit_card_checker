@@ -39,4 +39,20 @@ defmodule CreditCardChecker.TransactionControllerTest do
     conn = get conn, transaction_path(conn, :unmatched)
     refute html_response(conn, 200) =~ "Some Payee"
   end
+
+  test "don't show matched expenses in match screen", %{conn: conn, payment_method: payment_method, user: user} do
+    merchant = create_merchant(%{name: "Some Payee"}, user: user)
+    statement_line = create_statement_line(%{payee: "The Payee",
+                                             amount: -12.34},
+                                          payment_method: payment_method)
+    expense = create_expense(%{amount: 12.34}, payment_method: payment_method,
+                             merchant: merchant, user: user)
+    second_line = create_statement_line(%{payee: "The Other Payee",
+                                          amount: -12.34},
+                                          payment_method: payment_method)
+    create_transaction(statement_line: statement_line, expense: expense)
+
+    conn = get conn, transaction_path(conn, :match, second_line)
+    refute html_response(conn, 200) =~ "Some Payee"
+  end
 end

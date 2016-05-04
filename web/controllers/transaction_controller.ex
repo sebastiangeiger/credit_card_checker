@@ -29,6 +29,8 @@ defmodule CreditCardChecker.TransactionController do
     statement_line = Repo.get(StatementLine, id)
     |> Repo.preload(:payment_method)
     expenses = Repo.all from e in Expense,
+                left_join: t in assoc(e, :transaction),
+                where: is_nil(t.id),
                 order_by: [desc: e.time_of_sale],
                 preload: [:merchant, :payment_method]
     render(conn, "match.html", statement_line: statement_line, expenses: expenses)

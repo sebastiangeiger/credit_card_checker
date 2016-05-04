@@ -7,6 +7,7 @@ defmodule CreditCardChecker.Expense do
     belongs_to :merchant, CreditCardChecker.Merchant
     belongs_to :payment_method, CreditCardChecker.PaymentMethod
     belongs_to :user, CreditCardChecker.User
+    has_one :transaction, CreditCardChecker.Transaction
 
     timestamps
   end
