@@ -2,6 +2,7 @@ defmodule CreditCardChecker.TransactionControllerTest do
   use CreditCardChecker.ConnCase
 
   import CreditCardChecker.AuthTestHelper, only: [sign_in: 2]
+  alias CreditCardChecker.Transaction
 
   setup %{conn: conn} do
     user = create_user(%{email: "somebody@example.com", password: "super_secret"})
@@ -54,5 +55,35 @@ defmodule CreditCardChecker.TransactionControllerTest do
 
     conn = get conn, transaction_path(conn, :match, second_line)
     refute html_response(conn, 200) =~ "Some Payee"
+  end
+
+  test "creation with valid transaction", %{conn: conn, payment_method: payment_method, user: user} do
+    merchant = create_merchant(%{name: "Some Payee"}, user: user)
+    statement_line = create_statement_line(%{payee: "The Payee",
+                                             amount: -12.34},
+                                          payment_method: payment_method)
+    expense = create_expense(%{amount: 12.34}, payment_method: payment_method,
+                             merchant: merchant, user: user)
+    assert Enum.count(Repo.all(Transaction)) == 0
+    attrs = %{expense_id: expense.id, statement_line_id: statement_line.id}
+    conn = post conn, transaction_path(conn, :create), transaction: attrs
+    assert redirected_to(conn) == transaction_path(conn, :unmatched)
+    assert get_flash(conn, :info) == "Transaction created"
+    assert Enum.count(Repo.all(Transaction)) == 1
+  end
+
+  test "creation with invalid transaction", %{conn: conn, payment_method: payment_method, user: user} do
+    merchant = create_merchant(%{name: "Some Payee"}, user: user)
+    statement_line = create_statement_line(%{payee: "The Payee",
+                                             amount: -133},
+                                          payment_method: payment_method)
+    expense = create_expense(%{amount: 12.34}, payment_method: payment_method,
+                             merchant: merchant, user: user)
+    assert Enum.count(Repo.all(Transaction)) == 0
+    attrs = %{expense_id: expense.id, statement_line_id: statement_line.id}
+    conn = post conn, transaction_path(conn, :create), transaction: attrs
+    assert redirected_to(conn) == transaction_path(conn, :match, statement_line)
+    assert get_flash(conn, :error) == "Transaction could not be created"
+    assert Enum.count(Repo.all(Transaction)) == 0
   end
 end
