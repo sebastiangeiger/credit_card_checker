@@ -33,35 +33,36 @@ defmodule CreditCardChecker.Transaction do
   end
 
   defp validate_amounts_add_up(changeset) do
-    %{changes: changes, errors: errors} = changeset
-    case changes do
-      %{statement_line_id: statement_line_id, expense_id: expense_id} ->
-        statement_line = Repo.get(StatementLine, statement_line_id)
-        expense = Repo.get(Expense, expense_id)
+    validate_against_statement_line_and_expense(changeset,
+      fn(changeset, statement_line, expense, errors) ->
         if statement_line.amount_in_cents + expense.amount_in_cents == 0 do
           changeset
         else
           new = [base: "Amounts of StatementLine and Expense don't add up"]
           %{ changeset | errors: new ++ errors, valid?: false }
         end
-      _ ->
-        new = [base: "Could not find StatementLine and Expense"]
-        %{ changeset | errors: new ++ errors, valid?: false }
-    end
+      end)
   end
 
   defp validate_same_payment_method(changeset) do
-    %{changes: changes, errors: errors} = changeset
-    case changes do
-      %{statement_line_id: statement_line_id, expense_id: expense_id} ->
-        statement_line = Repo.get(StatementLine, statement_line_id)
-        expense = Repo.get(Expense, expense_id)
+    validate_against_statement_line_and_expense(changeset,
+      fn(changeset, statement_line, expense, errors) ->
         if statement_line.payment_method_id == expense.payment_method_id do
           changeset
         else
           new = [base: "StatementLine and Expense need to belong to same PaymentMethod"]
           %{ changeset | errors: new ++ errors, valid?: false }
         end
+      end)
+  end
+
+  defp validate_against_statement_line_and_expense(changeset, function) do
+    %{changes: changes, errors: errors} = changeset
+    case changes do
+      %{statement_line_id: statement_line_id, expense_id: expense_id} ->
+        statement_line = Repo.get(StatementLine, statement_line_id)
+        expense = Repo.get(Expense, expense_id)
+        function.(changeset, statement_line, expense, errors)
       _ ->
         new = [base: "Could not find StatementLine and Expense"]
         %{ changeset | errors: new ++ errors, valid?: false }
