@@ -23,6 +23,11 @@ defmodule CreditCardChecker.CreateATransactionTest do
     |> click
     assert visible_page_text =~ "Whole Foods"
     assert visible_page_text =~ "WHOLE FDS"
+    find_element(:css, "input[value='Create']")
+    |> submit_element
+    go_to_unclassified_transactions_page
+    refute visible_page_text =~ "WHOLE FDS"
+    refute visible_page_text =~ "Whole Foods"
   end
 
   defp go_to_unclassified_transactions_page do

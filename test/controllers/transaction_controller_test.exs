@@ -27,4 +27,16 @@ defmodule CreditCardChecker.TransactionControllerTest do
     conn = get conn, transaction_path(conn, :unmatched)
     refute html_response(conn, 200) =~ "Payee for Joe"
   end
+
+  test "don't show statement lines matched in transactions", %{conn: conn, payment_method: payment_method, user: user} do
+    merchant = create_merchant(%{name: "Some Payee"}, user: user)
+    statement_line = create_statement_line(%{payee: "Some Payee", amount: -12.34},
+                                          payment_method: payment_method)
+    expense = create_expense(%{amount: 12.34}, payment_method: payment_method,
+                             merchant: merchant, user: user)
+    create_transaction(statement_line: statement_line, expense: expense)
+
+    conn = get conn, transaction_path(conn, :unmatched)
+    refute html_response(conn, 200) =~ "Some Payee"
+  end
 end

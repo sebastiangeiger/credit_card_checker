@@ -6,6 +6,7 @@ defmodule CreditCardChecker.Factory do
   alias CreditCardChecker.Expense
   alias CreditCardChecker.Merchant
   alias CreditCardChecker.StatementLine
+  alias CreditCardChecker.Transaction
 
   def create_user(%{email: _, password: _} = credentials) do
     %User{}
@@ -19,15 +20,22 @@ defmodule CreditCardChecker.Factory do
     |> Repo.insert!
   end
 
+  def create_expense(%{amount: amount} = attrs, opts) do
+    attrs
+    |> Map.delete(:amount)
+    |> Map.put(:amount_in_cents, round(amount * 100))
+    |> create_expense(opts)
+  end
+
   def create_expense(attrs,
                      payment_method: %PaymentMethod{id: payment_method_id},
                      merchant: %Merchant{id: merchant_id},
                      user: %User{id: user_id}) do
-    attrs = attrs
-    |> Map.put_new(:payment_method_id, payment_method_id)
-    |> Map.put_new(:merchant_id, merchant_id)
-    |> Map.put_new(:user_id, user_id)
-    Expense.changeset(%Expense{}, attrs)
+    default_attrs = %{payment_method_id: payment_method_id,
+                      merchant_id: merchant_id,
+                      user_id: user_id,
+                      time_of_sale: now}
+    Expense.changeset(%Expense{}, Map.merge(default_attrs, attrs))
     |> Repo.insert!
   end
 
@@ -59,5 +67,17 @@ defmodule CreditCardChecker.Factory do
     })
     StatementLine.changeset(%StatementLine{}, attrs)
     |> Repo.insert!
+  end
+
+  def create_transaction(statement_line: statement_line, expense: expense) do
+    attrs = %{statement_line_id: statement_line.id, expense_id: expense.id}
+    Transaction.changeset(%Transaction{}, attrs)
+    |> Repo.insert!
+  end
+
+  defp now do
+    Timex.DateTime.local
+    |> Timex.Timezone.convert("America/Los_Angeles")
+    |> Timex.to_erlang_datetime
   end
 end

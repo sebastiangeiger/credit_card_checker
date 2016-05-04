@@ -5,12 +5,23 @@ defmodule CreditCardChecker.TransactionController do
 
   alias CreditCardChecker.StatementLine
   alias CreditCardChecker.Expense
+  alias CreditCardChecker.Transaction
+
+  def create(conn, %{"transaction" => transaction_params}) do
+    Transaction.changeset(%Transaction{}, transaction_params)
+    |> Repo.insert!
+    conn
+    |> put_flash(:info, "Transaction created")
+    |> redirect(to: transaction_path(conn, :unmatched))
+  end
 
   def unmatched(conn, _params) do
     statement_lines = Repo.all from sl in StatementLine,
                         join: pm in assoc(sl, :payment_method),
+                        left_join: t in assoc(sl, :transaction),
                         where: pm.user_id == ^conn.assigns.current_user.id,
-                        where: sl.amount_in_cents < 0
+                        where: sl.amount_in_cents < 0,
+                        where: is_nil(t.id)
     render(conn, "unmatched.html", statement_lines: statement_lines)
   end
 

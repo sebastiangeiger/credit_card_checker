@@ -9,6 +9,7 @@ defmodule CreditCardChecker.StatementLine do
     field :address, :string
     field :payee, :string
     belongs_to :payment_method, CreditCardChecker.PaymentMethod
+    has_one :transaction, CreditCardChecker.Transaction
 
     timestamps
   end
