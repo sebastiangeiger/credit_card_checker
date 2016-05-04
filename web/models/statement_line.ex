@@ -1,6 +1,7 @@
 defmodule CreditCardChecker.StatementLine do
   use CreditCardChecker.Web, :model
   alias CreditCardChecker.StatementLine
+  alias CreditCardChecker.PaymentMethod
 
   schema "statement_lines" do
     field :amount_in_cents, :integer
@@ -8,6 +9,7 @@ defmodule CreditCardChecker.StatementLine do
     field :reference_number, :string
     field :address, :string
     field :payee, :string
+    field :matched, :boolean, virtual: true, default: false
     belongs_to :payment_method, CreditCardChecker.PaymentMethod
     has_one :transaction, CreditCardChecker.Transaction
 
@@ -43,4 +45,19 @@ defmodule CreditCardChecker.StatementLine do
     false
   end
 
+  def mark_matched(statement_lines) when is_list(statement_lines) do
+    Enum.map(statement_lines, &mark_matched/1)
+  end
+
+  def mark_matched(%PaymentMethod{} = payment_method) do
+    %{ payment_method | statement_lines: mark_matched(payment_method.statement_lines) }
+  end
+
+  def mark_matched(%StatementLine{} = statement_line) do
+    if statement_line.transaction do
+      %{ statement_line | matched: true }
+    else
+      statement_line
+    end
+  end
 end

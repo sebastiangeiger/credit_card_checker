@@ -4,6 +4,7 @@ defmodule CreditCardChecker.PaymentMethodController do
   plug CreditCardChecker.RequireAuthenticated
 
   alias CreditCardChecker.PaymentMethod
+  alias CreditCardChecker.StatementLine
 
   plug :scrub_params, "payment_method" when action in [:create, :update]
 
@@ -34,7 +35,8 @@ defmodule CreditCardChecker.PaymentMethodController do
 
   def show(conn, %{"id" => id}) do
     payment_method = Repo.get!(PaymentMethod, id)
-                      |> Repo.preload([:statement_lines])
+                      |> Repo.preload([statement_lines: [:transaction]])
+    payment_method = StatementLine.mark_matched(payment_method)
     render(conn, "show.html", payment_method: payment_method)
   end
 end

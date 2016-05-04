@@ -8,7 +8,7 @@
         <td colspan=5><h4><%= headline %></h4></td>
       </tr>
       <%= for line <- statement_lines do %>
-        <tr class="sem-statement-line">
+        <tr class="sem-statement-line <%= if line.matched, do: "matched", else: "unmatched" %>">
           <td> <%= short_date_format(line.posted_date) %> </td>
           <td class="dollar-amount"> <%= in_dollars(line.amount_in_cents) %> </td>
           <td> <%= line.payee %> </td>
