@@ -9,7 +9,7 @@
         <td colspan=5><h4><%= headline %></h4></td>
       </tr>
       <%= for expense <- expenses do %>
-        <tr class='sem-expense'>
+        <tr class='sem-expense <%= if expense.matched, do: "matched", else: "unmatched" %>'>
           <td><%= short_date_format(expense.time_of_sale) %></td>
           <td><%= expense.merchant.name %></td>
           <td><%= expense.payment_method.name %></td>

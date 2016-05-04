@@ -4,6 +4,7 @@ defmodule CreditCardChecker.Expense do
   schema "expenses" do
     field :time_of_sale, Ecto.DateTime
     field :amount_in_cents, :integer
+    field :matched, :boolean, virtual: true, default: false
     belongs_to :merchant, CreditCardChecker.Merchant
     belongs_to :payment_method, CreditCardChecker.PaymentMethod
     belongs_to :user, CreditCardChecker.User
@@ -34,6 +35,18 @@ defmodule CreditCardChecker.Expense do
 
   def empty_changeset(model) do
     cast(model, :empty, @required_fields, @optional_fields)
+  end
+
+  def mark_matched(expenses) when is_list(expenses) do
+    Enum.map(expenses, &mark_matched/1)
+  end
+
+  def mark_matched(expense) do
+    if expense.transaction do
+      %{ expense | matched: true }
+    else
+      expense
+    end
   end
 
   defp convert_amount(%{"amount" => nil} = params) do

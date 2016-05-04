@@ -10,7 +10,8 @@ defmodule CreditCardChecker.ExpenseController do
     expenses = Repo.all from e in Expense,
                 where: e.user_id == ^conn.assigns.current_user.id,
                 order_by: [desc: e.time_of_sale],
-                preload: [:merchant, :payment_method]
+                preload: [:merchant, :payment_method, :transaction]
+    expenses =  Expense.mark_matched(expenses)
     render(conn, "index.html", expenses: expenses)
   end
 

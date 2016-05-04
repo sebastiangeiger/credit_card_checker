@@ -80,3 +80,7 @@ table tr:first-child td {
 td.dollar-amount {
   text-align: right;
 }
+
+.matched {
+  background-color: #9EE8AA;
+}
