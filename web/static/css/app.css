@@ -84,3 +84,7 @@ td.dollar-amount {
 .matched {
   background-color: #9EE8AA;
 }
+
+form ul#merchant_names {
+  display: none;
+}

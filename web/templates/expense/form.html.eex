@@ -7,8 +7,13 @@
 
   <div class="form-group">
     <%= label f, :merchant_name, class: "control-label" %>
-    <%= text_input f, :merchant_name, class: "form-control" %>
-    <%= error_tag f, :merchant_id %>
+    <%= text_input f, :merchant_name, class: "form-control awesomplete", data: [list: "#merchant_names", autofirst: true, minchars: 1] %>
+    <ul id="merchant_names">
+      <%= for merchant_name <- @merchant_names do %>
+        <li><%= merchant_name %></li>
+      <% end %>
+    </ul>
+    <%= error_tag f, :merchant_name %>
   </div>
 
   <div class="form-group">
