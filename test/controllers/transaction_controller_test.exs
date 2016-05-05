@@ -14,8 +14,11 @@ defmodule CreditCardChecker.TransactionControllerTest do
     {:ok, payload}
   end
 
-  test "list all statement lines on unmatched", %{conn: conn, payment_method: payment_method} do
+  test "list matchable statement lines", %{conn: conn, payment_method: payment_method, user: user} do
     create_statement_line(%{payee: "Some Payee", amount: -12.34}, payment_method: payment_method)
+    merchant = create_merchant(%{name: "Some Payee"}, user: user)
+    create_expense(%{amount: 12.34}, payment_method: payment_method,
+                             merchant: merchant, user: user)
     conn = get conn, transaction_path(conn, :unmatched)
     assert html_response(conn, 200) =~ "Some Payee"
   end

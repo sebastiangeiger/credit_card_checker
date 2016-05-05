@@ -5,6 +5,7 @@ defmodule CreditCardChecker.PaymentMethod do
     field :name, :string
     belongs_to :user, CreditCardChecker.User
     has_many :statement_lines, CreditCardChecker.StatementLine
+    has_many :expenses, CreditCardChecker.Expense
 
     timestamps
   end
