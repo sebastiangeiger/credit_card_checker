@@ -21,5 +21,6 @@ defmodule CreditCardChecker.Merchant do
     model
     |> cast(params, @required_fields, @optional_fields)
     |> foreign_key_constraint(:user_id)
+    |> validate_format(:name, ~r/\S+/)
   end
 end

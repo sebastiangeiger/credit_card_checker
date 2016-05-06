@@ -11,6 +11,11 @@ defmodule CreditCardChecker.MerchantTest do
     assert changeset.valid?
   end
 
+  test "changeset with empty name" do
+    changeset = Merchant.changeset(%Merchant{}, %{name: " ", user_id: 123})
+    refute changeset.valid?
+  end
+
   test "changeset with invalid attributes" do
     changeset = Merchant.changeset(%Merchant{}, @invalid_attrs)
     refute changeset.valid?
