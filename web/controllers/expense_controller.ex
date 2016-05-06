@@ -66,12 +66,9 @@ defmodule CreditCardChecker.ExpenseController do
   defp assign_merchants(conn) do
     query = from m in CreditCardChecker.Merchant,
       order_by: m.name,
-      select: {m.name, m.id}
-    merchants = Repo.all(query)
-    merchant_names = Enum.map(merchants, fn {name,id} -> name end)
+      select: m.name
     conn
-    |> assign(:merchants, merchants)
-    |> assign(:merchant_names, merchant_names)
+    |> assign(:merchant_names, Repo.all(query))
   end
 
   defp assign_payment_methods(conn) do
