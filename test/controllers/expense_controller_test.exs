@@ -4,6 +4,7 @@ defmodule CreditCardChecker.ExpenseControllerTest do
   import CreditCardChecker.AuthTestHelper, only: [sign_in: 2]
 
   alias CreditCardChecker.Expense
+  alias CreditCardChecker.Merchant
 
   @valid_attrs %{amount_in_cents: 42, time_of_sale: "2010-04-17 14:00:00"}
   @invalid_attrs %{}
@@ -40,14 +41,17 @@ defmodule CreditCardChecker.ExpenseControllerTest do
     assert conn.assigns[:merchants] == [{"Whole Foods", merchant.id}]
   end
 
-  test "creates resource and redirects when data is valid", %{conn: conn, payment_method: payment_method, merchant: merchant, user: user} do
+  test "creates resource and redirects when data is valid", %{conn: conn, payment_method: payment_method, user: user} do
+    assert Enum.count(Repo.all(Expense)) == 0
+    assert Enum.count(Repo.all(Merchant)) == 1
     attrs = @valid_attrs
     |> Map.put_new(:payment_method_id, payment_method.id)
-    |> Map.put_new(:merchant_id, merchant.id)
+    |> Map.put_new(:merchant_name, "CVS")
     |> Map.put_new(:user_id, user.id)
     conn = post conn, expense_path(conn, :create), expense: attrs
     assert redirected_to(conn) == expense_path(conn, :index)
-    assert Repo.get_by(Expense, @valid_attrs)
+    assert Enum.count(Repo.all(Expense)) == 1
+    assert Enum.count(Repo.all(Merchant)) == 2
   end
 
   test "does not create resource and renders errors when data is invalid", %{conn: conn} do

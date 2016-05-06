@@ -1,7 +1,5 @@
 defmodule CreditCardChecker.CreateAnExpenseTest do
   use CreditCardChecker.IntegrationCase
-  import CreditCardChecker.MerchantsTestHelper,
-    only: [create_merchant: 1]
   import CreditCardChecker.PaymentMethodsTestHelper,
     only: [create_payment_method: 1]
   import CreditCardChecker.ExpensesTestHelper,
@@ -25,16 +23,6 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
     assert visible_page_text =~ "$3.13"
     assert visible_page_text =~ "Whole Foods"
     assert visible_page_text =~ "Amex"
-  end
-
-  test "can see merchants in the new expense form" do
-    create_merchant("Starbucks")
-    create_merchant("Whole Foods")
-    create_merchant("CVS")
-    go_to_new_expense_form
-    options = find_all_elements(:css, "select#expense_merchant_id option")
-    |> Enum.map(&visible_text/1)
-    assert options == ["Select merchant...", "CVS", "Starbucks", "Whole Foods"]
   end
 
   test "can see payment methods in the new expense form" do

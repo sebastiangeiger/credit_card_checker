@@ -2,6 +2,7 @@ defmodule CreditCardChecker.ExpenseController do
   use CreditCardChecker.Web, :controller
 
   alias CreditCardChecker.Expense
+  alias CreditCardChecker.ExpenseForm
 
   plug :scrub_params, "expense" when action in [:create, :update]
   plug CreditCardChecker.RequireAuthenticated
@@ -24,15 +25,14 @@ defmodule CreditCardChecker.ExpenseController do
   end
 
   def create(conn, %{"expense" => expense_params}) do
-    expense_params = add_current_user_id(expense_params, conn)
-    changeset = Expense.changeset(%Expense{}, expense_params)
-
-    case Repo.insert(changeset) do
+    case ExpenseForm.insert(expense_params, user: conn.assigns.current_user) do
       {:ok, _expense} ->
         conn
         |> put_flash(:info, "Expense created successfully.")
         |> redirect(to: expense_path(conn, :index))
-      {:error, changeset} ->
+      {:error, _changeset} ->
+        time_of_sale = convert_time(Timex.DateTime.local)
+        changeset = Expense.empty_changeset(%Expense{time_of_sale: time_of_sale})
         conn
         |> assign_merchants_and_payment_methods
         |> render("new.html", changeset: changeset)

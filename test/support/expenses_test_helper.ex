@@ -13,7 +13,8 @@ defmodule CreditCardChecker.ExpensesTestHelper do
     navigate_to("/expenses")
     find_element(:link_text, "+ New Expense")
     |> click
-    select_option("expense_merchant_id", merchant_name)
+    find_element(:css, "input#expense_merchant_name")
+    |> fill_field(merchant_name)
     select_option("expense_payment_method_id", payment_method_name)
     find_element(:css, "input#expense_amount")
     |> fill_field(amount)
