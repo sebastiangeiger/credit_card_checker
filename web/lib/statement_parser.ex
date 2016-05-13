@@ -1,34 +1,46 @@
 defmodule CreditCardChecker.StatementParser do
   require Logger
   alias CreditCardChecker.StatementParser.Format1
+  alias CreditCardChecker.StatementParser.ErrorHandler
 
   def parse(file) do
     file
-    |> secure_read
-    |> Format1.convert
-    |> log_errors(file)
+    |> read_lines
+    |> convert
+    |> ErrorHandler.log_errors(file)
   end
 
-  defp log_errors({:error, "No file given"} = result, file) do
-    Logger.info("Could not open '#{file}'")
-    result
-  end
-
-  defp log_errors({:error, "Could not parse file"} = result, file) do
-    Logger.info("Could not parse '#{file}'")
-    result
-  end
-
-  defp log_errors(result, _file) do
-    result
-  end
-
-  defp secure_read(file) do
+  defp read_lines(file) do
     try do
-      {:ok, CSVLixir.read(file)}
+      {:ok, CSVLixir.read(file) |> Enum.to_list}
     rescue
       File.Error ->
         {:error, "No file given"}
+    end
+  end
+
+  defp convert(lines) do
+    determine_format(lines)
+    |> apply(:convert, [lines])
+  end
+
+  defp determine_format(lines) do
+    Format1
+  end
+
+  defmodule ErrorHandler do
+    def log_errors({:error, "No file given"} = result, file) do
+      Logger.info("Could not open '#{file}'")
+      result
+    end
+
+    def log_errors({:error, "Could not parse file"} = result, file) do
+      Logger.info("Could not parse '#{file}'")
+      result
+    end
+
+    def log_errors(result, _file) do
+      result
     end
   end
 end
@@ -51,7 +63,6 @@ defmodule CreditCardChecker.StatementParser.Format1 do
 
   defp try_to_convert(contents) do
     contents
-    |> Enum.to_list
     |> split_heading_and_body
     |> convert_to_maps
     |> convert_to_statement_lines
