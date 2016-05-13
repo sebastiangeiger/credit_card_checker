@@ -1,6 +1,7 @@
 defmodule CreditCardChecker.StatementParser do
   require Logger
   alias CreditCardChecker.StatementParser.Format1
+  alias CreditCardChecker.StatementParser.UnknownFormat
   alias CreditCardChecker.StatementParser.ErrorHandler
 
   def parse(file) do
@@ -25,7 +26,11 @@ defmodule CreditCardChecker.StatementParser do
   end
 
   defp determine_format(lines) do
-    Format1
+    if Format1.understands?(lines) do
+      Format1
+    else
+      UnknownFormat
+    end
   end
 
   defmodule ErrorHandler do
@@ -45,8 +50,22 @@ defmodule CreditCardChecker.StatementParser do
   end
 end
 
+defmodule CreditCardChecker.StatementParser.UnknownFormat do
+  def convert({:error, _message} = result) do
+    result
+  end
+end
+
 defmodule CreditCardChecker.StatementParser.Format1 do
   alias CreditCardChecker.StatementLine
+
+  def understands?({:ok, [head | rest]}) do
+    head == ["Posted Date", "Reference Number", "Payee", "Address", "Amount"]
+  end
+
+  def understands?(_) do
+    false
+  end
 
   def convert({:ok, contents}) do
     try do
