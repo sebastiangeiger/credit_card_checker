@@ -1,10 +1,11 @@
 defmodule CreditCardChecker.StatementParser do
   require Logger
   alias CreditCardChecker.StatementParser.Format1
+  alias CreditCardChecker.StatementParser.Format2
   alias CreditCardChecker.StatementParser.UnknownFormat
   alias CreditCardChecker.StatementParser.ErrorHandler
 
-  @formats [Format1]
+  @formats [Format1, Format2]
 
   def parse(file) do
     file
@@ -122,4 +123,86 @@ defmodule CreditCardChecker.StatementParser.Format1 do
     [_, m, d, y] = Regex.run(~r{(\d+)/(\d+)/(\d+)}, date_string)
     Ecto.Date.cast!({y,m,d})
   end
+end
+
+defmodule CreditCardChecker.StatementParser.Format2 do
+  alias CreditCardChecker.StatementLine
+
+  def understands?({:ok, [head | rest]}) do
+    head == ["Status","Date","Description","Debit","Credit"]
+  end
+
+  #Copied
+  def understands?(_) do
+    false
+  end
+
+  def convert({:ok, lines}) do
+    result = lines
+              |> split_heading_and_body
+              |> convert_to_maps
+              |> convert_to_statement_lines
+    {:ok, result}
+  end
+
+  #Copied
+  def convert({:error, _message} = result) do
+    result
+  end
+
+  #Copied
+  defp split_heading_and_body([head | body]) do
+    %{head: head, body: body}
+  end
+
+  defp convert_to_statement_line(map) do
+    {payee, address} = split_up_description(map["Description"])
+    %StatementLine{
+      address: address,
+      amount_in_cents:  amount_in_cents(map),
+      payee: payee,
+      reference_number: nil,
+      posted_date: mm_dd_yyyy_to_date(map["Date"])
+    }
+  end
+
+  def amount_in_cents(%{"Credit" => credit, "Debit" => debit}) do
+    {amount, sign} = case [credit, debit] do
+      ["",""] -> {"0.0", 1}
+      ["", debit] ->  {debit, -1}
+      [credit, ""] -> {credit, +1}
+    end
+    round(String.to_float(amount) * 100 * sign)
+  end
+
+  def split_up_description(description) do
+    split = String.split(description, ~r/\s{3,}/)
+    case Enum.count(split) do
+      1 -> {description, nil}
+      2 ->
+        [payee | [address | _]] = split
+        {payee, address}
+      3 -> raise "Could not split '#{description}' into address and payee"
+    end
+  end
+
+  #Copied
+  defp convert_to_maps(%{head: head, body: body}) do
+    Enum.map(body, fn line ->
+                     Enum.zip(head, line)
+                     |> Enum.into(%{})
+                   end)
+  end
+
+  #Copied
+  defp mm_dd_yyyy_to_date(date_string) do
+    [_, m, d, y] = Regex.run(~r{(\d+)/(\d+)/(\d+)}, date_string)
+    Ecto.Date.cast!({y,m,d})
+  end
+
+  #Copied
+  defp convert_to_statement_lines(maps) do
+    Enum.map(maps, &convert_to_statement_line/1)
+  end
+
 end

@@ -4,7 +4,7 @@ defmodule CreditCardChecker.StatementParserTest do
   alias CreditCardChecker.StatementParser
   alias CreditCardChecker.StatementLine
 
-  test "reading the csv file generates the correct StatementLines" do
+  test "reading the csv file of Format1 generates the correct StatementLines" do
     {:ok, lines} = StatementParser.parse("test/fixtures/format_1.csv")
     assert Enum.count(lines) == 4
     line = %StatementLine{
@@ -13,6 +13,19 @@ defmodule CreditCardChecker.StatementParserTest do
       payee: "PAYEE #1",
       reference_number: "24492156019719803515390",
       posted_date: Ecto.Date.cast!({2013, 4, 21})
+    }
+    assert List.first(lines) == line
+  end
+
+  test "reading the csv file of Format2 generates the correct StatementLines" do
+    {:ok, lines} = StatementParser.parse("test/fixtures/format_2.csv")
+    assert Enum.count(lines) == 5
+    line = %StatementLine{
+      amount_in_cents: -2000,
+      address: "Address #1",
+      payee: "Merchant #1",
+      reference_number: nil,
+      posted_date: Ecto.Date.cast!({2016, 5, 11})
     }
     assert List.first(lines) == line
   end
