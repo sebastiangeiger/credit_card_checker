@@ -28,4 +28,10 @@ defmodule CreditCardChecker.StatementParserTest do
     refute File.exists?(path)
     {:error, "No file given"} = StatementParser.parse(path)
   end
+
+  test "reading a csv file that has an unknown format" do
+    path = "test/fixtures/unknown_format.csv"
+    assert File.exists?(path)
+    {:error, "Could not recognize the file format"} = StatementParser.parse(path)
+  end
 end

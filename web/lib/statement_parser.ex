@@ -4,6 +4,8 @@ defmodule CreditCardChecker.StatementParser do
   alias CreditCardChecker.StatementParser.UnknownFormat
   alias CreditCardChecker.StatementParser.ErrorHandler
 
+  @formats [Format1]
+
   def parse(file) do
     file
     |> read_lines
@@ -26,10 +28,10 @@ defmodule CreditCardChecker.StatementParser do
   end
 
   defp determine_format(lines) do
-    if Format1.understands?(lines) do
-      Format1
-    else
-      UnknownFormat
+    matching_formats = Enum.filter(@formats, &(apply(&1, :understands?, [lines])))
+    case matching_formats do
+      [format] -> format
+      [] -> UnknownFormat
     end
   end
 
@@ -51,6 +53,10 @@ defmodule CreditCardChecker.StatementParser do
 end
 
 defmodule CreditCardChecker.StatementParser.UnknownFormat do
+  def convert({:ok, _}) do
+    {:error, "Could not recognize the file format"}
+  end
+
   def convert({:error, _message} = result) do
     result
   end
