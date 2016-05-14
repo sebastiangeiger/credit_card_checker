@@ -8,8 +8,7 @@ defmodule CreditCardChecker.StatementLineTest do
 
   @valid_attrs %{
     address: "some content", amount_in_cents: 42, payee: "some content",
-    posted_date: "2010-04-17", reference_number: "some content",
-    payment_method_id: 123
+    posted_date: "2010-04-17", payment_method_id: 123
   }
   @invalid_attrs %{}
 

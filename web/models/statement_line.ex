@@ -16,8 +16,8 @@ defmodule CreditCardChecker.StatementLine do
     timestamps
   end
 
-  @required_fields ~w(amount_in_cents posted_date reference_number payee payment_method_id)
-  @optional_fields ~w(address)
+  @required_fields ~w(amount_in_cents posted_date payee payment_method_id)
+  @optional_fields ~w(address reference_number)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
