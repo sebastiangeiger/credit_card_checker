@@ -1,0 +1,4 @@
+Type,Trans Date,Post Date,Description,Amount
+Sale,05/08/2016,05/09/2016,"MERCHANT #1",-25.00
+Return,05/08/2016,05/09/2016,"MERCHANT #2",5.00
+Payment,05/03/2016,05/03/2016,"MERCHANT #3",26.84
