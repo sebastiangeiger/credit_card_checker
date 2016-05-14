@@ -176,13 +176,11 @@ defmodule CreditCardChecker.StatementParser.Format2 do
   end
 
   def split_up_description(description) do
-    split = String.split(description, ~r/\s{3,}/)
-    case Enum.count(split) do
-      1 -> {description, nil}
-      2 ->
-        [payee | [address | _]] = split
-        {payee, address}
-      3 -> raise "Could not split '#{description}' into address and payee"
+    if String.slice(description, 22, 1) == " " do
+      {payee, address} = String.split_at(description, 22)
+      {String.strip(payee), String.strip(address)}
+    else
+      {description, nil}
     end
   end
 

@@ -48,3 +48,28 @@ defmodule CreditCardChecker.StatementParserTest do
     {:error, "Could not recognize the file format"} = StatementParser.parse(path)
   end
 end
+
+defmodule CreditCardChecker.StatementParser.Format2Test do
+  use ExUnit.Case
+
+  alias CreditCardChecker.StatementParser.Format2
+  alias CreditCardChecker.StatementLine
+
+  @head ["Status","Date","Description","Debit","Credit"]
+
+  test "can deal with multiple whitespaces in description" do
+    line = ["Cleared","04/23/2016","Merchant               9999999999    CA","8.99",""]
+    {:ok, statement_lines} = Format2.convert({:ok, [@head, line]})
+    [%StatementLine{address: address, payee: payee} | _] = statement_lines
+    assert address == "9999999999    CA"
+    assert payee == "Merchant"
+  end
+
+  test "if there is no address put everyting into payee" do
+    line = ["Cleared","05/02/2016","AUTOPAY 999990000054282RAUTOPAY AUTO-PMT","","267.38"]
+    {:ok, statement_lines} = Format2.convert({:ok, [@head, line]})
+    [%StatementLine{address: address, payee: payee} | _] = statement_lines
+    assert address == nil
+    assert payee == "AUTOPAY 999990000054282RAUTOPAY AUTO-PMT"
+  end
+end
