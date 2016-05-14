@@ -1,8 +1,6 @@
 defmodule CreditCardChecker.StatementParser do
   require Logger
-  alias CreditCardChecker.StatementParser.Format1
-  alias CreditCardChecker.StatementParser.Format2
-  alias CreditCardChecker.StatementParser.UnknownFormat
+  alias CreditCardChecker.StatementParser.FormatFinder
   alias CreditCardChecker.StatementParser.ErrorHandler
 
   @formats [Format1, Format2]
@@ -23,17 +21,9 @@ defmodule CreditCardChecker.StatementParser do
     end
   end
 
-  defp convert(lines) do
-    determine_format(lines)
-    |> apply(:convert, [lines])
-  end
-
-  defp determine_format(lines) do
-    matching_formats = Enum.filter(@formats, &(apply(&1, :understands?, [lines])))
-    case matching_formats do
-      [format] -> format
-      [] -> UnknownFormat
-    end
+  defp convert(content) do
+    FormatFinder.determine_format(content)
+    |> apply(:convert, [content])
   end
 
   defmodule ErrorHandler do
@@ -53,6 +43,35 @@ defmodule CreditCardChecker.StatementParser do
   end
 end
 
+defmodule CreditCardChecker.StatementParser.FormatFinder do
+  alias CreditCardChecker.StatementParser.Format1
+  alias CreditCardChecker.StatementParser.Format2
+  alias CreditCardChecker.StatementParser.UnknownFormat
+
+  @formats [Format1, Format2]
+
+  def determine_format(content) do
+    case matching_formats(content) do
+      [format | []] -> format
+      [] -> UnknownFormat
+    end
+  end
+
+  defp matching_formats(content) do
+    Enum.filter(@formats, fn(format) ->
+      understands?(content, format: format)
+    end)
+  end
+
+  defp understands?({:ok, lines}, format: format) do
+    apply(format, :understands?, [lines])
+  end
+
+  defp understands?(_, format: _format) do
+    false
+  end
+end
+
 defmodule CreditCardChecker.StatementParser.UnknownFormat do
   def convert({:ok, _}) do
     {:error, "Could not recognize the file format"}
@@ -66,12 +85,8 @@ end
 defmodule CreditCardChecker.StatementParser.Format1 do
   alias CreditCardChecker.StatementLine
 
-  def understands?({:ok, [head | rest]}) do
+  def understands?([head | _rest]) do
     head == ["Posted Date", "Reference Number", "Payee", "Address", "Amount"]
-  end
-
-  def understands?(_) do
-    false
   end
 
   def convert({:ok, contents}) do
@@ -128,13 +143,8 @@ end
 defmodule CreditCardChecker.StatementParser.Format2 do
   alias CreditCardChecker.StatementLine
 
-  def understands?({:ok, [head | rest]}) do
+  def understands?([head | _rest]) do
     head == ["Status","Date","Description","Debit","Credit"]
-  end
-
-  #Copied
-  def understands?(_) do
-    false
   end
 
   def convert({:ok, lines}) do
