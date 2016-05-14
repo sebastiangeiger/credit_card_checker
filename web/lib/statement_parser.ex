@@ -141,6 +141,7 @@ defmodule CreditCardChecker.StatementParser.Format2 do
     result = lines
               |> split_heading_and_body
               |> convert_to_maps
+              |> only_cleared_lines
               |> convert_to_statement_lines
     {:ok, result}
   end
@@ -153,6 +154,10 @@ defmodule CreditCardChecker.StatementParser.Format2 do
   #Copied
   defp split_heading_and_body([head | body]) do
     %{head: head, body: body}
+  end
+
+  defp only_cleared_lines(lines) do
+    Enum.filter(lines, &(&1["Status"] == "Cleared"))
   end
 
   defp convert_to_statement_line(map) do
