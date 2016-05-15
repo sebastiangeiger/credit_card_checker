@@ -1,5 +1,5 @@
 Application.ensure_all_started(:hound)
-ExUnit.start(timeout: 3_000)
+ExUnit.start(timeout: 10_000)
 
 Mix.Task.run "ecto.create", ~w(-r CreditCardChecker.Repo --quiet)
 Mix.Task.run "ecto.migrate", ~w(-r CreditCardChecker.Repo --quiet)
