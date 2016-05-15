@@ -2,13 +2,14 @@ defmodule CreditCardChecker.StatementParser do
   require Logger
   alias CreditCardChecker.StatementParser.FormatFinder
   alias CreditCardChecker.StatementParser.ErrorHandler
+  alias CreditCardChecker.StatementParser.ParserSkeleton
 
   @formats [Format1, Format2]
 
   def parse(file) do
     file
     |> read_lines
-    |> convert
+    |> find_format_and_convert
     |> ErrorHandler.log_errors(file)
   end
 
@@ -21,9 +22,9 @@ defmodule CreditCardChecker.StatementParser do
     end
   end
 
-  defp convert(content) do
-    FormatFinder.determine_format(content)
-    |> apply(:convert, [content])
+  defp find_format_and_convert(content) do
+    format = FormatFinder.determine_format(content)
+    ParserSkeleton.convert(content, format: format)
   end
 
   defmodule ErrorHandler do
@@ -72,13 +73,24 @@ defmodule CreditCardChecker.StatementParser.FormatFinder do
   end
 end
 
+defmodule CreditCardChecker.StatementParser.ParserSkeleton do
+  def convert({:ok, lines} = content, format: format) do
+    try do
+      apply(format, :convert, [content])
+    rescue
+      ArgumentError ->
+        {:error, "Could not parse file"}
+    end
+  end
+
+  def convert({:error, _message} = result, format: _) do
+    result
+  end
+end
+
 defmodule CreditCardChecker.StatementParser.UnknownFormat do
   def convert({:ok, _}) do
     {:error, "Could not recognize the file format"}
-  end
-
-  def convert({:error, _message} = result) do
-    result
   end
 end
 
@@ -89,21 +101,12 @@ defmodule CreditCardChecker.StatementParser.Format1 do
     head == ["Posted Date", "Reference Number", "Payee", "Address", "Amount"]
   end
 
-  def convert({:ok, contents}) do
-    try do
-      {:ok, try_to_convert(contents)}
-    rescue
-      ArgumentError ->
-        {:error, "Could not parse file"}
-    end
+  def convert({:ok, lines}) do
+    {:ok, try_to_convert(lines)}
   end
 
-  def convert({:error, _message} = result) do
-    result
-  end
-
-  defp try_to_convert(contents) do
-    contents
+  def try_to_convert(lines) do
+    lines
     |> split_heading_and_body
     |> convert_to_maps
     |> convert_to_statement_lines
@@ -148,17 +151,15 @@ defmodule CreditCardChecker.StatementParser.Format2 do
   end
 
   def convert({:ok, lines}) do
-    result = lines
-              |> split_heading_and_body
-              |> convert_to_maps
-              |> only_cleared_lines
-              |> convert_to_statement_lines
-    {:ok, result}
+    {:ok, try_to_convert(lines)}
   end
 
-  #Copied
-  def convert({:error, _message} = result) do
-    result
+  def try_to_convert(lines) do
+    lines
+    |> split_heading_and_body
+    |> convert_to_maps
+    |> only_cleared_lines
+    |> convert_to_statement_lines
   end
 
   #Copied
@@ -217,5 +218,4 @@ defmodule CreditCardChecker.StatementParser.Format2 do
   defp convert_to_statement_lines(maps) do
     Enum.map(maps, &convert_to_statement_line/1)
   end
-
 end
