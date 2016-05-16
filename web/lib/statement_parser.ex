@@ -55,6 +55,7 @@ defmodule CreditCardChecker.StatementParser.FormatFinder do
     case matching_formats(content) do
       [format | []] -> format
       [] -> UnknownFormat
+      _ -> raise "Multiple formats matched, this should not happen!"
     end
   end
 
@@ -88,6 +89,28 @@ defmodule CreditCardChecker.StatementParser.ParserSkeleton do
   end
 end
 
+defmodule CreditCardChecker.StatementParser.FormatHelper do
+  def split_heading_and_body([head | body]) do
+    %{head: head, body: body}
+  end
+
+  def convert_to_maps(%{head: head, body: body}) do
+    Enum.map(body, fn line ->
+                     Enum.zip(head, line)
+                     |> Enum.into(%{})
+                   end)
+  end
+
+  def mm_dd_yyyy_to_date(date_string) do
+    [_, m, d, y] = Regex.run(~r{(\d+)/(\d+)/(\d+)}, date_string)
+    Ecto.Date.cast!({y,m,d})
+  end
+
+  def ok_response(lines) do
+    {:ok, lines}
+  end
+end
+
 defmodule CreditCardChecker.StatementParser.UnknownFormat do
   def convert({:ok, _}) do
     {:error, "Could not recognize the file format"}
@@ -96,31 +119,18 @@ end
 
 defmodule CreditCardChecker.StatementParser.Format1 do
   alias CreditCardChecker.StatementLine
+  import CreditCardChecker.StatementParser.FormatHelper
 
   def understands?([head | _rest]) do
     head == ["Posted Date", "Reference Number", "Payee", "Address", "Amount"]
   end
 
   def convert({:ok, lines}) do
-    {:ok, try_to_convert(lines)}
-  end
-
-  def try_to_convert(lines) do
     lines
     |> split_heading_and_body
     |> convert_to_maps
     |> convert_to_statement_lines
-  end
-
-  defp split_heading_and_body([head | body]) do
-    %{head: head, body: body}
-  end
-
-  defp convert_to_maps(%{head: head, body: body}) do
-    Enum.map(body, fn line ->
-                     Enum.zip(head, line)
-                     |> Enum.into(%{})
-                   end)
+    |> ok_response
   end
 
   defp convert_to_statement_lines(maps) do
@@ -136,35 +146,23 @@ defmodule CreditCardChecker.StatementParser.Format1 do
       posted_date: mm_dd_yyyy_to_date(map["Posted Date"])
     }
   end
-
-  defp mm_dd_yyyy_to_date(date_string) do
-    [_, m, d, y] = Regex.run(~r{(\d+)/(\d+)/(\d+)}, date_string)
-    Ecto.Date.cast!({y,m,d})
-  end
 end
 
 defmodule CreditCardChecker.StatementParser.Format2 do
   alias CreditCardChecker.StatementLine
+  import CreditCardChecker.StatementParser.FormatHelper
 
   def understands?([head | _rest]) do
     head == ["Status","Date","Description","Debit","Credit"]
   end
 
   def convert({:ok, lines}) do
-    {:ok, try_to_convert(lines)}
-  end
-
-  def try_to_convert(lines) do
     lines
     |> split_heading_and_body
     |> convert_to_maps
     |> only_cleared_lines
     |> convert_to_statement_lines
-  end
-
-  #Copied
-  defp split_heading_and_body([head | body]) do
-    %{head: head, body: body}
+    |> ok_response
   end
 
   defp only_cleared_lines(lines) do
@@ -182,7 +180,7 @@ defmodule CreditCardChecker.StatementParser.Format2 do
     }
   end
 
-  def amount_in_cents(%{"Credit" => credit, "Debit" => debit}) do
+  defp amount_in_cents(%{"Credit" => credit, "Debit" => debit}) do
     {amount, sign} = case [credit, debit] do
       ["",""] -> {"0.0", 1}
       ["", debit] ->  {debit, -1}
@@ -191,7 +189,7 @@ defmodule CreditCardChecker.StatementParser.Format2 do
     round(String.to_float(amount) * 100 * sign)
   end
 
-  def split_up_description(description) do
+  defp split_up_description(description) do
     if String.slice(description, 22, 1) == " " do
       {payee, address} = String.split_at(description, 22)
       {String.strip(payee), String.strip(address)}
@@ -200,21 +198,6 @@ defmodule CreditCardChecker.StatementParser.Format2 do
     end
   end
 
-  #Copied
-  defp convert_to_maps(%{head: head, body: body}) do
-    Enum.map(body, fn line ->
-                     Enum.zip(head, line)
-                     |> Enum.into(%{})
-                   end)
-  end
-
-  #Copied
-  defp mm_dd_yyyy_to_date(date_string) do
-    [_, m, d, y] = Regex.run(~r{(\d+)/(\d+)/(\d+)}, date_string)
-    Ecto.Date.cast!({y,m,d})
-  end
-
-  #Copied
   defp convert_to_statement_lines(maps) do
     Enum.map(maps, &convert_to_statement_line/1)
   end
