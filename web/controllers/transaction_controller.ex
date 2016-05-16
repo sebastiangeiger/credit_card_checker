@@ -23,14 +23,9 @@ defmodule CreditCardChecker.TransactionController do
   end
 
   def unmatched(conn, _params) do
-    statement_lines = Repo.all from sl in StatementLine,
-                        join: pm in assoc(sl, :payment_method),
-                        join: e in assoc(pm, :expenses),
-                        left_join: t in assoc(sl, :transaction),
-                        where: pm.user_id == ^conn.assigns.current_user.id,
-                        where: sl.amount_in_cents < 0,
-                        where: fragment("? = (-1 * ?)", sl.amount_in_cents, e.amount_in_cents),
-                        where: is_nil(t.id)
+    statement_lines = [user_id: conn.assigns.current_user.id]
+                      |> StatementLine.unmatched_but_with_possible_expense
+                      |> Repo.all
     render(conn, "unmatched.html", statement_lines: statement_lines)
   end
 
