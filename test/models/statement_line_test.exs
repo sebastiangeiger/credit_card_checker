@@ -59,6 +59,17 @@ defmodule CreditCardChecker.StatementLineTest do
     assert statement_lines == []
   end
 
+  test "unmatched_but_with_possible_expense with statement and two matching expense" do
+    statement_line = create_statement_line(%{amount_in_cents: -123, payee: "Merchant #1"})
+    user = user_for(statement_line)
+    create_expense(%{amount_in_cents: 123, payment_method_id: statement_line.payment_method_id}, user: user)
+    create_expense(%{amount_in_cents: 123, payment_method_id: statement_line.payment_method_id}, user: user)
+    statement_lines = [user_id: user.id]
+                      |> StatementLine.unmatched_but_with_possible_expense()
+                      |> Repo.all
+    assert statement_lines == [statement_line]
+  end
+
   defp user_for(%StatementLine{payment_method_id: payment_method_id}) do
     user_id = Repo.get_by!(PaymentMethod, id: payment_method_id).user_id
     Repo.get_by!(User, id: user_id)

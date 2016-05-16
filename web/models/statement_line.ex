@@ -63,6 +63,7 @@ defmodule CreditCardChecker.StatementLine do
 
   def unmatched_but_with_possible_expense(user_id: current_user_id) do
     from sl in StatementLine,
+    distinct: true,
     join: pm in assoc(sl, :payment_method),
     join: e in assoc(pm, :expenses),
     left_join: t in assoc(sl, :transaction),
