@@ -76,7 +76,7 @@ defmodule CreditCardChecker.StatementParser.FormatFinder do
 end
 
 defmodule CreditCardChecker.StatementParser.ParserSkeleton do
-  def convert({:ok, lines} = content, format: format) do
+  def convert({:ok, _lines} = content, format: format) do
     try do
       apply(format, :convert, [content])
     rescue

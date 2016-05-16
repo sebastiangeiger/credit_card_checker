@@ -36,7 +36,7 @@ defmodule CreditCardChecker.ExpenseControllerTest do
     assert html_response(conn, 200) =~ "New expense"
   end
 
-  test "assigns merchants in the new action", %{conn: conn, merchant: merchant} do
+  test "assigns merchants in the new action", %{conn: conn} do
     conn = get conn, expense_path(conn, :new)
     assert conn.assigns[:merchant_names] == ["Whole Foods"]
   end

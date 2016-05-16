@@ -62,7 +62,7 @@ defmodule CreditCardChecker.TransactionTest do
     assert changeset.errors[:base] == "Amounts of StatementLine and Expense don't add up"
   end
 
-  test "create transaction with expense and statement from different payment methods", %{user: user, payment_method: payment_method_1, merchant: merchant, statement_line: statement_line} do
+  test "create transaction with expense and statement from different payment methods", %{user: user, merchant: merchant, statement_line: statement_line} do
     payment_method_2 = create_payment_method(%{name: "MasterCard"}, user: user)
     expense = create_expense(%{amount: 12}, payment_method: payment_method_2,
                              merchant: merchant, user: user)
