@@ -47,9 +47,10 @@ end
 defmodule CreditCardChecker.StatementParser.FormatFinder do
   alias CreditCardChecker.StatementParser.Format1
   alias CreditCardChecker.StatementParser.Format2
+  alias CreditCardChecker.StatementParser.Format3
   alias CreditCardChecker.StatementParser.UnknownFormat
 
-  @formats [Format1, Format2]
+  @formats [Format1, Format2, Format3]
 
   def determine_format(content) do
     case matching_formats(content) do
@@ -196,6 +197,37 @@ defmodule CreditCardChecker.StatementParser.Format2 do
     else
       {description, nil}
     end
+  end
+
+  defp convert_to_statement_lines(maps) do
+    Enum.map(maps, &convert_to_statement_line/1)
+  end
+end
+
+defmodule CreditCardChecker.StatementParser.Format3 do
+  alias CreditCardChecker.StatementLine
+  import CreditCardChecker.StatementParser.FormatHelper
+
+  def understands?([head | _rest]) do
+    head == ["Type","Trans Date","Post Date","Description","Amount"]
+  end
+
+  def convert({:ok, lines}) do
+    lines
+    |> split_heading_and_body
+    |> convert_to_maps
+    |> convert_to_statement_lines
+    |> ok_response
+  end
+
+  defp convert_to_statement_line(map) do
+    %StatementLine{
+      address: nil,
+      amount_in_cents: round(String.to_float(map["Amount"]) * 100),
+      payee: map["Description"],
+      reference_number: nil,
+      posted_date: mm_dd_yyyy_to_date(map["Post Date"])
+    }
   end
 
   defp convert_to_statement_lines(maps) do

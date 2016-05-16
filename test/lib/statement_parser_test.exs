@@ -30,6 +30,19 @@ defmodule CreditCardChecker.StatementParserTest do
     assert List.first(lines) == line
   end
 
+  test "reading the csv file of Format3 generates the correct StatementLines" do
+    {:ok, lines} = StatementParser.parse("test/fixtures/format_3.csv")
+    assert Enum.count(lines) == 3
+    line = %StatementLine{
+      amount_in_cents: -2500,
+      address: nil,
+      payee: "MERCHANT #1",
+      reference_number: nil,
+      posted_date: Ecto.Date.cast!({2016, 5, 9})
+    }
+    assert List.first(lines) == line
+  end
+
   test "reading an invalid csv file" do
     path = "test/fixtures/not_a_valid_csv.csv"
     assert File.exists?(path)
