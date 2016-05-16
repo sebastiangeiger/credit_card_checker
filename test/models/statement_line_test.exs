@@ -3,8 +3,11 @@ defmodule CreditCardChecker.StatementLineTest do
 
   alias CreditCardChecker.StatementLine
   alias CreditCardChecker.PaymentMethod
+  alias CreditCardChecker.User
   import CreditCardChecker.Factory, only: [create_user: 1,
-                                           create_payment_method: 2]
+                                           create_payment_method: 2,
+                                           create_statement_line: 1,
+                                           create_expense: 2]
 
   @valid_attrs %{
     address: "some content", amount_in_cents: 42, payee: "some content",
@@ -34,5 +37,30 @@ defmodule CreditCardChecker.StatementLineTest do
     %PaymentMethod{id: pm_id} = create_payment_method(%{name: "Visa"},
                                                               user: user)
     %{ @valid_attrs | payment_method_id: pm_id }
+  end
+
+  test "unmatched_but_with_possible_expense with statement and matching expense" do
+    statement_line = create_statement_line(%{amount_in_cents: -123, payee: "Merchant #1"})
+    user = user_for(statement_line)
+    create_expense(%{amount_in_cents: 123, payment_method_id: statement_line.payment_method_id}, user: user)
+    statement_lines = [user_id: user.id]
+                      |> StatementLine.unmatched_but_with_possible_expense()
+                      |> Repo.all
+    assert statement_lines == [statement_line]
+  end
+
+  test "unmatched_but_with_possible_expense with statement but no matching expense" do
+    statement_line = create_statement_line(%{amount_in_cents: -123, payee: "Merchant #1"})
+    user = user_for(statement_line)
+    create_expense(%{amount_in_cents: 124, payment_method_id: statement_line.payment_method_id}, user: user)
+    statement_lines = [user_id: user.id]
+                      |> StatementLine.unmatched_but_with_possible_expense()
+                      |> Repo.all
+    assert statement_lines == []
+  end
+
+  defp user_for(%StatementLine{payment_method_id: payment_method_id}) do
+    user_id = Repo.get_by!(PaymentMethod, id: payment_method_id).user_id
+    Repo.get_by!(User, id: user_id)
   end
 end

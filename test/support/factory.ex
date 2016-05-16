@@ -46,6 +46,13 @@ defmodule CreditCardChecker.Factory do
                     user: user)
   end
 
+  def create_expense(attrs, user: user) do
+    payment_method = create_payment_method(%{name: "Some PM"}, user: user)
+    merchant = create_merchant(%{name: "Some Merchant"}, user: user)
+    create_expense(attrs, payment_method: payment_method, merchant: merchant,
+                    user: user)
+  end
+
   def create_merchant(attrs, user: %User{id: user_id}) do
     attrs = Map.put_new(attrs, :user_id, user_id)
     Merchant.changeset(%Merchant{}, attrs)
@@ -67,6 +74,12 @@ defmodule CreditCardChecker.Factory do
     })
     StatementLine.changeset(%StatementLine{}, attrs)
     |> Repo.insert!
+  end
+
+  def create_statement_line(attrs) do
+    user = create_user(%{email: "somebody@example.com", password: "secret"})
+    payment_method = create_payment_method(%{name: "Visa"}, user: user)
+    create_statement_line(attrs, payment_method: payment_method)
   end
 
   def create_transaction(statement_line: statement_line, expense: expense) do
