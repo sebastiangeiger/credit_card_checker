@@ -226,7 +226,7 @@ defmodule CreditCardChecker.StatementParser.Format3 do
       amount_in_cents: round(String.to_float(map["Amount"]) * 100),
       payee: map["Description"],
       reference_number: nil,
-      posted_date: mm_dd_yyyy_to_date(map["Post Date"])
+      posted_date: mm_dd_yyyy_to_date(map["Trans Date"])
     }
   end
 

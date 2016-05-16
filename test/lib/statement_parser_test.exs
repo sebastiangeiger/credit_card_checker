@@ -38,7 +38,7 @@ defmodule CreditCardChecker.StatementParserTest do
       address: nil,
       payee: "MERCHANT #1",
       reference_number: nil,
-      posted_date: Ecto.Date.cast!({2016, 5, 9})
+      posted_date: Ecto.Date.cast!({2016, 5, 8})
     }
     assert List.first(lines) == line
   end
