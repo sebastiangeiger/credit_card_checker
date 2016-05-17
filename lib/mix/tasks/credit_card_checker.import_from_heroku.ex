@@ -3,10 +3,12 @@ defmodule Mix.Tasks.CreditCardChecker.ImportFromHeroku do
   use Mix.Task
 
   def run(_args) do
-    {url, 0} = System.cmd("heroku", ["pg:backups", "public-url"])
-    download(url)
-    |> import_into_development_database
-    |> File.rm
+    case System.cmd("heroku", ["pg:backups", "public-url"]) do
+      {url, 0} ->  download(url)
+                   |> import_into_development_database
+                   |> File.rm
+      _ -> IO.puts("Could not get the heroku pg backup url")
+    end
   end
 
   defp download(url) do
