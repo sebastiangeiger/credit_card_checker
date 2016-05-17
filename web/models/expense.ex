@@ -98,4 +98,10 @@ defmodule CreditCardChecker.Expense do
       [_|_] -> %{changeset | errors: new ++ errors, valid?: false}
     end
   end
+
+  def unmatched do
+    from e in CreditCardChecker.Expense,
+    left_join: t in assoc(e, :transaction),
+    where: is_nil(t.id)
+  end
 end
