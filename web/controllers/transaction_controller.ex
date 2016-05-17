@@ -32,11 +32,7 @@ defmodule CreditCardChecker.TransactionController do
   def match(conn, %{"id" => id}) do
     statement_line = Repo.get(StatementLine, id)
     |> Repo.preload(:payment_method)
-    expenses = Repo.all from e in Expense.unmatched,
-                where: e.payment_method_id == ^statement_line.payment_method_id,
-                where: e.amount_in_cents == ^(-1 * statement_line.amount_in_cents),
-                order_by: [desc: e.time_of_sale],
-                preload: [:merchant, :payment_method]
+    expenses = Repo.all(Expense.potential_matches_for(statement_line: statement_line))
     render(conn, "match.html", statement_line: statement_line, expenses: expenses)
   end
 end

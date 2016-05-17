@@ -104,4 +104,12 @@ defmodule CreditCardChecker.Expense do
     left_join: t in assoc(e, :transaction),
     where: is_nil(t.id)
   end
+
+  def potential_matches_for(statement_line: statement_line) do
+    from e in unmatched,
+    where: e.payment_method_id == ^statement_line.payment_method_id,
+    where: e.amount_in_cents == ^(-1 * statement_line.amount_in_cents),
+    order_by: [desc: e.time_of_sale],
+    preload: [:merchant, :payment_method]
+  end
 end
