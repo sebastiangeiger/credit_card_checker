@@ -40,9 +40,12 @@ defmodule CreditCardChecker.StatementLineTest do
   end
 
   test "unmatched_but_with_possible_expense with statement and matching expense" do
-    statement_line = create_statement_line(%{amount_in_cents: -123, payee: "Merchant #1"})
+    statement_line = create_statement_line(%{amount_in_cents: -123,
+                                             payee: "Merchant #1"})
     user = user_for(statement_line)
-    create_expense(%{amount_in_cents: 123, payment_method_id: statement_line.payment_method_id}, user: user)
+    create_expense(%{amount_in_cents: 123,
+                     payment_method_id: statement_line.payment_method_id},
+                   user: user)
     statement_lines = [user_id: user.id]
                       |> StatementLine.unmatched_but_with_possible_expense()
                       |> Repo.all
@@ -50,9 +53,12 @@ defmodule CreditCardChecker.StatementLineTest do
   end
 
   test "unmatched_but_with_possible_expense with statement but no matching expense" do
-    statement_line = create_statement_line(%{amount_in_cents: -123, payee: "Merchant #1"})
+    statement_line = create_statement_line(%{amount_in_cents: -123,
+                                             payee: "Merchant #1"})
     user = user_for(statement_line)
-    create_expense(%{amount_in_cents: 124, payment_method_id: statement_line.payment_method_id}, user: user)
+    create_expense(%{amount_in_cents: 124,
+                     payment_method_id: statement_line.payment_method_id},
+                   user: user)
     statement_lines = [user_id: user.id]
                       |> StatementLine.unmatched_but_with_possible_expense()
                       |> Repo.all
@@ -60,10 +66,14 @@ defmodule CreditCardChecker.StatementLineTest do
   end
 
   test "unmatched_but_with_possible_expense with statement and two matching expense" do
-    statement_line = create_statement_line(%{amount_in_cents: -123, payee: "Merchant #1"})
+    statement_line = create_statement_line(%{amount_in_cents: -123,
+                                             payee: "Merchant #1"})
     user = user_for(statement_line)
-    create_expense(%{amount_in_cents: 123, payment_method_id: statement_line.payment_method_id}, user: user)
-    create_expense(%{amount_in_cents: 123, payment_method_id: statement_line.payment_method_id}, user: user)
+    for _ <- [1,2] do
+      create_expense(%{amount_in_cents: 123,
+                       payment_method_id: statement_line.payment_method_id},
+                     user: user)
+    end
     statement_lines = [user_id: user.id]
                       |> StatementLine.unmatched_but_with_possible_expense()
                       |> Repo.all
