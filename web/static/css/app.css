@@ -88,3 +88,8 @@ td.dollar-amount {
 form ul#merchant_names {
   display: none;
 }
+
+p.empty {
+  font-style: italic;
+  color: darkgrey;
+}
