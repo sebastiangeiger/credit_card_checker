@@ -4,7 +4,7 @@ defmodule CreditCardChecker.TransactionController do
   plug CreditCardChecker.RequireAuthenticated
 
   alias CreditCardChecker.StatementLine
-  alias CreditCardChecker.Expense
+  alias CreditCardChecker.StatementLineExpenseMatcher
   alias CreditCardChecker.Transaction
 
   def create(conn, %{"transaction" => transaction_params}) do
@@ -30,9 +30,7 @@ defmodule CreditCardChecker.TransactionController do
   end
 
   def match(conn, %{"id" => id}) do
-    statement_line = Repo.get(StatementLine, id)
-    |> Repo.preload(:payment_method)
-    expenses = Repo.all(Expense.potential_matches_for(statement_line: statement_line))
-    render(conn, "match.html", statement_line: statement_line, expenses: expenses)
+    view_models = StatementLineExpenseMatcher.diff_view(statement_line_id: id)
+    render(conn, "match.html", view_models)
   end
 end
