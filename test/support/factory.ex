@@ -60,10 +60,14 @@ defmodule CreditCardChecker.Factory do
   end
 
   def create_statement_line(attrs, payment_method: %PaymentMethod{id: payment_method_id}) do
+    Map.merge(attrs, %{payment_method_id: payment_method_id})
+    |> create_statement_line
+  end
+
+  def create_statement_line(%{payment_method_id: payment_method_id} = attrs) do
     attrs = Map.merge(attrs, %{
       posted_date: Ecto.Date.cast!("2016-04-20"),
-      reference_number: "123456",
-      payment_method_id: payment_method_id
+      reference_number: "123456"
     })
     StatementLine.changeset(%StatementLine{}, attrs)
     |> Repo.insert!

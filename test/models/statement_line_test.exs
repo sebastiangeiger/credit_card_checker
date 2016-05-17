@@ -4,10 +4,7 @@ defmodule CreditCardChecker.StatementLineTest do
   alias CreditCardChecker.StatementLine
   alias CreditCardChecker.PaymentMethod
   alias CreditCardChecker.User
-  import CreditCardChecker.Factory, only: [create_user: 1,
-                                           create_payment_method: 2,
-                                           create_statement_line: 1,
-                                           create_expense: 2]
+  import CreditCardChecker.Factory
 
   @valid_attrs %{
     address: "some content", amount_in_cents: 42, payee: "some content",
@@ -78,6 +75,37 @@ defmodule CreditCardChecker.StatementLineTest do
                       |> StatementLine.unmatched_but_with_possible_expense()
                       |> Repo.all
     assert statement_lines == [statement_line]
+  end
+
+  test "unmatched_but_with_possible_expense with matched statement and expense" do
+    statement_line = create_statement_line(%{amount_in_cents: -123,
+                                             payee: "Merchant #1"})
+    user = user_for(statement_line)
+    expense = create_expense(%{amount_in_cents: 123,
+                               payment_method_id: statement_line.payment_method_id},
+                             user: user)
+    create_transaction(statement_line: statement_line, expense: expense)
+    statement_lines = [user_id: user.id]
+                      |> StatementLine.unmatched_but_with_possible_expense()
+                      |> Repo.all
+    assert statement_lines == []
+  end
+
+  test "unmatched_but_with_possible_expense with statement and otherwise matched expense" do
+    statement_line = create_statement_line(%{amount_in_cents: -123,
+                                             payee: "Merchant #1"})
+    statement_line_2 = create_statement_line(
+      %{amount_in_cents: -123, payee: "Merchant #2",
+        payment_method_id: statement_line.payment_method_id})
+    user = user_for(statement_line)
+    expense = create_expense(%{amount_in_cents: 123,
+                               payment_method_id: statement_line.payment_method_id},
+                             user: user)
+    create_transaction(statement_line: statement_line_2, expense: expense)
+    statement_lines = [user_id: user.id]
+                      |> StatementLine.unmatched_but_with_possible_expense()
+                      |> Repo.all
+    assert statement_lines == []
   end
 
   defp user_for(%StatementLine{payment_method_id: payment_method_id}) do
