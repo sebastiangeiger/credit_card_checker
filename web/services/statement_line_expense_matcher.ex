@@ -10,7 +10,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     statement_line = Repo.get(StatementLine, id)
     |> Repo.preload(:payment_method)
     expenses = Repo.all(Expense.potential_matches_for(statement_line: statement_line))
-    [statement_line: statement_line, expenses: expenses]
+    [statement_line: statement_line, expenses: expenses, diff_view: view_model(statement_line, List.first(expenses))]
   end
 
   defmodule ViewModel do
@@ -38,25 +38,31 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       ]
     end
 
-    defp side(nil) do
-      [
-        "Amount": "",
-        "Payee": "",
-        "Date": "",
-        "Address": "",
-        "Reference Number": "",
-        "Payment Method": ""
-      ]
-    end
-
     def zip_up(left_side, right_side) do
       Keyword.merge(left_side, right_side,
         fn(_key, value_1, value_2) -> [value_1, value_2] end)
     end
 
+    def cast(statement_line, nil) do
+      for {headline, left} <- side(statement_line) do
+        [
+          %Line{cells: [%Cell{content: Atom.to_string(headline)}]},
+          %Line{cells: [%Cell{content: left}]}
+        ]
+      end
+      |> List.flatten
+      |> add_row_spanning_cell
+    end
+
     def cast(statement_line, expense) do
       zip_up(side(statement_line), side(expense))
       |> convert_to_table_model
+    end
+
+    def add_row_spanning_cell(lines) do
+      List.update_at(lines, 0, fn (%Line{cells: [cell | []]} = line) ->
+        %{ line | cells: [cell, %Cell{content: "No matching expenses", rowspan: 12}] }
+      end)
     end
 
     def convert_to_table_model(model) do

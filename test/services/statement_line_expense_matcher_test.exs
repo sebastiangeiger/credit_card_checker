@@ -49,18 +49,18 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
   test "view_model with a statement line but no expense returns the right table model" do
     view_model = StatementLineExpenseMatcher.view_model(@statement_line, nil)
     assert view_model == [
-      %Line{cells: [%Cell{content: "Amount"},              %Cell{content: "Amount"}]},
-      %Line{cells: [%Cell{content: "-1.23"},               %Cell{content: ""}]},
-      %Line{cells: [%Cell{content: "Payee"},               %Cell{content: "Payee"}]},
-      %Line{cells: [%Cell{content: "MERCHANT #1"},         %Cell{content: ""}]},
-      %Line{cells: [%Cell{content: "Date"},                %Cell{content: "Date"}]},
-      %Line{cells: [%Cell{content: "2015-04-20"},          %Cell{content: ""}]},
-      %Line{cells: [%Cell{content: "Address"},             %Cell{content: "Address"}]},
-      %Line{cells: [%Cell{content: "Address #1"},          %Cell{content: ""}]},
-      %Line{cells: [%Cell{content: "Reference Number"},    %Cell{content: "Reference Number"}]},
-      %Line{cells: [%Cell{content: "Reference Number #1"}, %Cell{content: ""}]},
-      %Line{cells: [%Cell{content: "Payment Method"},      %Cell{content: "Payment Method"}]},
-      %Line{cells: [%Cell{content: "Visa"},                %Cell{content: ""}]}
+      %Line{cells: [%Cell{content: "Amount"}, %Cell{content: "No matching expenses", rowspan: 12}]},
+      %Line{cells: [%Cell{content: "-1.23"}]},
+      %Line{cells: [%Cell{content: "Payee"}]},
+      %Line{cells: [%Cell{content: "MERCHANT #1"}]},
+      %Line{cells: [%Cell{content: "Date"}]},
+      %Line{cells: [%Cell{content: "2015-04-20"}]},
+      %Line{cells: [%Cell{content: "Address"}]},
+      %Line{cells: [%Cell{content: "Address #1"}]},
+      %Line{cells: [%Cell{content: "Reference Number"}]},
+      %Line{cells: [%Cell{content: "Reference Number #1"}]},
+      %Line{cells: [%Cell{content: "Payment Method"}]},
+      %Line{cells: [%Cell{content: "Visa"}]}
     ]
   end
 end
