@@ -93,3 +93,43 @@ p.empty {
   font-style: italic;
   color: darkgrey;
 }
+
+table.diff-table {
+  width: 100%;
+  max-width: 100%;
+}
+
+table.diff-table tr {
+  display: table-row;
+}
+
+table.diff-table tr:first-child {
+  border-top: 0px solid black !important;
+}
+
+table.diff-table tr:nth-child(odd) {
+  font-weight: bold;
+  border-top: 1px solid darkgrey;
+}
+
+table.diff-table tr:nth-child(odd) td {
+  padding-bottom: 0px;
+}
+
+table.diff-table tr:nth-child(even) td {
+  padding-top: 0px;
+}
+
+table.diff-table td:first-child {
+  border-right: 1px solid darkgrey;
+}
+
+table.diff-table tr:nth-child(odd) td:after {
+  content: ":";
+}
+
+table.diff-table td {
+  padding: 8px;
+  line-height:1.42857143;
+  vertical-align: top;
+}

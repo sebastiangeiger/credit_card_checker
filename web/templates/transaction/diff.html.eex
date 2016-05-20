@@ -1,4 +1,4 @@
-<table class="table">
+<table class="diff-table">
   <%= for %{cells: cells} <- @diff_view do %>
     <tr>
       <%= for %{content: content, rowspan: rowspan} <- cells do %>
