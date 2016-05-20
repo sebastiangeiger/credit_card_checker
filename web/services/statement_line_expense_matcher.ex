@@ -2,6 +2,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   alias CreditCardChecker.Repo
   alias CreditCardChecker.StatementLine
   alias CreditCardChecker.Expense
+  alias CreditCardChecker.NoExpense
   alias CreditCardChecker.TableModel.Line
   alias CreditCardChecker.TableModel.Cell
   import CreditCardChecker.MoneyViewHelpers, only: [in_dollars: 1]
@@ -10,7 +11,10 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     statement_line = Repo.get(StatementLine, id)
     |> Repo.preload(:payment_method)
     expenses = Repo.all(Expense.potential_matches_for(statement_line: statement_line))
-    [statement_line: statement_line, expenses: expenses, diff_view: view_model(statement_line, List.first(expenses))]
+    expense = List.first(expenses) || %NoExpense{}
+    [statement_line_id: statement_line.id,
+      expense_id: expense.id,
+      diff_view: view_model(statement_line, expense)]
   end
 
   defmodule ViewModel do
@@ -43,7 +47,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
         fn(_key, value_1, value_2) -> [value_1, value_2] end)
     end
 
-    def cast(statement_line, nil) do
+    def cast(statement_line, %NoExpense{}) do
       for {headline, left} <- side(statement_line) do
         [
           %Line{cells: [%Cell{content: Atom.to_string(headline)}]},

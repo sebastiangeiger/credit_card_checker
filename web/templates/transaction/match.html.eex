@@ -1,9 +1,9 @@
 <h3>Match</h3>
 <%= render "diff.html", diff_view: @diff_view, conn: @conn %>
-<%= if Enum.any?(@expenses) do %>
+<%= if @statement_line_id && @expense_id do %>
   <%= form_tag transaction_path(@conn, :create) do %>
-    <%= hidden_input :transaction, :statement_line_id, value: @statement_line.id %>
-    <%= hidden_input :transaction, :expense_id, value: List.first(@expenses).id %>
+    <%= hidden_input :transaction, :statement_line_id, value: @statement_line_id %>
+    <%= hidden_input :transaction, :expense_id, value: @expense_id %>
     <%= submit "Create", class: "btn btn-xs btn-default" %>
   <% end %>
 <% end %>

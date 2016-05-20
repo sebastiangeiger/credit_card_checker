@@ -113,3 +113,7 @@ defmodule CreditCardChecker.Expense do
     preload: [:merchant, :payment_method]
   end
 end
+
+defmodule CreditCardChecker.NoExpense do
+  defstruct id: nil
+end

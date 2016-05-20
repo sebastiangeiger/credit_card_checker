@@ -4,6 +4,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
   alias CreditCardChecker.StatementLineExpenseMatcher
   alias CreditCardChecker.StatementLine
   alias CreditCardChecker.Expense
+  alias CreditCardChecker.NoExpense
   alias CreditCardChecker.Merchant
   alias CreditCardChecker.PaymentMethod
   alias CreditCardChecker.TableModel.Line
@@ -47,7 +48,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
   end
 
   test "view_model with a statement line but no expense returns the right table model" do
-    view_model = StatementLineExpenseMatcher.view_model(@statement_line, nil)
+    view_model = StatementLineExpenseMatcher.view_model(@statement_line, %NoExpense{})
     assert view_model == [
       %Line{cells: [%Cell{content: "Amount"}, %Cell{content: "No matching expenses", rowspan: 12}]},
       %Line{cells: [%Cell{content: "-1.23"}]},
