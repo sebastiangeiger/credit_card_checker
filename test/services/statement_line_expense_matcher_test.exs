@@ -6,6 +6,8 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
   alias CreditCardChecker.Expense
   alias CreditCardChecker.Merchant
   alias CreditCardChecker.PaymentMethod
+  alias CreditCardChecker.TableModel.Line
+  alias CreditCardChecker.TableModel.Cell
 
   @payment_method %PaymentMethod{
       name: "Visa"
@@ -20,7 +22,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
     payment_method: @payment_method
   }
 
-  test "view_model with a statement line and an expense returns the right datastructure" do
+  test "view_model with a statement line and an expense returns the right table model" do
     expense = %Expense{
       amount_in_cents: 123,
       time_of_sale: Ecto.DateTime.cast!("2015-04-20 13:37:00"),
@@ -29,24 +31,36 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
     }
     view_model = StatementLineExpenseMatcher.view_model(@statement_line, expense)
     assert view_model == [
-      "Amount": ["-1.23", "1.23"],
-      "Payee": ["MERCHANT #1", "Merchant #1"],
-      "Date": ["2015-04-20", "2015-04-20 13:37:00"],
-      "Address": ["Address #1", ""],
-      "Reference Number": ["Reference Number #1", ""],
-      "Payment Method": ["Visa", "Visa"]
+      %Line{cells: [%Cell{content: "Amount"},              %Cell{content: "Amount"}]},
+      %Line{cells: [%Cell{content: "-1.23"},               %Cell{content: "1.23"}]},
+      %Line{cells: [%Cell{content: "Payee"},               %Cell{content: "Payee"}]},
+      %Line{cells: [%Cell{content: "MERCHANT #1"},         %Cell{content: "Merchant #1"}]},
+      %Line{cells: [%Cell{content: "Date"},                %Cell{content: "Date"}]},
+      %Line{cells: [%Cell{content: "2015-04-20"},          %Cell{content: "2015-04-20 13:37:00"}]},
+      %Line{cells: [%Cell{content: "Address"},             %Cell{content: "Address"}]},
+      %Line{cells: [%Cell{content: "Address #1"},          %Cell{content: ""}]},
+      %Line{cells: [%Cell{content: "Reference Number"},    %Cell{content: "Reference Number"}]},
+      %Line{cells: [%Cell{content: "Reference Number #1"}, %Cell{content: ""}]},
+      %Line{cells: [%Cell{content: "Payment Method"},      %Cell{content: "Payment Method"}]},
+      %Line{cells: [%Cell{content: "Visa"},                %Cell{content: "Visa"}]}
     ]
   end
 
-  test "view_model with a statement line but no expense returns the right datastructure" do
+  test "view_model with a statement line but no expense returns the right table model" do
     view_model = StatementLineExpenseMatcher.view_model(@statement_line, nil)
     assert view_model == [
-      "Amount": ["-1.23", ""],
-      "Payee": ["MERCHANT #1", ""],
-      "Date": ["2015-04-20", ""],
-      "Address": ["Address #1", ""],
-      "Reference Number": ["Reference Number #1", ""],
-      "Payment Method": ["Visa", ""]
+      %Line{cells: [%Cell{content: "Amount"},              %Cell{content: "Amount"}]},
+      %Line{cells: [%Cell{content: "-1.23"},               %Cell{content: ""}]},
+      %Line{cells: [%Cell{content: "Payee"},               %Cell{content: "Payee"}]},
+      %Line{cells: [%Cell{content: "MERCHANT #1"},         %Cell{content: ""}]},
+      %Line{cells: [%Cell{content: "Date"},                %Cell{content: "Date"}]},
+      %Line{cells: [%Cell{content: "2015-04-20"},          %Cell{content: ""}]},
+      %Line{cells: [%Cell{content: "Address"},             %Cell{content: "Address"}]},
+      %Line{cells: [%Cell{content: "Address #1"},          %Cell{content: ""}]},
+      %Line{cells: [%Cell{content: "Reference Number"},    %Cell{content: "Reference Number"}]},
+      %Line{cells: [%Cell{content: "Reference Number #1"}, %Cell{content: ""}]},
+      %Line{cells: [%Cell{content: "Payment Method"},      %Cell{content: "Payment Method"}]},
+      %Line{cells: [%Cell{content: "Visa"},                %Cell{content: ""}]}
     ]
   end
 end

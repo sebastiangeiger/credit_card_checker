@@ -2,6 +2,8 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   alias CreditCardChecker.Repo
   alias CreditCardChecker.StatementLine
   alias CreditCardChecker.Expense
+  alias CreditCardChecker.TableModel.Line
+  alias CreditCardChecker.TableModel.Cell
   import CreditCardChecker.MoneyViewHelpers, only: [in_dollars: 1]
 
   def diff_view(statement_line_id: id) do
@@ -54,6 +56,17 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
 
     def cast(statement_line, expense) do
       zip_up(side(statement_line), side(expense))
+      |> convert_to_table_model
+    end
+
+    def convert_to_table_model(model) do
+      for {headline, [left, right]} <- model do
+        [
+          %Line{cells: [%Cell{content: Atom.to_string(headline)}, %Cell{content: Atom.to_string(headline)}]},
+          %Line{cells: [%Cell{content: left}, %Cell{content: right}]}
+        ]
+      end
+      |> List.flatten
     end
   end
 
