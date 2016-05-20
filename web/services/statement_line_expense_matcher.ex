@@ -20,6 +20,19 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   defmodule ViewModel do
     defstruct lines: []
 
+    def cast(statement_line, %NoExpense{} = expense) do
+      zip_up(side(statement_line), side(expense))
+      |> remove_empty_lines
+      |> convert_to_table_model
+      |> add_row_spanning_cell
+    end
+
+    def cast(statement_line, expense) do
+      zip_up(side(statement_line), side(expense))
+      |> remove_empty_lines
+      |> convert_to_table_model
+    end
+
     defp side(%StatementLine{} = statement_line) do
       [
         "Amount": in_dollars(statement_line.amount_in_cents),
@@ -42,39 +55,58 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       ]
     end
 
+    defp side(%NoExpense{}) do
+      [
+        "Amount": nil,
+        "Payee": nil,
+        "Date": nil,
+        "Address": nil,
+        "Reference Number": nil,
+        "Payment Method": nil
+      ]
+    end
+
     def zip_up(left_side, right_side) do
       Keyword.merge(left_side, right_side,
         fn(_key, value_1, value_2) -> [value_1, value_2] end)
     end
 
-    def cast(statement_line, %NoExpense{}) do
-      for {headline, left} <- side(statement_line) do
-        [
-          %Line{cells: [%Cell{content: Atom.to_string(headline)}]},
-          %Line{cells: [%Cell{content: left}]}
-        ]
-      end
-      |> List.flatten
-      |> add_row_spanning_cell
-    end
-
-    def cast(statement_line, expense) do
-      zip_up(side(statement_line), side(expense))
-      |> convert_to_table_model
-    end
-
     def add_row_spanning_cell(lines) do
+      rowspan = Enum.count(lines)
+      row_spanning_cell = %Cell{content: "No matching expenses", rowspan: rowspan}
       List.update_at(lines, 0, fn (%Line{cells: [cell | []]} = line) ->
-        %{ line | cells: [cell, %Cell{content: "No matching expenses", rowspan: 12}] }
+        %{ line | cells: [cell, row_spanning_cell] }
+      end)
+    end
+
+    def remove_empty_lines(lines) do
+      Enum.reject(lines, fn(line) ->
+        case line do
+          {_headline, ["",""]}  -> true
+          {_headline, ["",nil]} -> true
+          {_headline, [nil, ""]} -> true
+          {_headline, [nil, nil]} -> true
+          {_headline, nil} -> true
+          {_headline, ""} -> true
+          _ -> false
+        end
       end)
     end
 
     def convert_to_table_model(model) do
-      for {headline, [left, right]} <- model do
-        [
-          %Line{cells: [%Cell{content: Atom.to_string(headline)}, %Cell{content: Atom.to_string(headline)}]},
-          %Line{cells: [%Cell{content: left}, %Cell{content: right}]}
-        ]
+      for line <- model do
+        case line do
+          {headline, [left, nil]} ->
+            [
+              %Line{cells: [%Cell{content: Atom.to_string(headline)}]},
+              %Line{cells: [%Cell{content: left}]}
+            ]
+          {headline, [left, right]} ->
+            [
+              %Line{cells: [%Cell{content: Atom.to_string(headline)}, %Cell{content: Atom.to_string(headline)}]},
+              %Line{cells: [%Cell{content: left}, %Cell{content: right}]}
+            ]
+        end
       end
       |> List.flatten
     end
