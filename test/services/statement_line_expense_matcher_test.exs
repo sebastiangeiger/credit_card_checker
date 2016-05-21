@@ -64,6 +64,31 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
       %Line{cells: [%Cell{content: "Visa"}]}
     ]
   end
+
+  @expense_1 %Expense{id: 1}
+  @expense_2 %Expense{id: 2}
+  @expense_3 %Expense{id: 3}
+
+  test "select_displayed_expense without a expense_id" do
+    expenses = [@expense_1, @expense_2, @expense_3]
+    actual = StatementLineExpenseMatcher.select_displayed_expense(expenses, nil)
+    expected = {@expense_1, [@expense_2, @expense_3]}
+    assert actual == expected
+  end
+
+  test "select_displayed_expense with an expense_id" do
+    expenses = [@expense_1, @expense_2, @expense_3]
+    actual = StatementLineExpenseMatcher.select_displayed_expense(expenses, 2)
+    expected = {@expense_2, [@expense_1, @expense_3]}
+    assert actual == expected
+  end
+
+  test "select_displayed_expense with an expense_id not in the list" do
+    expenses = [@expense_1, @expense_2, @expense_3]
+    actual = StatementLineExpenseMatcher.select_displayed_expense(expenses, 4)
+    expected = {@expense_1, [@expense_2, @expense_3]}
+    assert actual == expected
+  end
 end
 
 defmodule CreditCardChecker.StatementLineExpenseMatcher.ViewModelTest do

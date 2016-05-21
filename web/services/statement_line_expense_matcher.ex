@@ -8,11 +8,17 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   import CreditCardChecker.MoneyViewHelpers, only: [in_dollars: 1]
 
   def diff_view(statement_line_id: id) do
-    statement_line = Repo.get(StatementLine, id)
+    diff_view(statement_line_id: id, expense_id: nil)
+  end
+
+  def diff_view(statement_line_id: statement_line_id, expense_id: expense_id) do
+    statement_line = Repo.get(StatementLine, statement_line_id)
     |> Repo.preload(:payment_method)
-    [expense | remaining_expenses] =
+    {expense, remaining_expenses} =
       Expense.potential_matches_for(statement_line: statement_line)
-      |> read_from_database
+      |> Repo.all
+      |> adjust_expense_list
+      |> select_displayed_expense(expense_id)
 
     [statement_line_id: statement_line.id,
       expense_id: expense.id,
@@ -20,10 +26,18 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       diff_view: view_model(statement_line, expense)]
   end
 
-  defp read_from_database(query) do
-    query
-    |> Repo.all
-    |> adjust_expense_list
+  def select_displayed_expense(expenses, nil) do
+    [expense | remaining_expenses] = expenses
+    {expense, remaining_expenses}
+  end
+
+  def select_displayed_expense(expenses, expense_id) do
+    index = Enum.find_index(expenses, &(&1.id == expense_id))
+    if index do
+      {Enum.at(expenses, index), List.delete_at(expenses, index)}
+    else
+      select_displayed_expense(expenses, nil)
+    end
   end
 
   defp adjust_expense_list([]) do
