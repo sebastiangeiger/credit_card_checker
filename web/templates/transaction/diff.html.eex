@@ -1,8 +1,8 @@
 <table class="diff-table">
   <%= for %{cells: cells} <- @diff_view do %>
     <tr>
-      <%= for %{content: content, rowspan: rowspan} <- cells do %>
-        <td rowspan="<%= rowspan %>"> <%= content %> </td>
+      <%= for %{content: content, rowspan: rowspan, class: class} <- cells do %>
+        <td rowspan="<%= rowspan %>" class="<%= class %>"> <%= content %> </td>
       <% end %>
     </tr>
   <% end %>

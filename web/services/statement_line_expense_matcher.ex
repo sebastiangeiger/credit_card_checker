@@ -73,7 +73,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
 
     def add_row_spanning_cell(lines) do
       rowspan = Enum.count(lines)
-      row_spanning_cell = %Cell{content: "No matching expenses", rowspan: rowspan}
+      row_spanning_cell = %Cell{content: "No matching expenses", rowspan: rowspan, class: "no-matches"}
       List.update_at(lines, 0, fn (%Line{cells: [cell | []]} = line) ->
         %{ line | cells: [cell, row_spanning_cell] }
       end)

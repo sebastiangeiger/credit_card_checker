@@ -124,8 +124,21 @@ table.diff-table td:first-child {
   border-right: 1px solid darkgrey;
 }
 
-table.diff-table tr:nth-child(odd) td:after {
+table.diff-fable tr:nth-child(odd) td:after {
   content: ":";
+}
+
+table.diff-table td.no-matches {
+  text-align:center;
+  vertical-align:middle;
+  color: grey;
+  font-style: italic;
+  font-weight: normal;
+}
+
+table.diff-fable tr:nth-child(odd) td.no-matches:after {
+  content: "";
+
 }
 
 table.diff-table td {

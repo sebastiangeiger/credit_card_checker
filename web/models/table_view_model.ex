@@ -4,6 +4,6 @@ defmodule CreditCardChecker.TableModel do
   end
 
   defmodule Cell do
-    defstruct content: "", rowspan: 1
+    defstruct content: "", rowspan: 1, class: ""
   end
 end
