@@ -23,7 +23,7 @@
         <td><%= expense.time_of_sale %></td>
         <td><%= expense.merchant.name %></td>
         <td><%= expense.payment_method.name %></td>
-        <td>Match</td>
+        <td><%= link "Match", to: transaction_path(@conn, :match, @statement_line_id, expense_id: expense.id) %></td>
       </tr>
     <% end %>
   </table>
