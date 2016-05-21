@@ -31,6 +31,10 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     {expense, remaining_expenses}
   end
 
+  def select_displayed_expense(expenses, expense_id) when is_binary(expense_id) do
+    select_displayed_expense(expenses, String.to_integer(expense_id))
+  end
+
   def select_displayed_expense(expenses, expense_id) do
     index = Enum.find_index(expenses, &(&1.id == expense_id))
     if index do

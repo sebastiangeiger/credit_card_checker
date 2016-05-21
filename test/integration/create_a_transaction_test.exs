@@ -47,6 +47,14 @@ defmodule CreditCardChecker.CreateATransactionTest do
                       |> visible_text
     assert other_matches_text =~ "Walgreens"
     find_element(:link_text, "Match")
+    |> click
+    diff_table_text = find_element(:css, "table.diff-table")
+                      |> visible_text
+    assert diff_table_text =~ "WHOLE FDS"
+    assert diff_table_text =~ "Walgreens"
+    other_matches_text = find_element(:css, ".sem-other-matches")
+                      |> visible_text
+    assert other_matches_text =~ "Whole Foods"
   end
 
   defp go_to_unclassified_transactions_page do

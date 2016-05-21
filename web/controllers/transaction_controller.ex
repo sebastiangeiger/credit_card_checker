@@ -29,8 +29,13 @@ defmodule CreditCardChecker.TransactionController do
     render(conn, "unmatched.html", statement_lines: statement_lines)
   end
 
-  def match(conn, %{"id" => id}) do
-    view_models = StatementLineExpenseMatcher.diff_view(statement_line_id: id)
+  def match(conn, params) do
+    view_models = case params do
+      %{"id" => id, "expense_id" => expense_id} ->
+        StatementLineExpenseMatcher.diff_view(statement_line_id: id, expense_id: expense_id)
+      %{"id" => id} ->
+        StatementLineExpenseMatcher.diff_view(statement_line_id: id)
+    end
     render(conn, "match.html", view_models)
   end
 end
