@@ -10,11 +10,28 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   def diff_view(statement_line_id: id) do
     statement_line = Repo.get(StatementLine, id)
     |> Repo.preload(:payment_method)
-    expenses = Repo.all(Expense.potential_matches_for(statement_line: statement_line))
-    expense = List.first(expenses) || %NoExpense{}
+    [expense | remaining_expenses] =
+      Expense.potential_matches_for(statement_line: statement_line)
+      |> read_from_database
+
     [statement_line_id: statement_line.id,
       expense_id: expense.id,
+      remaining_expenses: remaining_expenses,
       diff_view: view_model(statement_line, expense)]
+  end
+
+  defp read_from_database(query) do
+    query
+    |> Repo.all
+    |> adjust_expense_list
+  end
+
+  defp adjust_expense_list([]) do
+    [%NoExpense{}]
+  end
+
+  defp adjust_expense_list([_ | _] = result) do
+    result
   end
 
   defmodule ViewModel do

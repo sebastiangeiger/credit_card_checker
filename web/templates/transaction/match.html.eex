@@ -7,3 +7,24 @@
     <%= submit "Create", class: "btn btn-xs btn-default" %>
   <% end %>
 <% end %>
+<%= if Enum.any?(@remaining_expenses) do %>
+  <h5>Other matching expenses</h5>
+  <table class="table sem-other-matches">
+    <tr>
+      <th>Amount</th>
+      <th>Date</th>
+      <th>Payee</th>
+      <th>Payment Method</th>
+      <th></th>
+    </tr>
+    <%= for expense <- @remaining_expenses do %>
+      <tr>
+        <td><%= in_dollars(expense.amount_in_cents) %></td>
+        <td><%= expense.time_of_sale %></td>
+        <td><%= expense.merchant.name %></td>
+        <td><%= expense.payment_method.name %></td>
+        <td>Match</td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

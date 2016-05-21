@@ -30,6 +30,24 @@ defmodule CreditCardChecker.CreateATransactionTest do
     refute visible_page_text =~ "Whole Foods"
   end
 
+  test "can select from multiple matching expenses" do
+    create_expense %{amount: 3.11, merchant: %{name: "Whole Foods"},
+                                   payment_method: %{name: "Amex"}}
+    create_expense %{amount: 3.11, merchant: %{name: "Walgreens"},
+                                   payment_method: %{name: "Amex"}}
+    create_statement_line %{amount: -3.11, payee: "WHOLE FDS", payment_method: %{name: "Amex"}}
+    go_to_unclassified_transactions_page
+    find_element(:link_text, "Match")
+    |> click
+    diff_table_text = find_element(:css, "table.diff-table")
+                      |> visible_text
+    assert diff_table_text =~ "Whole Foods"
+    assert diff_table_text =~ "WHOLE FDS"
+    other_matches_text = find_element(:css, ".sem-other-matches")
+                      |> visible_text
+    assert other_matches_text =~ "Walgreens"
+  end
+
   defp go_to_unclassified_transactions_page do
     navigate_to("/")
     find_element(:link_text, "Transactions")
