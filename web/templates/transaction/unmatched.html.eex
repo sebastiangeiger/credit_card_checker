@@ -1,8 +1,8 @@
 <h3>Unmatched but with fitting expense</h3>
-<%= if Enum.any?(@statement_lines) do %>
+<%= if Enum.any?(@unmatched_but_with_possible_expense) do %>
   <table class="table">
     <tbody class="sem-statement-lines">
-      <%= for {headline, statement_lines} <- group_by_month(@statement_lines) do %>
+      <%= for {headline, statement_lines} <- group_by_month(@unmatched_but_with_possible_expense) do %>
         <tr>
           <td colspan=6><h4><%= headline %></h4></td>
         </tr>

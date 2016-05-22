@@ -67,15 +67,31 @@ defmodule CreditCardChecker.StatementLine do
     where: is_nil(t.id)
   end
 
-  def unmatched_but_with_possible_expense(user_id: current_user_id) do
-    from sl in unmatched,
+  def belongs_to_user(query, user_id) do
+    from sl in query,
+    join: pm in assoc(sl, :payment_method),
+    where: pm.user_id == ^user_id
+  end
+
+  def is_debit(query) do
+    from sl in query,
+    where: sl.amount_in_cents < 0
+  end
+
+  def unmatched_but_with_possible_expense(user_id: user_id) do
+    from sl in unmatched_debit_for_user(user_id: user_id),
     distinct: true,
     join: pm in assoc(sl, :payment_method),
     join: e in assoc(pm, :expenses),
     left_join: t in assoc(e, :transaction),
-    where: pm.user_id == ^current_user_id,
-    where: sl.amount_in_cents < 0,
     where: fragment("? = (-1 * ?)", sl.amount_in_cents, e.amount_in_cents),
     where: is_nil(t.id)
+  end
+
+  def unmatched_debit_for_user(user_id: user_id) do
+    base_query =
+      unmatched
+      |> is_debit
+      |> belongs_to_user(user_id)
   end
 end

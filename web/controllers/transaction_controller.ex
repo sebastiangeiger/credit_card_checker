@@ -23,10 +23,11 @@ defmodule CreditCardChecker.TransactionController do
   end
 
   def unmatched(conn, _params) do
-    statement_lines = [user_id: conn.assigns.current_user.id]
-                      |> StatementLine.unmatched_but_with_possible_expense
-                      |> Repo.all
-    render(conn, "unmatched.html", statement_lines: statement_lines)
+    unmatched_but_with_possible_expense =
+      [user_id: conn.assigns.current_user.id]
+      |> StatementLine.unmatched_but_with_possible_expense
+      |> Repo.all
+    render(conn, "unmatched.html", unmatched_but_with_possible_expense: unmatched_but_with_possible_expense)
   end
 
   def match(conn, params) do
