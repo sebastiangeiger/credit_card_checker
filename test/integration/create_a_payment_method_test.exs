@@ -1,5 +1,6 @@
 defmodule CreditCardChecker.CreateAPaymentMethodTest do
-  use CreditCardChecker.IntegrationCase
+  use CreditCardChecker.IntegrationCase, async: false
+
   import CreditCardChecker.PaymentMethodsTestHelper,
     only: [payment_methods_list: 0, create_payment_method: 1]
   import CreditCardChecker.AuthTestHelper,

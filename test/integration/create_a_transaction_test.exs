@@ -1,5 +1,6 @@
 defmodule CreditCardChecker.CreateATransactionTest do
-  use CreditCardChecker.IntegrationCase
+  use CreditCardChecker.IntegrationCase, async: false
+
   import CreditCardChecker.ExpensesTestHelper,
     only: [create_expense: 1]
   import CreditCardChecker.StatementsTestHelper,
