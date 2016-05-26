@@ -11,18 +11,14 @@ defmodule CreditCardChecker.IntegrationCase do
 
       alias CreditCardChecker.Repo
 
-      # The default endpoint for testing
       @endpoint CreditCardChecker.Endpoint
-
-      hound_session
     end
   end
 
   setup tags do
-    unless tags[:async] do
-      Ecto.Adapters.SQL.restart_test_transaction(CreditCardChecker.Repo, [])
-    end
-
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(CreditCardChecker.Repo)
+    metadata = Phoenix.Ecto.SQL.Sandbox.metadata_for(CreditCardChecker.Repo, self())
+    Hound.start_session(metadata: metadata)
     :ok
   end
 end

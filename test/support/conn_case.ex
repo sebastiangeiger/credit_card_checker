@@ -33,10 +33,8 @@ defmodule CreditCardChecker.ConnCase do
     end
   end
 
-  setup tags do
-    unless tags[:async] do
-      Ecto.Adapters.SQL.restart_test_transaction(CreditCardChecker.Repo, [])
-    end
+  setup _tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(CreditCardChecker.Repo)
 
     {:ok, conn: Phoenix.ConnTest.conn()}
   end
