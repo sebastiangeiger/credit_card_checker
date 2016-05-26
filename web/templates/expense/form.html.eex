@@ -30,7 +30,7 @@
 
   <div class="form-group">
     <%= label f, :amount, class: "control-label" %>
-    <%= number_input f, :amount, value: in_dollars(@changeset.model.amount_in_cents), class: "form-control", step: "0.01", placeholder: "0.00" %>
+    <%= number_input f, :amount, value: in_dollars(@changeset.data.amount_in_cents), class: "form-control", step: "0.01", placeholder: "0.00" %>
     <%= error_tag f, :amount %>
   </div>
 

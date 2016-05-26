@@ -36,7 +36,7 @@ defmodule CreditCardChecker.TransactionTest do
     transaction_2 = Transaction.changeset(%Transaction{},
       %{statement_line_id: sl_2.id, expense_id: expense.id})
     {:error, changeset} = Repo.insert(transaction_2)
-    assert changeset.errors[:expense_id] == "has already been taken"
+    assert changeset.errors[:expense_id] == {"has already been taken", []}
   end
 
   test "create two transactions with the same statement_line", %{user: user, payment_method: payment_method, merchant: merchant, statement_line: statement_line} do
@@ -50,7 +50,7 @@ defmodule CreditCardChecker.TransactionTest do
     transaction_2 = Transaction.changeset(%Transaction{},
       %{statement_line_id: statement_line.id, expense_id: expense_2.id})
     {:error, changeset} = Repo.insert(transaction_2)
-    assert changeset.errors[:statement_line_id] == "has already been taken"
+    assert changeset.errors[:statement_line_id] == {"has already been taken", []}
   end
 
   test "create transaction with expense and statement not adding up", %{user: user, payment_method: payment_method, merchant: merchant, statement_line: statement_line} do
