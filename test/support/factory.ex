@@ -14,6 +14,10 @@ defmodule CreditCardChecker.Factory do
     |> Repo.insert!
   end
 
+  def create_user(%{email: email}) do
+    create_user(%{email: email, password: "super_secret"})
+  end
+
   def create_payment_method(attrs, user: %User{id: user_id}) when user_id != nil do
     attrs = Map.put_new(attrs, :user_id, user_id)
     PaymentMethod.changeset(%PaymentMethod{}, attrs)

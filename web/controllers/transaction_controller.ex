@@ -3,9 +3,9 @@ defmodule CreditCardChecker.TransactionController do
 
   plug CreditCardChecker.RequireAuthenticated
 
-  alias CreditCardChecker.StatementLine
   alias CreditCardChecker.StatementLineExpenseMatcher
   alias CreditCardChecker.Transaction
+  alias CreditCardChecker.UnmatchedStatementLines
 
   def create(conn, %{"transaction" => transaction_params}) do
     changeset = Transaction.changeset(%Transaction{}, transaction_params)
@@ -23,11 +23,8 @@ defmodule CreditCardChecker.TransactionController do
   end
 
   def unmatched(conn, _params) do
-    unmatched_but_with_possible_expense =
-      [user_id: conn.assigns.current_user.id]
-      |> StatementLine.unmatched_but_with_possible_expense
-      |> Repo.all
-    render(conn, "unmatched.html", unmatched_but_with_possible_expense: unmatched_but_with_possible_expense)
+    view_model = UnmatchedStatementLines.view_model(conn.assigns.current_user.id)
+    render(conn, "unmatched.html", view_model)
   end
 
   def match(conn, params) do
