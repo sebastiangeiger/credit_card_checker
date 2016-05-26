@@ -22,6 +22,6 @@ defmodule CreditCardChecker.UserTest do
     |> Repo.insert!
     {_result, changeset} = User.changeset(%User{}, @valid_attrs)
     |> Repo.insert
-    assert changeset.errors[:email] == "has already been taken"
+    assert changeset.errors[:email] == {"has already been taken", []}
   end
 end

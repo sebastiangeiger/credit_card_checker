@@ -1,5 +1,5 @@
 defmodule CreditCardChecker.CreateAMerchantTest do
-  use CreditCardChecker.IntegrationCase
+  use CreditCardChecker.IntegrationCase, async: false
 
   import CreditCardChecker.MerchantsTestHelper,
     only: [merchants_list: 0, create_merchant: 1]

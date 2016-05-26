@@ -32,13 +32,13 @@ defmodule CreditCardChecker.Mixfile do
   defp deps do
     [{:phoenix, "~> 1.1.4"},
      {:postgrex, ">= 0.0.0"},
-     {:phoenix_ecto, "~> 2.0"},
+     {:phoenix_ecto, "3.0.0-rc.0"},
      {:phoenix_html, "~> 2.4"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
      {:timex, "~> 2.1"},
-     {:hound, "~> 0.8.2"},
+     {:hound, "~> 1.0"},
      {:comeonin, "~> 2.4"},
      {:csvlixir, "~> 2.0.3"}]
   end
@@ -51,6 +51,7 @@ defmodule CreditCardChecker.Mixfile do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+     "test": ["ecto.drop --quiet", "ecto.create --quiet", "ecto.migrate", "test"],
      "ecto.reset": ["ecto.drop", "ecto.setup"]]
   end
 end

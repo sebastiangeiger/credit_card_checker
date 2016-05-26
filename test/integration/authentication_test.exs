@@ -1,5 +1,5 @@
 defmodule CreditCardChecker.AuthenticationTest do
-  use CreditCardChecker.IntegrationCase
+  use CreditCardChecker.IntegrationCase, async: false
 
   import CreditCardChecker.AuthTestHelper,
     only: [sign_in_through_app: 1, sign_out_through_app: 0]

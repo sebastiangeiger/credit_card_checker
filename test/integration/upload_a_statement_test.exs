@@ -1,5 +1,5 @@
 defmodule CreditCardChecker.UploadAStatementTest do
-  use CreditCardChecker.IntegrationCase
+  use CreditCardChecker.IntegrationCase, async: false
 
   import CreditCardChecker.PaymentMethodsTestHelper,
     only: [create_payment_method: 1]

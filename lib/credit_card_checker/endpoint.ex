@@ -35,5 +35,10 @@ defmodule CreditCardChecker.Endpoint do
     key: "_credit_card_checker_key",
     signing_salt: "w5+6kkiz"
 
+
+  if Application.get_env(:credit_card_checker, :sql_sandbox) do
+    plug Phoenix.Ecto.SQL.Sandbox
+  end
+
   plug CreditCardChecker.Router
 end

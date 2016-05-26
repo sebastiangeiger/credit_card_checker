@@ -28,4 +28,4 @@ config :phoenix, :generators,
   migration: true,
   binary_id: false
 
-config :hound, driver: "phantomjs"
+config :credit_card_checker, ecto_repos: [CreditCardChecker.Repo]

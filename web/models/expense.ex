@@ -22,7 +22,7 @@ defmodule CreditCardChecker.Expense do
   If no params are provided, an invalid changeset is returned
   with no validation performed.
   """
-  def changeset(model, params \\ :empty) do
+  def changeset(model, params \\ %{}) do
     params = convert_amount(params)
     model
     |> cast(params, @required_fields, @optional_fields)
@@ -34,7 +34,7 @@ defmodule CreditCardChecker.Expense do
   end
 
   def empty_changeset(model) do
-    cast(model, :empty, @required_fields, @optional_fields)
+    cast(model, %{}, @required_fields, @optional_fields)
   end
 
   def mark_matched(expenses) when is_list(expenses) do
