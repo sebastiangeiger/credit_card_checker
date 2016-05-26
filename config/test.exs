@@ -18,5 +18,11 @@ config :credit_card_checker, CreditCardChecker.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
+
+config :hound, driver: "phantomjs"
+
+config :credit_card_checker, sql_sandbox: true
+
+
 config :comeonin, :bcrypt_log_rounds, 1
 config :comeonin, :pbkdf2_rounds, 1
