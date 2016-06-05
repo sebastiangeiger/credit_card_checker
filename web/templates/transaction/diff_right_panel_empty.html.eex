@@ -3,7 +3,10 @@
   <% {heading, content} = first_row  %>
   <tr>
     <td> <%= heading %> </td>
-    <td rowspan=<%= @diff_view.rowspan %> class="no-matches">No matching expenses</td>
+    <td rowspan=<%= @diff_view.rowspan %> class="no-matches">
+      <p>No matching expenses.</p>
+      <p><%= link "Create expense", to: "#" %></p>
+    </td>
   </tr>
   <tr>
     <td> <%= content %> </td>
