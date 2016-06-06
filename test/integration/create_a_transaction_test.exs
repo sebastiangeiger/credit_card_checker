@@ -69,6 +69,12 @@ defmodule CreditCardChecker.CreateATransactionTest do
     assert visible_page_text =~ "No matching expenses"
     find_element(:link_text, "Create expense")
     |> click
+    find_element(:css, "input#transaction_merchant_name")
+    |> fill_field("Whole Foods")
+    find_element(:css, "input[value='Create']")
+    |> submit_element
+    go_to_unclassified_transactions_page
+    refute visible_page_text =~ "WHOLE FDS"
   end
 
   defp go_to_unclassified_transactions_page do

@@ -3,6 +3,8 @@ defmodule CreditCardChecker.TransactionCreatorTest do
 
   alias CreditCardChecker.TransactionCreator
   alias CreditCardChecker.Transaction
+  alias CreditCardChecker.Expense
+  alias CreditCardChecker.Merchant
   alias CreditCardChecker.Repo
 
   import CreditCardChecker.Factory
@@ -38,5 +40,32 @@ defmodule CreditCardChecker.TransactionCreatorTest do
 
     assert result == :error
     assert Enum.count(Repo.all(Transaction)) == 0
+  end
+
+  test "create with a statement line with a merchant_name of an existing merchant", %{statement_line: statement_line} do
+    assert Enum.count(Repo.all(Expense)) == 1
+    result = TransactionCreator.create(%{
+      "merchant_name" => "Whole Foods",
+      "statement_line_id" => statement_line.id
+    })
+
+    assert result == :ok
+    assert Enum.count(Repo.all(Expense)) == 2
+    assert Enum.count(Repo.all(Merchant)) == 1
+    assert Enum.count(Repo.all(Transaction)) == 1
+  end
+
+  test "create with a statement line with a merchant_name of a new merchant", %{statement_line: statement_line} do
+    assert Enum.count(Repo.all(Expense)) == 1
+    assert Enum.count(Repo.all(Merchant)) == 1
+    result = TransactionCreator.create(%{
+      "merchant_name" => "Who Food?",
+      "statement_line_id" => statement_line.id
+    })
+
+    assert result == :ok
+    assert Enum.count(Repo.all(Expense)) == 2
+    assert Enum.count(Repo.all(Merchant)) == 2
+    assert Enum.count(Repo.all(Transaction)) == 1
   end
 end

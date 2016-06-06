@@ -1,4 +1,5 @@
 <%= form_tag transaction_path(@conn, :create), id: "create-transaction" do %>
+  <%= hidden_input :transaction, :statement_line_id, value: @diff_view.statement_line_id %>
   <table class="diff-table">
     <% left_panel = @diff_view.left_panel %>
     <tr>
@@ -12,13 +13,13 @@
     <tr>
       <td> <%= "Payee" %> </td>
       <td>
-        <%= label :merchant, :name, class: "control-label" %>
+        <%= label :transaction, :merchant_name, class: "control-label" %>
       </td>
     </tr>
     <tr>
       <td> <%= left_panel["Payee"] %> </td>
       <td>
-        <%= text_input :merchant, :name, class: "form-control awesomplete", data: [list: "#merchant_names", autofirst: true, minchars: 1] %>
+        <%= text_input :transaction, :merchant_name, class: "form-control awesomplete", data: [list: "#merchant_names", autofirst: true, minchars: 1] %>
         <ul id="merchant_names">
           <%= for merchant_name <- @diff_view.merchant_names do %>
             <li><%= merchant_name %></li>
