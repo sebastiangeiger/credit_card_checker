@@ -4,17 +4,16 @@ defmodule CreditCardChecker.TransactionController do
   plug CreditCardChecker.RequireAuthenticated
 
   alias CreditCardChecker.StatementLineExpenseMatcher
-  alias CreditCardChecker.Transaction
   alias CreditCardChecker.UnmatchedStatementLines
+  alias CreditCardChecker.TransactionCreator
 
   def create(conn, %{"transaction" => transaction_params}) do
-    changeset = Transaction.changeset(%Transaction{}, transaction_params)
-    case Repo.insert(changeset) do
-      {:ok, _} ->
+    case TransactionCreator.create(transaction_params) do
+      :ok ->
         conn
         |> put_flash(:info, "Transaction created")
         |> redirect(to: transaction_path(conn, :unmatched))
-      {:error, _} ->
+      :error ->
         statement_line_id = transaction_params["statement_line_id"]
         conn
         |> put_flash(:error, "Transaction could not be created")

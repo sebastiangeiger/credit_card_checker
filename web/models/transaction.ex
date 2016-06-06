@@ -62,7 +62,12 @@ defmodule CreditCardChecker.Transaction do
       %{statement_line_id: statement_line_id, expense_id: expense_id} ->
         statement_line = Repo.get(StatementLine, statement_line_id)
         expense = Repo.get(Expense, expense_id)
-        function.(changeset, statement_line, expense, errors)
+        if expense && statement_line do
+          function.(changeset, statement_line, expense, errors)
+        else
+          new = [base: "Could not find StatementLine and/or Expense"]
+          %{ changeset | errors: new ++ errors, valid?: false }
+        end
       _ ->
         new = [base: "Could not find StatementLine and Expense"]
         %{ changeset | errors: new ++ errors, valid?: false }
