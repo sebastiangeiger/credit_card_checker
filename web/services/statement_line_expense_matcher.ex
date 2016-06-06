@@ -1,16 +1,15 @@
 defmodule CreditCardChecker.StatementLineExpenseMatcher do
-  alias CreditCardChecker.Repo
   alias CreditCardChecker.StatementLine
   alias CreditCardChecker.Expense
   alias CreditCardChecker.NoExpense
-  alias CreditCardChecker.TableModel.Line
-  alias CreditCardChecker.TableModel.Cell
   import CreditCardChecker.MoneyViewHelpers, only: [in_dollars: 1]
 
   defmodule DataAccess do
+    alias CreditCardChecker.Repo
+
     def load_data(statement_line_id, expense_id) do
       statement_line = Repo.get(StatementLine, statement_line_id)
-                        |> Repo.preload(:payment_method)
+                       |> Repo.preload(:payment_method)
       {expense, remaining_expenses} =
       Expense.potential_matches_for(statement_line: statement_line)
       |> Repo.all
@@ -48,6 +47,9 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   end
 
   defmodule MatchingExpenseViewModel do
+    alias CreditCardChecker.TableModel.Line
+    alias CreditCardChecker.TableModel.Cell
+
     defstruct table: [], statement_line_id: nil, expense_id: nil,
               template: "diff.html"
 
