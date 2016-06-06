@@ -1,21 +1,23 @@
 <table class="diff-table">
-  <% [first_row | rest] = @diff_view.left_panel %>
-  <% {heading, content} = first_row  %>
+  <% left_panel = @diff_view.left_panel %>
   <tr>
-    <td> <%= heading %> </td>
+    <td> <%= "Amount" %> </td>
     <td rowspan=<%= @diff_view.rowspan %> class="no-matches">
       <p>No matching expenses.</p>
     </td>
   </tr>
   <tr>
-    <td> <%= content %> </td>
+    <td> <%= left_panel["Amount"] %> </td>
   </tr>
-  <%= for {heading, content} <- rest do %>
-    <tr>
-      <td> <%= heading %> </td>
-    </tr>
-    <tr>
-      <td> <%= content %> </td>
-    </tr>
+  <% field_names = ["Payee", "Date", "Address", "Reference Number", "Payment Method"] %>
+  <%= for field_name <- field_names do %>
+    <%= if Map.has_key?(left_panel, field_name) do %>
+      <tr>
+        <td> <%= field_name %> </td>
+      </tr>
+      <tr>
+        <td> <%= left_panel[field_name] %> </td>
+      </tr>
+    <% end %>
   <% end %>
 </table>

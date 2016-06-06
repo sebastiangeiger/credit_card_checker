@@ -50,14 +50,14 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
 
   test "diff_view with a statement line but no expense returns a left panel only" do
     diff_view = StatementLineExpenseMatcher.diff_view(@statement_line, %NoExpense{}, false)
-    assert diff_view.left_panel == [
-      "Amount": "-1.23",
-      "Payee": "MERCHANT #1",
-      "Date": "2015-04-20",
-      "Address": "Address #1",
-      "Reference Number": "Reference Number #1",
-      "Payment Method": "Visa"
-    ]
+    assert diff_view.left_panel == %{
+      "Amount" => "-1.23",
+      "Payee" => "MERCHANT #1",
+      "Date" => "2015-04-20",
+      "Address" => "Address #1",
+      "Reference Number" => "Reference Number #1",
+      "Payment Method" => "Visa"
+    }
     assert diff_view.rowspan == 12
     assert diff_view.template == "diff_right_panel_empty.html"
   end

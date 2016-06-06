@@ -134,6 +134,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     def cast(statement_line, show_new_expense_form) do
       left_panel = side(statement_line)
                    |> remove_empty_lines
+                   |> to_map_with_string_keys
       %NoMatchingExpenseViewModel{
         statement_line_id: statement_line.id,
         left_panel: left_panel,
@@ -169,6 +170,12 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       else
         "diff_right_panel_empty.html"
       end
+    end
+
+    defp to_map_with_string_keys(list) do
+      list
+      |> Enum.map(fn({key,value}) -> {Atom.to_string(key), value} end)
+      |> Enum.into(%{})
     end
   end
 
