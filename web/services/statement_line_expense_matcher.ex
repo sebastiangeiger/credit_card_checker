@@ -7,11 +7,11 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   alias CreditCardChecker.TableModel.Cell
   import CreditCardChecker.MoneyViewHelpers, only: [in_dollars: 1]
 
-  def diff_view(statement_line_id: id) do
-    diff_view(statement_line_id: id, expense_id: nil)
+  def view_model(statement_line_id: id) do
+    view_model(statement_line_id: id, expense_id: nil)
   end
 
-  def diff_view(statement_line_id: statement_line_id, expense_id: expense_id) do
+  def view_model(statement_line_id: statement_line_id, expense_id: expense_id) do
     statement_line = Repo.get(StatementLine, statement_line_id)
     |> Repo.preload(:payment_method)
     {expense, remaining_expenses} =
@@ -24,7 +24,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       expense_id: expense.id,
       remaining_expenses: remaining_expenses,
       template: "diff.html",
-      diff_view: view_model(statement_line, expense)]
+      diff_view: diff_view(statement_line, expense)]
   end
 
   def select_displayed_expense(expenses, nil) do
@@ -154,7 +154,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     end
   end
 
-  def view_model(statement_line, expense) do
+  def diff_view(statement_line, expense) do
     MatchingExpenseViewModel.cast(statement_line, expense)
   end
 end

@@ -23,15 +23,15 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
     payment_method: @payment_method
   }
 
-  test "view_model with a statement line and an expense returns the right table model" do
+  test "diff_view with a statement line and an expense returns the right table model" do
     expense = %Expense{
       amount_in_cents: 123,
       time_of_sale: Ecto.DateTime.cast!("2015-04-20 13:37:00"),
       merchant: %Merchant{name: "Merchant #1"},
       payment_method: @payment_method
     }
-    view_model = StatementLineExpenseMatcher.view_model(@statement_line, expense)
-    assert view_model.table == [
+    diff_view = StatementLineExpenseMatcher.diff_view(@statement_line, expense)
+    assert diff_view.table == [
       %Line{cells: [%Cell{content: "Amount"},              %Cell{content: "Amount"}]},
       %Line{cells: [%Cell{content: "-1.23"},               %Cell{content: "1.23"}]},
       %Line{cells: [%Cell{content: "Payee"},               %Cell{content: "Payee"}]},
@@ -47,9 +47,9 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
     ]
   end
 
-  test "view_model with a statement line but no expense returns the right table model" do
-    view_model = StatementLineExpenseMatcher.view_model(@statement_line, %NoExpense{})
-    assert view_model.table == [
+  test "diff_view with a statement line but no expense returns the right table model" do
+    diff_view = StatementLineExpenseMatcher.diff_view(@statement_line, %NoExpense{})
+    assert diff_view.table == [
       %Line{cells: [%Cell{content: "Amount"}, %Cell{content: "No matching expenses", rowspan: 12, class: "no-matches"}]},
       %Line{cells: [%Cell{content: "-1.23"}]},
       %Line{cells: [%Cell{content: "Payee"}]},
