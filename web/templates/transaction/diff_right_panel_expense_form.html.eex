@@ -1,23 +1,62 @@
-<table class="diff-table">
-  <% left_panel = @diff_view.left_panel %>
-  <tr>
-    <td> <%= "Amount" %> </td>
-    <td rowspan=<%= @diff_view.rowspan %> class="no-matches">
-      <p>No matching expenses.</p>
-    </td>
-  </tr>
-  <tr>
-    <td> <%= left_panel["Amount"] %> </td>
-  </tr>
-  <% field_names = ["Payee", "Date", "Address", "Reference Number", "Payment Method"] %>
-  <%= for field_name <- field_names do %>
-    <%= if Map.has_key?(left_panel, field_name) do %>
-      <tr>
-        <td> <%= field_name %> </td>
-      </tr>
-      <tr>
-        <td> <%= left_panel[field_name] %> </td>
-      </tr>
+<%= form_tag transaction_path(@conn, :create), id: "create-transaction" do %>
+  <table class="diff-table">
+    <% left_panel = @diff_view.left_panel %>
+    <tr>
+      <td> <%= "Amount" %> </td>
+      <td> <%= "Amount" %> </td>
+    </tr>
+    <tr>
+      <td> <%= left_panel["Amount"] %> </td>
+      <td> <%= left_panel["Amount"] %> </td>
+    </tr>
+    <tr>
+      <td> <%= "Payee" %> </td>
+      <td>
+        <%= label :merchant, :name, class: "control-label" %>
+      </td>
+    </tr>
+    <tr>
+      <td> <%= left_panel["Payee"] %> </td>
+      <td>
+        <%= text_input :merchant, :name, class: "form-control awesomplete", data: [list: "#merchant_names", autofirst: true, minchars: 1] %>
+        <ul id="merchant_names">
+          <%= for merchant_name <- @diff_view.merchant_names do %>
+            <li><%= merchant_name %></li>
+          <% end %>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td> <%= "Date" %> </td>
+      <td> <%= "Date" %> </td>
+    </tr>
+    <tr>
+      <td> <%= left_panel["Date"] %> </td>
+      <td> <%= left_panel["Date"] %> </td>
+    </tr>
+    <% field_names = ["Address", "Reference Number" ] %>
+    <%= for field_name <- field_names do %>
+      <%= if Map.has_key?(left_panel, field_name) do %>
+        <tr>
+          <td> <%= field_name %> </td>
+          <td> <%= field_name %> </td>
+        </tr>
+        <tr>
+          <td> <%= left_panel[field_name] %> </td>
+          <td> </td>
+        </tr>
+      <% end %>
     <% end %>
-  <% end %>
-</table>
+    <tr>
+      <td> <%= "Payment Method" %> </td>
+      <td> <%= "Payment Method" %> </td>
+    </tr>
+    <tr>
+      <td> <%= left_panel["Payment Method"] %> </td>
+      <td> <%= left_panel["Payment Method"] %> </td>
+    </tr>
+  </table>
+  <div class="buttons">
+    <%= submit "Create", class: "btn btn-xs btn-default" %>
+  </div>
+<% end %>

@@ -6,8 +6,9 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
 
   defmodule DataAccess do
     alias CreditCardChecker.Repo
+    alias CreditCardChecker.Merchant
 
-    def load_data(statement_line_id, expense_id) do
+    def load_data(statement_line_id, expense_id, opts) do
       statement_line = Repo.get(StatementLine, statement_line_id)
                        |> Repo.preload(:payment_method)
       {expense, remaining_expenses} =
@@ -16,7 +17,15 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       |> adjust_expense_list
       |> select_displayed_expense(expense_id)
 
-      %{statement_line: statement_line, expense: expense, remaining_expenses: remaining_expenses}
+      merchant_names = if Keyword.get(opts, :load_merchants, false) do
+        Merchant.names_for(user_id: statement_line.payment_method.user_id)
+        |> Repo.all
+      else
+        []
+      end
+
+      %{statement_line: statement_line, expense: expense,
+        remaining_expenses: remaining_expenses, merchant_names: merchant_names}
     end
 
     def select_displayed_expense(expenses, nil) do
@@ -129,7 +138,8 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
 
   defmodule NoMatchingExpenseViewModel do
     defstruct left_panel: [], statement_line_id: nil, expense_id: nil,
-              template: "diff_right_panel_empty.html", rowspan: 1
+              template: "diff_right_panel_empty.html", rowspan: 1,
+              merchant_names: []
 
     def cast(statement_line, show_new_expense_form) do
       left_panel = side(statement_line)
@@ -184,12 +194,13 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
                  show_new_expense_form: show_new_expense_form) do
     %{statement_line: statement_line,
       expense: expense,
+      merchant_names: merchant_names,
       remaining_expenses: remaining_expenses}
-      = DataAccess.load_data(statement_line_id, expense_id)
+      = DataAccess.load_data(statement_line_id, expense_id, load_merchants: show_new_expense_form)
 
     [statement_line_id: statement_line.id,
      remaining_expenses: remaining_expenses,
-     diff_view: diff_view(statement_line, expense, show_new_expense_form)]
+     diff_view: diff_view(statement_line, expense, show_new_expense_form) |> add_merchant_names(merchant_names)]
   end
 
   def diff_view(statement_line, %NoExpense{} = _expense, show_new_expense_form) do
@@ -198,5 +209,13 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
 
   def diff_view(statement_line, expense, _show_new_expense_form) do
     MatchingExpenseViewModel.cast(statement_line, expense)
+  end
+
+  defp add_merchant_names(%NoMatchingExpenseViewModel{} = view_model, merchant_names) do
+    %{ view_model | merchant_names: merchant_names }
+  end
+
+  defp add_merchant_names(view_model,_) do
+    view_model
   end
 end
