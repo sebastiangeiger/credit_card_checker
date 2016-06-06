@@ -5,7 +5,7 @@
     <td> <%= heading %> </td>
     <td rowspan=<%= @diff_view.rowspan %> class="no-matches">
       <p>No matching expenses.</p>
-      <p><%= link "Create expense", to: "#" %></p>
+      <p><%= link "Create expense", to: transaction_path(@conn, :match, @diff_view.statement_line_id, [new: true])%></p>
     </td>
   </tr>
   <tr>

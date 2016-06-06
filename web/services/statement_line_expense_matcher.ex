@@ -163,11 +163,9 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     end
   end
 
-  def view_model(statement_line_id: id) do
-    view_model(statement_line_id: id, expense_id: nil)
-  end
-
-  def view_model(statement_line_id: statement_line_id, expense_id: expense_id) do
+  def view_model(statement_line_id: statement_line_id,
+                 expense_id: expense_id,
+                 show_new_expense_form: _) do
     %{statement_line: statement_line,
       expense: expense,
       remaining_expenses: remaining_expenses}
