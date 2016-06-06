@@ -61,6 +61,11 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
     assert diff_view.rowspan == 12
     assert diff_view.template == "diff_right_panel_empty.html"
   end
+
+  test "diff_view with a statement line and instructed to show a new expense form" do
+    diff_view = StatementLineExpenseMatcher.diff_view(@statement_line, %NoExpense{}, true)
+    assert diff_view.template == "diff_right_panel_expense_form.html"
+  end
 end
 
 defmodule CreditCardChecker.StatementLineExpenseMatcher.DataAccessTest do

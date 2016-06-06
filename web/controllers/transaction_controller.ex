@@ -38,7 +38,7 @@ defmodule CreditCardChecker.TransactionController do
     case params do
       %{"id" => id, "expense_id" => expense_id} ->
         [statement_line_id: id, expense_id: expense_id, show_new_expense_form: false]
-      %{"id" => id, "new" => true} ->
+      %{"id" => id, "new" => "true"} ->
         [statement_line_id: id, expense_id: nil, show_new_expense_form: true]
       %{"id" => id} ->
         [statement_line_id: id, expense_id: nil, show_new_expense_form: false]

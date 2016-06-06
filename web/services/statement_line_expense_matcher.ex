@@ -137,7 +137,8 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       %NoMatchingExpenseViewModel{
         statement_line_id: statement_line.id,
         left_panel: left_panel,
-        rowspan: Enum.count(left_panel) * 2
+        rowspan: Enum.count(left_panel) * 2,
+        template: template(show_new_expense_form)
       }
     end
 
@@ -160,6 +161,14 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
           _ -> false
         end
       end)
+    end
+
+    defp template(show_new_expense_form) do
+      if show_new_expense_form do
+        "diff_right_panel_expense_form.html"
+      else
+        "diff_right_panel_empty.html"
+      end
     end
   end
 
