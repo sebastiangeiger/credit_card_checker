@@ -7,48 +7,44 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   alias CreditCardChecker.TableModel.Cell
   import CreditCardChecker.MoneyViewHelpers, only: [in_dollars: 1]
 
-  def view_model(statement_line_id: id) do
-    view_model(statement_line_id: id, expense_id: nil)
-  end
-
-  def view_model(statement_line_id: statement_line_id, expense_id: expense_id) do
-    statement_line = Repo.get(StatementLine, statement_line_id)
-    |> Repo.preload(:payment_method)
-    {expense, remaining_expenses} =
+  defmodule DataAccess do
+    def load_data(statement_line_id, expense_id) do
+      statement_line = Repo.get(StatementLine, statement_line_id)
+                        |> Repo.preload(:payment_method)
+      {expense, remaining_expenses} =
       Expense.potential_matches_for(statement_line: statement_line)
       |> Repo.all
       |> adjust_expense_list
       |> select_displayed_expense(expense_id)
 
-    [statement_line_id: statement_line.id,
-     remaining_expenses: remaining_expenses,
-     diff_view: diff_view(statement_line, expense)]
-  end
-
-  def select_displayed_expense(expenses, nil) do
-    [expense | remaining_expenses] = expenses
-    {expense, remaining_expenses}
-  end
-
-  def select_displayed_expense(expenses, expense_id) when is_binary(expense_id) do
-    select_displayed_expense(expenses, String.to_integer(expense_id))
-  end
-
-  def select_displayed_expense(expenses, expense_id) do
-    index = Enum.find_index(expenses, &(&1.id == expense_id))
-    if index do
-      {Enum.at(expenses, index), List.delete_at(expenses, index)}
-    else
-      select_displayed_expense(expenses, nil)
+      %{statement_line: statement_line, expense: expense, remaining_expenses: remaining_expenses}
     end
-  end
 
-  defp adjust_expense_list([]) do
-    [%NoExpense{}]
-  end
+    def select_displayed_expense(expenses, nil) do
+      [expense | remaining_expenses] = expenses
+      {expense, remaining_expenses}
+    end
 
-  defp adjust_expense_list([_ | _] = result) do
-    result
+    def select_displayed_expense(expenses, expense_id) when is_binary(expense_id) do
+      select_displayed_expense(expenses, String.to_integer(expense_id))
+    end
+
+    def select_displayed_expense(expenses, expense_id) do
+      index = Enum.find_index(expenses, &(&1.id == expense_id))
+      if index do
+        {Enum.at(expenses, index), List.delete_at(expenses, index)}
+      else
+        select_displayed_expense(expenses, nil)
+      end
+    end
+
+    defp adjust_expense_list([]) do
+      [%NoExpense{}]
+    end
+
+    defp adjust_expense_list([_ | _] = result) do
+      result
+    end
   end
 
   defmodule MatchingExpenseViewModel do
@@ -153,6 +149,21 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       end
       |> List.flatten
     end
+  end
+
+  def view_model(statement_line_id: id) do
+    view_model(statement_line_id: id, expense_id: nil)
+  end
+
+  def view_model(statement_line_id: statement_line_id, expense_id: expense_id) do
+    %{statement_line: statement_line,
+      expense: expense,
+      remaining_expenses: remaining_expenses}
+      = DataAccess.load_data(statement_line_id, expense_id)
+
+    [statement_line_id: statement_line.id,
+     remaining_expenses: remaining_expenses,
+     diff_view: diff_view(statement_line, expense)]
   end
 
   def diff_view(statement_line, expense) do
