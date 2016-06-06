@@ -59,13 +59,6 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       }
     end
 
-    defp table(statement_line, %NoExpense{} = expense) do
-      zip_up(side(statement_line), side(expense))
-      |> remove_empty_lines
-      |> convert_to_table_model
-      |> add_row_spanning_cell
-    end
-
     defp table(statement_line, expense) do
       zip_up(side(statement_line), side(expense))
       |> remove_empty_lines
@@ -94,28 +87,9 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       ]
     end
 
-    defp side(%NoExpense{}) do
-      [
-        "Amount": nil,
-        "Payee": nil,
-        "Date": nil,
-        "Address": nil,
-        "Reference Number": nil,
-        "Payment Method": nil
-      ]
-    end
-
     def zip_up(left_side, right_side) do
       Keyword.merge(left_side, right_side,
         fn(_key, value_1, value_2) -> [value_1, value_2] end)
-    end
-
-    def add_row_spanning_cell(lines) do
-      rowspan = Enum.count(lines)
-      row_spanning_cell = %Cell{content: "No matching expenses", rowspan: rowspan, class: "no-matches"}
-      List.update_at(lines, 0, fn (%Line{cells: [cell | []]} = line) ->
-        %{ line | cells: [cell, row_spanning_cell] }
-      end)
     end
 
     def remove_empty_lines(lines) do
@@ -151,6 +125,42 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     end
   end
 
+  defmodule NoMatchingExpenseViewModel do
+    defstruct left_panel: [], statement_line_id: nil, expense_id: nil,
+              template: "diff_right_panel_empty.html", rowspan: 1
+
+    def cast(statement_line) do
+      left_panel = side(statement_line)
+                   |> remove_empty_lines
+      %NoMatchingExpenseViewModel{
+        statement_line_id: statement_line.id,
+        left_panel: left_panel,
+        rowspan: Enum.count(left_panel) * 2
+      }
+    end
+
+    defp side(%StatementLine{} = statement_line) do
+      [
+        "Amount": in_dollars(statement_line.amount_in_cents),
+        "Payee": statement_line.payee,
+        "Date": Ecto.Date.to_string(statement_line.posted_date),
+        "Address": statement_line.address,
+        "Reference Number": statement_line.reference_number,
+        "Payment Method": statement_line.payment_method.name
+      ]
+    end
+
+    def remove_empty_lines(lines) do
+      Enum.reject(lines, fn(line) ->
+        case line do
+          {_headline, ""}  -> true
+          {_headline, nil} -> true
+          _ -> false
+        end
+      end)
+    end
+  end
+
   def view_model(statement_line_id: id) do
     view_model(statement_line_id: id, expense_id: nil)
   end
@@ -164,6 +174,10 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     [statement_line_id: statement_line.id,
      remaining_expenses: remaining_expenses,
      diff_view: diff_view(statement_line, expense)]
+  end
+
+  def diff_view(statement_line, %NoExpense{} = _expense) do
+    NoMatchingExpenseViewModel.cast(statement_line)
   end
 
   def diff_view(statement_line, expense) do

@@ -45,24 +45,21 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
       %Line{cells: [%Cell{content: "Payment Method"},      %Cell{content: "Payment Method"}]},
       %Line{cells: [%Cell{content: "Visa"},                %Cell{content: "Visa"}]}
     ]
+    assert diff_view.template == "diff.html"
   end
 
-  test "diff_view with a statement line but no expense returns the right table model" do
+  test "diff_view with a statement line but no expense returns a left panel only" do
     diff_view = StatementLineExpenseMatcher.diff_view(@statement_line, %NoExpense{})
-    assert diff_view.table == [
-      %Line{cells: [%Cell{content: "Amount"}, %Cell{content: "No matching expenses", rowspan: 12, class: "no-matches"}]},
-      %Line{cells: [%Cell{content: "-1.23"}]},
-      %Line{cells: [%Cell{content: "Payee"}]},
-      %Line{cells: [%Cell{content: "MERCHANT #1"}]},
-      %Line{cells: [%Cell{content: "Date"}]},
-      %Line{cells: [%Cell{content: "2015-04-20"}]},
-      %Line{cells: [%Cell{content: "Address"}]},
-      %Line{cells: [%Cell{content: "Address #1"}]},
-      %Line{cells: [%Cell{content: "Reference Number"}]},
-      %Line{cells: [%Cell{content: "Reference Number #1"}]},
-      %Line{cells: [%Cell{content: "Payment Method"}]},
-      %Line{cells: [%Cell{content: "Visa"}]}
+    assert diff_view.left_panel == [
+      "Amount": "-1.23",
+      "Payee": "MERCHANT #1",
+      "Date": "2015-04-20",
+      "Address": "Address #1",
+      "Reference Number": "Reference Number #1",
+      "Payment Method": "Visa"
     ]
+    assert diff_view.rowspan == 12
+    assert diff_view.template == "diff_right_panel_empty.html"
   end
 end
 
@@ -113,5 +110,19 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher.MatchingExpenseViewModel
 
   test "remove_empty_lines with empty line" do
     assert remove_empty_lines([a: [1, 3], b: ["", ""]]) == [a: [1, 3]]
+  end
+end
+
+defmodule CreditCardChecker.StatementLineExpenseMatcher.NoMatchingExpenseViewModelTest do
+  use ExUnit.Case
+
+  import CreditCardChecker.StatementLineExpenseMatcher.NoMatchingExpenseViewModel
+
+  test "remove_empty_lines with no empty line" do
+    assert remove_empty_lines([a: 1, b: 2]) == [a: 1, b: 2]
+  end
+
+  test "remove_empty_lines with empty line" do
+    assert remove_empty_lines([a: 1, b: ""]) == [a: 1]
   end
 end

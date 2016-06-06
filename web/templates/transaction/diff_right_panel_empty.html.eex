@@ -1,0 +1,19 @@
+<table class="diff-table">
+  <% [first_row | rest] = @diff_view.left_panel %>
+  <% {heading, content} = first_row  %>
+  <tr>
+    <td> <%= heading %> </td>
+    <td rowspan=<%= @diff_view.rowspan %> class="no-matches">No matching expenses</td>
+  </tr>
+  <tr>
+    <td> <%= content %> </td>
+  </tr>
+  <%= for {heading, content} <- rest do %>
+    <tr>
+      <td> <%= heading %> </td>
+    </tr>
+    <tr>
+      <td> <%= content %> </td>
+    </tr>
+  <% end %>
+</table>
