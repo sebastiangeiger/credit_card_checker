@@ -3,6 +3,7 @@ defmodule CreditCardChecker.ExpenseController do
 
   alias CreditCardChecker.Expense
   alias CreditCardChecker.ExpenseForm
+  alias CreditCardChecker.Merchant
 
   plug :scrub_params, "expense" when action in [:create, :update]
   plug CreditCardChecker.RequireAuthenticated
@@ -64,9 +65,7 @@ defmodule CreditCardChecker.ExpenseController do
   end
 
   defp assign_merchants(conn) do
-    query = from m in CreditCardChecker.Merchant,
-      order_by: m.name,
-      select: m.name
+    query = Merchant.names_for(user_id: conn.assigns.current_user.id)
     conn
     |> assign(:merchant_names, Repo.all(query))
   end

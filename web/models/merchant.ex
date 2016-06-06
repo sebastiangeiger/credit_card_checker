@@ -23,4 +23,11 @@ defmodule CreditCardChecker.Merchant do
     |> foreign_key_constraint(:user_id)
     |> validate_format(:name, ~r/\S+/)
   end
+
+  def names_for(user_id: user_id) do
+    from m in CreditCardChecker.Merchant,
+    select: m.name,
+    where: m.user_id == ^user_id,
+    order_by: m.name
+  end
 end
