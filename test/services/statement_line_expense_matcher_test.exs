@@ -30,7 +30,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
       merchant: %Merchant{name: "Merchant #1"},
       payment_method: @payment_method
     }
-    diff_view = StatementLineExpenseMatcher.diff_view(@statement_line, expense)
+    diff_view = StatementLineExpenseMatcher.diff_view(@statement_line, expense, false)
     assert diff_view.table == [
       %Line{cells: [%Cell{content: "Amount"},              %Cell{content: "Amount"}]},
       %Line{cells: [%Cell{content: "-1.23"},               %Cell{content: "1.23"}]},
@@ -49,7 +49,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
   end
 
   test "diff_view with a statement line but no expense returns a left panel only" do
-    diff_view = StatementLineExpenseMatcher.diff_view(@statement_line, %NoExpense{})
+    diff_view = StatementLineExpenseMatcher.diff_view(@statement_line, %NoExpense{}, false)
     assert diff_view.left_panel == [
       "Amount": "-1.23",
       "Payee": "MERCHANT #1",

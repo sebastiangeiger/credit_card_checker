@@ -131,7 +131,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     defstruct left_panel: [], statement_line_id: nil, expense_id: nil,
               template: "diff_right_panel_empty.html", rowspan: 1
 
-    def cast(statement_line) do
+    def cast(statement_line, show_new_expense_form) do
       left_panel = side(statement_line)
                    |> remove_empty_lines
       %NoMatchingExpenseViewModel{
@@ -165,7 +165,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
 
   def view_model(statement_line_id: statement_line_id,
                  expense_id: expense_id,
-                 show_new_expense_form: _) do
+                 show_new_expense_form: show_new_expense_form) do
     %{statement_line: statement_line,
       expense: expense,
       remaining_expenses: remaining_expenses}
@@ -173,14 +173,14 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
 
     [statement_line_id: statement_line.id,
      remaining_expenses: remaining_expenses,
-     diff_view: diff_view(statement_line, expense)]
+     diff_view: diff_view(statement_line, expense, show_new_expense_form)]
   end
 
-  def diff_view(statement_line, %NoExpense{} = _expense) do
-    NoMatchingExpenseViewModel.cast(statement_line)
+  def diff_view(statement_line, %NoExpense{} = _expense, show_new_expense_form) do
+    NoMatchingExpenseViewModel.cast(statement_line, show_new_expense_form)
   end
 
-  def diff_view(statement_line, expense) do
+  def diff_view(statement_line, expense, _show_new_expense_form) do
     MatchingExpenseViewModel.cast(statement_line, expense)
   end
 end
