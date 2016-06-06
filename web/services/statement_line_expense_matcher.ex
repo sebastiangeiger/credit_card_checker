@@ -53,11 +53,11 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     result
   end
 
-  defmodule ViewModel do
+  defmodule MatchingExpenseViewModel do
     defstruct table: []
 
     def cast(statement_line, expense) do
-      %ViewModel{
+      %MatchingExpenseViewModel{
         table: table(statement_line, expense)
       }
     end
@@ -155,6 +155,6 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   end
 
   def view_model(statement_line, expense) do
-    ViewModel.cast(statement_line, expense)
+    MatchingExpenseViewModel.cast(statement_line, expense)
   end
 end

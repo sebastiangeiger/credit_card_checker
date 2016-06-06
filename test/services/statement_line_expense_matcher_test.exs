@@ -91,20 +91,20 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
   end
 end
 
-defmodule CreditCardChecker.StatementLineExpenseMatcher.ViewModelTest do
+defmodule CreditCardChecker.StatementLineExpenseMatcher.MatchingExpenseViewModelTest do
   use ExUnit.Case
 
-  alias CreditCardChecker.StatementLineExpenseMatcher.ViewModel
+  import CreditCardChecker.StatementLineExpenseMatcher.MatchingExpenseViewModel
 
   test "zip_up with two keyword lists" do
-    assert ViewModel.zip_up([a: 1, b: 2], [a: 3, b: 4]) == [a: [1, 3], b: [2, 4]]
+    assert zip_up([a: 1, b: 2], [a: 3, b: 4]) == [a: [1, 3], b: [2, 4]]
   end
 
   test "remove_empty_lines with no empty line" do
-    assert ViewModel.remove_empty_lines([a: [1, 3], b: [2, 4]]) == [a: [1, 3], b: [2, 4]]
+    assert remove_empty_lines([a: [1, 3], b: [2, 4]]) == [a: [1, 3], b: [2, 4]]
   end
 
   test "remove_empty_lines with empty line" do
-    assert ViewModel.remove_empty_lines([a: [1, 3], b: ["", ""]]) == [a: [1, 3]]
+    assert remove_empty_lines([a: [1, 3], b: ["", ""]]) == [a: [1, 3]]
   end
 end
