@@ -54,16 +54,22 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   end
 
   defmodule ViewModel do
-    defstruct lines: []
+    defstruct table: []
 
-    def cast(statement_line, %NoExpense{} = expense) do
+    def cast(statement_line, expense) do
+      %ViewModel{
+        table: table(statement_line, expense)
+      }
+    end
+
+    defp table(statement_line, %NoExpense{} = expense) do
       zip_up(side(statement_line), side(expense))
       |> remove_empty_lines
       |> convert_to_table_model
       |> add_row_spanning_cell
     end
 
-    def cast(statement_line, expense) do
+    defp table(statement_line, expense) do
       zip_up(side(statement_line), side(expense))
       |> remove_empty_lines
       |> convert_to_table_model

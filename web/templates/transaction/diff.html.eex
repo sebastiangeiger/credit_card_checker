@@ -1,5 +1,5 @@
 <table class="diff-table">
-  <%= for %{cells: cells} <- @diff_view do %>
+  <%= for %{cells: cells} <- @diff_view.table do %>
     <tr>
       <%= for %{content: content, rowspan: rowspan, class: class} <- cells do %>
         <td rowspan="<%= rowspan %>" class="<%= class %>"> <%= content %> </td>

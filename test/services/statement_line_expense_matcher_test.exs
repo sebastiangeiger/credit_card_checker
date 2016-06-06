@@ -31,7 +31,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
       payment_method: @payment_method
     }
     view_model = StatementLineExpenseMatcher.view_model(@statement_line, expense)
-    assert view_model == [
+    assert view_model.table == [
       %Line{cells: [%Cell{content: "Amount"},              %Cell{content: "Amount"}]},
       %Line{cells: [%Cell{content: "-1.23"},               %Cell{content: "1.23"}]},
       %Line{cells: [%Cell{content: "Payee"},               %Cell{content: "Payee"}]},
@@ -49,7 +49,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcherTest do
 
   test "view_model with a statement line but no expense returns the right table model" do
     view_model = StatementLineExpenseMatcher.view_model(@statement_line, %NoExpense{})
-    assert view_model == [
+    assert view_model.table == [
       %Line{cells: [%Cell{content: "Amount"}, %Cell{content: "No matching expenses", rowspan: 12, class: "no-matches"}]},
       %Line{cells: [%Cell{content: "-1.23"}]},
       %Line{cells: [%Cell{content: "Payee"}]},
