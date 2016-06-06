@@ -23,6 +23,7 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
     [statement_line_id: statement_line.id,
       expense_id: expense.id,
       remaining_expenses: remaining_expenses,
+      template: "diff.html",
       diff_view: view_model(statement_line, expense)]
   end
 

@@ -1,5 +1,5 @@
 <h3>Match</h3>
-<%= render "diff.html", diff_view: @diff_view, conn: @conn %>
+<%= render @template, diff_view: @diff_view, conn: @conn %>
 <%= if @statement_line_id && @expense_id do %>
   <%= form_tag transaction_path(@conn, :create), id: "create-transaction" do %>
     <%= hidden_input :transaction, :statement_line_id, value: @statement_line_id %>
