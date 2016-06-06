@@ -7,10 +7,10 @@
     </tr>
   <% end %>
 </table>
-<%= if @statement_line_id && @expense_id do %>
+<%= if @diff_view.statement_line_id && @diff_view.expense_id do %>
   <%= form_tag transaction_path(@conn, :create), id: "create-transaction" do %>
-    <%= hidden_input :transaction, :statement_line_id, value: @statement_line_id %>
-    <%= hidden_input :transaction, :expense_id, value: @expense_id %>
+    <%= hidden_input :transaction, :statement_line_id, value: @diff_view.statement_line_id %>
+    <%= hidden_input :transaction, :expense_id, value: @diff_view.expense_id %>
     <%= submit "Create", class: "btn btn-xs btn-default" %>
   <% end %>
 <% end %>

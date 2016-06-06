@@ -21,10 +21,9 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
       |> select_displayed_expense(expense_id)
 
     [statement_line_id: statement_line.id,
-      expense_id: expense.id,
-      remaining_expenses: remaining_expenses,
-      template: "diff.html",
-      diff_view: diff_view(statement_line, expense)]
+     remaining_expenses: remaining_expenses,
+     template: "diff.html",
+     diff_view: diff_view(statement_line, expense)]
   end
 
   def select_displayed_expense(expenses, nil) do
@@ -54,11 +53,13 @@ defmodule CreditCardChecker.StatementLineExpenseMatcher do
   end
 
   defmodule MatchingExpenseViewModel do
-    defstruct table: []
+    defstruct table: [], statement_line_id: nil, expense_id: nil
 
     def cast(statement_line, expense) do
       %MatchingExpenseViewModel{
-        table: table(statement_line, expense)
+        table: table(statement_line, expense),
+        statement_line_id: statement_line.id,
+        expense_id: expense.id
       }
     end
 

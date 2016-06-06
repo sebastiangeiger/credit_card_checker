@@ -1,5 +1,5 @@
 <h3>Match</h3>
-<%= render @template, diff_view: @diff_view, statement_line_id: @statement_line_id, expense_id: @expense_id, conn: @conn %>
+<%= render @template, diff_view: @diff_view, conn: @conn %>
 <%= if Enum.any?(@remaining_expenses) do %>
   <h5>Other matching expenses</h5>
   <table class="table sem-other-matches">
