@@ -12,7 +12,6 @@ defmodule CreditCardChecker.TransactionCreator do
   end
 
   def create(%{"merchant_name" => merchant_name, "statement_line_id" => statement_line_id}) do
-    # TODO: Use `with` here?
     statement_line = Repo.get!(StatementLine, statement_line_id)
                      |> Repo.preload(:payment_method)
     user_id = statement_line.payment_method.user_id #TODO: Needs to be compared to current user_id
