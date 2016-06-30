@@ -15,7 +15,7 @@ defmodule CreditCardChecker.TransactionCreator do
     statement_line = Repo.get!(StatementLine, statement_line_id)
                      |> Repo.preload(:payment_method)
     user_id = statement_line.payment_method.user_id #TODO: Needs to be compared to current user_id
-    with {:ok, merchant} <- create_or_find_merchant(name: merchant_name, user_id: user_id),
+    result = with {:ok, merchant} <- create_or_find_merchant(name: merchant_name, user_id: user_id),
          {:ok, expense} <- Expense.changeset(%Expense{}, %{
                              merchant_id: merchant.id,
                              payment_method_id: statement_line.payment_method_id,
@@ -29,8 +29,12 @@ defmodule CreditCardChecker.TransactionCreator do
                                  statement_line_id: statement_line.id
                                })
                                |> Repo.insert,
-      do: :ok,
-      else: :error
+      do: :ok
+      if result == nil do #TODO: This is a hack, elixir 1.3 wouldn't compile
+        :error
+      else
+        :ok
+      end
   end
 
   defp midnight_on(date) do
