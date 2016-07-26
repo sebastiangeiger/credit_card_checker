@@ -35,6 +35,7 @@
   </div>
 
   <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
+    <%= submit "Submit & New", class: "btn btn-primary", name: "submit_target" %>
+    <%= submit "Submit", class: "btn btn-secondary", name: "submit_target" %>
   </div>
 <% end %>

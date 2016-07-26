@@ -25,12 +25,16 @@ defmodule CreditCardChecker.ExpenseController do
     |> render("new.html", changeset: changeset)
   end
 
-  def create(conn, %{"expense" => expense_params}) do
+  def create(conn, %{"expense" => expense_params} = params) do
+    path = case Map.get(params, "submit_target") do
+      "Submit & New" -> expense_path(conn, :new)
+      _ -> expense_path(conn, :index)
+    end
     case ExpenseForm.insert(expense_params, user: conn.assigns.current_user) do
       {:ok, _expense} ->
         conn
         |> put_flash(:info, "Expense created successfully.")
-        |> redirect(to: expense_path(conn, :index))
+        |> redirect(to: path)
       {:error, _changeset} ->
         time_of_sale = convert_time(Timex.DateTime.local)
         changeset = Expense.empty_changeset(%Expense{time_of_sale: time_of_sale})
