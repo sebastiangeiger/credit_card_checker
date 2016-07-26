@@ -1,5 +1,5 @@
 <div>
-  <%= link "+ New Expense", to: expense_path(@conn, :new), class: "btn btn-default pull-right" %>
+  <%= link "+ New Expense", to: expense_path(@conn, :new), class: "btn btn-default pull-right", data: [shortcut: "n"] %>
 </div>
 
 <table class="table">

@@ -14,3 +14,16 @@
 import "phoenix_html"
 
 import $ from "jquery"
+
+let shortcuts = new Map()
+$('*[data-shortcut]').each((i, rawEl) => {
+  let el = $(rawEl)
+  let shortcut = el.data("shortcut")
+  shortcuts.set(shortcut, el)
+})
+
+$(document).keypress(evt => {
+  if(shortcuts.has(evt.key)){
+    $(shortcuts.get(evt.key))[0].click()
+  }
+})
