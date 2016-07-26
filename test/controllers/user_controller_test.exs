@@ -6,19 +6,19 @@ defmodule CreditCardChecker.UserControllerTest do
   @valid_attrs %{email: "somebody@example.com", password: "super_safe"}
   @invalid_attrs %{email: "somebody@example.com"}
 
-  test "can show a registration form" do
+  test "can show a registration form", %{conn: conn}  do
     conn = get conn, user_path(conn, :new)
     assert html_response(conn, 200) =~ "<h2>Register</h2>"
   end
 
-  test "can't register without password" do
+  test "can't register without password", %{conn: conn} do
     assert Repo.all(User) == []
     conn = post conn, user_path(conn, :create), user: @invalid_attrs
     assert html_response(conn, 200) =~ "<h2>Register</h2>"
     assert Repo.all(User) == []
   end
 
-  test "can register with an email/password" do
+  test "can register with an email/password", %{conn: conn} do
     assert Repo.all(User) == []
     conn = post conn, user_path(conn, :create), user: @valid_attrs
     assert html_response(conn, 302)
