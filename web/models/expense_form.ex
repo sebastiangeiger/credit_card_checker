@@ -62,10 +62,19 @@ defmodule CreditCardChecker.ExpenseForm do
         changeset = Expense.changeset(%Expense{}, expense_params)
         case Repo.insert(changeset) do
           {:ok, _} -> result
-          {:error, _} -> %{ result | status: :error }
+          {:error, _} -> %{ result | status: :error, changeset: translate_changeset(changeset) }
         end
       %{status: :error} -> result
     end
+  end
+
+  defp translate_changeset(changeset) do
+    {amount_error, errors} = Keyword.pop(changeset.errors, :amount_in_cents)
+    errors = case amount_error do
+      nil -> errors
+      _ -> Keyword.put_new(errors, :amount, amount_error)
+    end
+    %Ecto.Changeset{ errors: errors }
   end
 
   defp rollback_if_necessary(%{status: status} = result) do
