@@ -14,6 +14,10 @@ defmodule CreditCardChecker.ExpenseForm do
     end)
   end
 
+  def empty_changeset(model) do
+    Ecto.Changeset.change(model, %{})
+  end
+
   defp create_or_find_merchant(result, merchant_params, user: user) do
     merchant_params = %{name: merchant_params["merchant_name"], user_id: user.id}
     case find_merchant(merchant_params) do

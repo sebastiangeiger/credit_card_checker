@@ -33,10 +33,6 @@ defmodule CreditCardChecker.Expense do
     |> validate_payment_method_belongs_to_user
   end
 
-  def empty_changeset(model) do
-    cast(model, %{}, @required_fields, @optional_fields)
-  end
-
   def mark_matched(expenses) when is_list(expenses) do
     Enum.map(expenses, &mark_matched/1)
   end
