@@ -18,11 +18,9 @@ defmodule CreditCardChecker.ExpenseController do
   end
 
   def new(conn, _params) do
-    time_of_sale = convert_time(Timex.DateTime.local)
-    changeset = ExpenseForm.empty_changeset(%Expense{time_of_sale: time_of_sale})
     conn
     |> assign_merchants_and_payment_methods
-    |> render("new.html", changeset: changeset)
+    |> render("new.html", changeset: ExpenseForm.empty_changeset())
   end
 
   def create(conn, %{"expense" => expense_params} = params) do
@@ -36,11 +34,9 @@ defmodule CreditCardChecker.ExpenseController do
         |> put_flash(:info, "Expense created successfully.")
         |> redirect(to: path)
       {:error, _changeset} ->
-        time_of_sale = convert_time(Timex.DateTime.local)
-        changeset = ExpenseForm.empty_changeset(%Expense{time_of_sale: time_of_sale})
         conn
         |> assign_merchants_and_payment_methods
-        |> render("new.html", changeset: changeset)
+        |> render("new.html", changeset: ExpenseForm.empty_changeset())
     end
   end
 
@@ -79,11 +75,5 @@ defmodule CreditCardChecker.ExpenseController do
               order_by: m.name,
               select: {m.name, m.id}
     assign(conn, :payment_methods, Repo.all(query))
-  end
-
-  defp convert_time(%Timex.DateTime{} = date) do
-    date
-    |> Timex.Timezone.convert("America/Los_Angeles")
-    |> Timex.to_erlang_datetime
   end
 end

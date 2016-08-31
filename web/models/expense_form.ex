@@ -18,6 +18,17 @@ defmodule CreditCardChecker.ExpenseForm do
     Ecto.Changeset.change(model, %{})
   end
 
+  def empty_changeset() do
+    time_of_sale = convert_time(Timex.DateTime.local)
+    Ecto.Changeset.change(%Expense{time_of_sale: time_of_sale}, %{})
+  end
+
+  defp convert_time(%Timex.DateTime{} = date) do
+    date
+    |> Timex.Timezone.convert("America/Los_Angeles")
+    |> Timex.to_erlang_datetime
+  end
+
   defp create_or_find_merchant(result, merchant_params, user: user) do
     merchant_params = %{name: merchant_params["merchant_name"], user_id: user.id}
     case find_merchant(merchant_params) do
