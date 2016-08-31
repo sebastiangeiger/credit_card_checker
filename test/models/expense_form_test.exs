@@ -7,7 +7,7 @@ defmodule CreditCardChecker.ExpenseFormTest do
   alias CreditCardChecker.Repo
   import CreditCardChecker.Factory
 
-  @valid_attrs %{"amount_in_cents" => 42, "time_of_sale" => "2010-04-17 14:00:00"}
+  @valid_attrs %{"amount" => "42.31", "time_of_sale" => "2010-04-17 14:00:00"}
   @invalid_attrs %{"time_of_sale" => "2010-04-17 14:00:00"}
 
   test "insert with a new merchant" do
@@ -19,6 +19,7 @@ defmodule CreditCardChecker.ExpenseFormTest do
     {:ok, _} = ExpenseForm.insert(attrs, user: user)
     assert Enum.count(Repo.all(Expense)) == 1
     assert Enum.count(Repo.all(Merchant)) == 1
+    assert Repo.one!(Expense).amount_in_cents == 4231
   end
 
   test "insert with an existing merchant" do
