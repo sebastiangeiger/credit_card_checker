@@ -71,6 +71,17 @@ defmodule CreditCardChecker.ExpenseControllerTest do
     end
   end
 
+  defp current_datetime() do
+    Timex.DateTime.local
+    |> Timex.Timezone.convert("America/Los_Angeles")
+    |> Timex.to_erlang_datetime
+  end
+
+  test "Shows the current data and time", %{conn: conn} do
+    conn = get conn, expense_path(conn, :new)
+    assert conn.assigns[:changeset].data.time_of_sale == current_datetime
+  end
+
   test "deletes chosen resource", %{conn: conn, payment_method: payment_method, merchant: merchant, user: user} do
     expense = create_expense(@valid_attrs, payment_method: payment_method, merchant: merchant, user: user)
     conn = delete conn, expense_path(conn, :delete, expense)
