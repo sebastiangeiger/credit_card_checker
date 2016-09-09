@@ -36,7 +36,7 @@ defmodule CreditCardChecker.ExpenseForm do
       nil ->
         case create_merchant(merchant_params) do
           {:ok, merchant} -> %{ result | merchant: merchant }
-          {:error, _} -> %{ result | status: :error }
+          {:error, changeset} -> %{ result | status: :error, changeset: translate_changeset(changeset) }
         end
     end
   end
@@ -68,13 +68,22 @@ defmodule CreditCardChecker.ExpenseForm do
     end
   end
 
-  defp translate_changeset(changeset) do
+  defp translate_changeset(%Ecto.Changeset{data: %Merchant{}} = changeset) do
+    {name_error, errors} = Keyword.pop(changeset.errors, :name)
+    errors = case name_error do
+      nil -> errors
+      _ -> Keyword.put_new(errors, :merchant_name, name_error)
+    end
+    %Ecto.Changeset{ errors: errors, action: :insert }
+  end
+
+  defp translate_changeset(%Ecto.Changeset{data: %Expense{}} = changeset) do
     {amount_error, errors} = Keyword.pop(changeset.errors, :amount_in_cents)
     errors = case amount_error do
       nil -> errors
       _ -> Keyword.put_new(errors, :amount, amount_error)
     end
-    %Ecto.Changeset{ errors: errors }
+    %Ecto.Changeset{ errors: errors, action: :insert }
   end
 
   defp rollback_if_necessary(%{status: status} = result) do

@@ -78,4 +78,13 @@ defmodule CreditCardChecker.ExpenseFormTest do
     {:error, changeset} = ExpenseForm.insert(attrs, user: user)
     assert Keyword.get(changeset.errors, :amount) == {"can't be blank", []}
   end
+
+  test "insert with an invalid expense (no merchant) returns changeset as second argument" do
+    user = create_user(%{email: "somebody@example.com", password: "super_secret"})
+    payment_method = create_payment_method(%{name: "Visa"}, user: user)
+    attrs = @valid_attrs
+    |> Map.put("payment_method_id", payment_method.id)
+    {:error, changeset} = ExpenseForm.insert(attrs, user: user)
+    assert Keyword.get(changeset.errors, :merchant_name) == {"can't be blank", []}
+  end
 end
