@@ -33,10 +33,10 @@ defmodule CreditCardChecker.ExpenseController do
         conn
         |> put_flash(:info, "Expense created successfully.")
         |> redirect(to: path)
-      {:error, _changeset} ->
+      {:error, changeset} ->
         conn
         |> assign_merchants_and_payment_methods
-        |> render("new.html", changeset: ExpenseForm.empty_changeset())
+        |> render("new.html", changeset: changeset)
     end
   end
 
