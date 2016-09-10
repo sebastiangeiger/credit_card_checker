@@ -14,10 +14,6 @@ defmodule CreditCardChecker.ExpenseForm do
     end)
   end
 
-  def empty_changeset(model) do
-    Ecto.Changeset.change(model, %{})
-  end
-
   def empty_changeset() do
     time_of_sale = convert_time(Timex.DateTime.local)
     Ecto.Changeset.change(%Expense{time_of_sale: time_of_sale}, %{})
