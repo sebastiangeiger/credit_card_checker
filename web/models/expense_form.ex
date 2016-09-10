@@ -39,8 +39,10 @@ defmodule CreditCardChecker.ExpenseForm do
       (%Merchant{} = merchant) -> %{ result | merchant: merchant }
       nil ->
         case create_merchant(merchant_params) do
-          {:ok, merchant} -> %{ result | merchant: merchant }
-          {:error, changeset} -> %{ result | status: :error, changeset: translate_changeset(changeset) }
+          {:ok, merchant} ->
+            %{ result | merchant: merchant }
+          {:error, changeset} ->
+            %{ result | status: :error, changeset: translate_changeset(changeset) }
         end
     end
   end
@@ -78,7 +80,8 @@ defmodule CreditCardChecker.ExpenseForm do
       nil -> errors
       _ -> Keyword.put_new(errors, :merchant_name, name_error)
     end
-    %Ecto.Changeset{ errors: errors, action: :insert }
+    time_of_sale = convert_time(Timex.DateTime.local)
+    %{ Ecto.Changeset.change(%__MODULE__{time_of_sale: time_of_sale}, %{}) | errors: errors, action: :insert }
   end
 
   defp translate_changeset(%Ecto.Changeset{data: %Expense{}} = changeset) do

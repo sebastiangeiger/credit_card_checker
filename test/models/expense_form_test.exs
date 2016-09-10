@@ -86,5 +86,6 @@ defmodule CreditCardChecker.ExpenseFormTest do
     |> Map.put("payment_method_id", payment_method.id)
     {:error, changeset} = ExpenseForm.insert(attrs, user: user)
     assert Keyword.get(changeset.errors, :merchant_name) == {"can't be blank", []}
+    assert changeset.data
   end
 end
