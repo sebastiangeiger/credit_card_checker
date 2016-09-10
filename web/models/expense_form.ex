@@ -2,6 +2,14 @@ defmodule CreditCardChecker.ExpenseForm do
   alias CreditCardChecker.Expense
   alias CreditCardChecker.Merchant
   alias CreditCardChecker.Repo
+  use Ecto.Schema
+
+  schema "virtual" do
+    field :time_of_sale, Ecto.DateTime, virtual: true
+    field :amount, :string, virtual: true
+    field :merchant_name, :string, virtual: true
+    field :payment_method_id, :integer, virtual: true
+  end
 
   def insert(params, user: user) do
     #TODO: Values need to be shown properly if creation fails
@@ -16,7 +24,7 @@ defmodule CreditCardChecker.ExpenseForm do
 
   def empty_changeset() do
     time_of_sale = convert_time(Timex.DateTime.local)
-    Ecto.Changeset.change(%Expense{time_of_sale: time_of_sale}, %{})
+    Ecto.Changeset.change(%__MODULE__{time_of_sale: time_of_sale}, %{})
   end
 
   defp convert_time(%Timex.DateTime{} = date) do
