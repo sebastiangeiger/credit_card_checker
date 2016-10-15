@@ -87,7 +87,7 @@ defmodule CreditCardChecker.Expense do
     new  = if model && model.user_id == user_id do
       []
     else
-      [{:payment_method_id, "does not belong to the current user"}]
+      [{:payment_method_id, {"does not belong to the current user", []}}]
     end
 
     case new do
@@ -103,7 +103,7 @@ defmodule CreditCardChecker.Expense do
 
     new = cond do
       extract_merchant_user_id(changes) == user_id -> []
-      true -> [{:merchant_id, "does not belong to the current user"}]
+      true -> [{:merchant_id, {"does not belong to the current user", []}}]
     end
 
     case new do
