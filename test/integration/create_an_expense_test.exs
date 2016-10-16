@@ -39,9 +39,14 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
   test "values are not lost when creating invalid expense" do
     create_payment_method("Mastercard")
     go_to_new_expense_form
+    find_element(:css, ".awesomplete input#expense_merchant_name")
+    |> fill_field("Whole Foods")
     find_element(:css, "input[value='Submit']")
     |> submit_element
     assert visible_page_text =~ "Oops, something went wrong! Please check the errors below."
+    merchant_name = find_element(:css, ".awesomplete input#expense_merchant_name")
+                    |> attribute_value("value")
+    assert merchant_name =~ "Whole Foods"
   end
 
   defp expenses_list do

@@ -19,6 +19,7 @@ defmodule CreditCardChecker.ExpenseForm do
     Expense.changeset(%Expense{}, expense_params, merchant: merchant)
     |> Repo.insert
     |> translate_errors
+    |> translate_values
   end
 
   defp translate_errors({:error, %Ecto.Changeset{data: %Expense{}} = changeset}) do
@@ -32,6 +33,13 @@ defmodule CreditCardChecker.ExpenseForm do
   end
 
   defp translate_errors({:ok, _} = result), do: result
+
+  defp translate_values({:error, %Ecto.Changeset{data: %Expense{}, changes: changes} = changeset} = result) do
+    new_changes = Map.put_new(changes, :merchant_name, changes.merchant.changes[:name])
+    {:error, %{ changeset | changes: new_changes }}
+  end
+
+  defp translate_values({:ok, _} = result), do: result
 
   defp find_merchant(merchant_params) do
     get_merchant(merchant_params) || Merchant.changeset(%Merchant{}, merchant_params)
