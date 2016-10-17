@@ -3,8 +3,6 @@ defmodule CreditCardChecker.CreateATransactionTest do
 
   import CreditCardChecker.ExpensesTestHelper,
     only: [create_expense: 1]
-  import CreditCardChecker.PaymentMethodsTestHelper,
-    only: [create_payment_method: 1]
   import CreditCardChecker.StatementsTestHelper,
     only: [create_statement_line: 1]
   import CreditCardChecker.AuthTestHelper,
@@ -61,7 +59,7 @@ defmodule CreditCardChecker.CreateATransactionTest do
   end
 
   test "can create a transaction for a statement line without a matching expense" do
-    create_payment_method("Amex")
+    NewPaymentMethodPage.create("Amex")
     create_statement_line %{amount: -3.11, payee: "WHOLE FDS", payment_method: %{name: "Amex"}}
     go_to_unclassified_transactions_page
     find_element(:link_text, "Match")

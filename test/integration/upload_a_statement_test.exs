@@ -1,8 +1,6 @@
 defmodule CreditCardChecker.UploadAStatementTest do
   use CreditCardChecker.IntegrationCase, async: false
 
-  import CreditCardChecker.PaymentMethodsTestHelper,
-    only: [create_payment_method: 1]
   import CreditCardChecker.AuthTestHelper,
     only: [sign_in_through_app: 0]
 
@@ -12,7 +10,7 @@ defmodule CreditCardChecker.UploadAStatementTest do
   end
 
   test "can upload a statement" do
-    create_payment_method("Amex")
+    NewPaymentMethodPage.create("Amex")
     go_to_new_statement_form
     find_element(:css, "input#statement_file")
     |> attach_file("test/fixtures/format_1.csv")

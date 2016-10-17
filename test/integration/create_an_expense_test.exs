@@ -1,8 +1,6 @@
 defmodule CreditCardChecker.CreateAnExpenseTest do
   use CreditCardChecker.IntegrationCase, async: false
 
-  import CreditCardChecker.PaymentMethodsTestHelper,
-    only: [create_payment_method: 1]
   import CreditCardChecker.ExpensesTestHelper,
     only: [create_expense: 1]
   import CreditCardChecker.AuthTestHelper,
@@ -27,9 +25,9 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
   end
 
   test "can see payment methods in the new expense form" do
-    create_payment_method("Personal Visa")
-    create_payment_method("Golden Visa")
-    create_payment_method("Mastercard")
+    NewPaymentMethodPage.create("Personal Visa")
+    NewPaymentMethodPage.create("Golden Visa")
+    NewPaymentMethodPage.create("Mastercard")
     go_to_new_expense_form
     options = find_all_elements(:css, "select#expense_payment_method_id option")
     |> Enum.map(&visible_text/1)
@@ -38,7 +36,7 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
 
   @tag failing_on_ci: true
   test "values are not lost when creating invalid expense" do
-    create_payment_method("Mastercard")
+    NewPaymentMethodPage.create("Mastercard")
     go_to_new_expense_form
     find_element(:css, ".awesomplete input#expense_merchant_name")
     |> fill_field("Whole Foods")

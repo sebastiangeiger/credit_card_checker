@@ -3,13 +3,11 @@ defmodule CreditCardChecker.ExpensesTestHelper do
 
   import CreditCardChecker.MerchantsTestHelper,
     only: [create_merchant: 1]
-  import CreditCardChecker.PaymentMethodsTestHelper,
-    only: [create_payment_method: 1]
 
   def create_expense(%{amount: amount, merchant: %{name: merchant_name},
       payment_method: %{name: payment_method_name}}) do
     create_merchant(merchant_name)
-    create_payment_method(payment_method_name)
+    NewPaymentMethodPage.create(payment_method_name)
     navigate_to("/expenses")
     find_element(:link_text, "+ New Expense")
     |> click

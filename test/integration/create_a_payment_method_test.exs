@@ -1,8 +1,6 @@
 defmodule CreditCardChecker.CreateAPaymentMethodTest do
   use CreditCardChecker.IntegrationCase, async: false
 
-  import CreditCardChecker.PaymentMethodsTestHelper,
-    only: [payment_methods_list: 0, create_payment_method: 1]
   import CreditCardChecker.AuthTestHelper,
     only: [sign_in_through_app: 0]
 
@@ -12,8 +10,8 @@ defmodule CreditCardChecker.CreateAPaymentMethodTest do
   end
 
   test "can create payment methods" do
-    assert Enum.count(payment_methods_list) == 0
-    create_payment_method("Golden Visa")
-    assert Enum.count(payment_methods_list) == 1
+    assert Enum.count(PaymentMethodsPage.PaymentMethods.all) == 0
+    NewPaymentMethodPage.create("Golden Visa")
+    assert Enum.count(PaymentMethodsPage.PaymentMethods.all) == 1
   end
 end
