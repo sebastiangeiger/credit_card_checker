@@ -4,6 +4,8 @@ defmodule CreditCardChecker.ExpenseForm do
   alias CreditCardChecker.Repo
   use Ecto.Schema
 
+  import CreditCardChecker.MoneyViewHelpers, only: [in_dollars: 1]
+
   schema "virtual" do
     field :time_of_sale, Ecto.DateTime, virtual: true
     field :amount, :string, virtual: true
@@ -34,8 +36,10 @@ defmodule CreditCardChecker.ExpenseForm do
 
   defp translate_errors({:ok, _} = result), do: result
 
-  defp translate_values({:error, %Ecto.Changeset{data: %Expense{}, changes: changes} = changeset} = result) do
-    new_changes = Map.put_new(changes, :merchant_name, changes.merchant.changes[:name])
+  defp translate_values({:error, %Ecto.Changeset{data: %Expense{}, changes: changes} = changeset}) do
+    new_changes = changes
+                  |> Map.put_new(:merchant_name, changes.merchant.changes[:name])
+                  |> Map.put_new(:amount, in_dollars(changes[:amount_in_cents]))
     {:error, %{ changeset | changes: new_changes }}
   end
 

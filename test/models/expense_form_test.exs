@@ -81,6 +81,16 @@ defmodule CreditCardChecker.ExpenseFormTest do
     assert changeset.changes[:merchant_name] == "Whole Foods"
   end
 
+  test "insert without merchant name preserves the amount" do
+    user = create_user(%{email: "somebody@example.com", password: "super_secret"})
+    payment_method = create_payment_method(%{name: "Visa"}, user: user)
+    attrs = @invalid_attrs
+    |> Map.put("amount", "123.50")
+    |> Map.put("payment_method_id", payment_method.id)
+    {:error, changeset} = ExpenseForm.insert(attrs, user: user)
+    assert changeset.changes[:amount] == "123.50"
+  end
+
   test "insert with an invalid expense (no merchant) returns changeset as second argument" do
     user = create_user(%{email: "somebody@example.com", password: "super_secret"})
     payment_method = create_payment_method(%{name: "Visa"}, user: user)
