@@ -30,7 +30,7 @@ defmodule CreditCardChecker.ExpenseTest do
     |> Map.put(:payment_method_id, payment_method.id)
     expense = Expense.changeset(%Expense{}, attrs)
     {:error, changeset} = Repo.insert(expense)
-    assert changeset.errors[:merchant_id] == "does not belong to the current user"
+    assert changeset.errors[:merchant_id] == {"does not belong to the current user", []}
   end
 
   test "changeset with somebody else's payment_method" do
@@ -44,7 +44,7 @@ defmodule CreditCardChecker.ExpenseTest do
     |> Map.put(:payment_method_id, payment_method.id)
     expense = Expense.changeset(%Expense{}, attrs)
     {:error, changeset} = Repo.insert(expense)
-    assert changeset.errors[:payment_method_id] == "does not belong to the current user"
+    assert changeset.errors[:payment_method_id] == {"does not belong to the current user", []}
   end
 
   test "changeset with invalid attributes" do

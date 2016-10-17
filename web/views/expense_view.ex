@@ -12,4 +12,12 @@ defmodule CreditCardChecker.ExpenseView do
     |> Ecto.DateTime.to_erl
     |> Timex.format!("%-d.", :strftime)
   end
+
+  def merchant_name(%{changes: %{merchant_name: merchant_name}}) do
+    merchant_name
+  end
+
+  def merchant_name(_changeset) do
+    ""
+  end
 end
