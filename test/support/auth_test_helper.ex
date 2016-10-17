@@ -24,16 +24,6 @@ defmodule CreditCardChecker.AuthTestHelper do
 
   def sign_in_through_app do
     create_user(@credentials)
-    sign_in_through_app(@credentials)
-  end
-
-  def sign_in_through_app(%{email: email, password: password}) do
-    navigate_to("/sessions/new")
-    find_element(:css, "input#session_email")
-    |> fill_field(email)
-    find_element(:css, "input#session_password")
-    |> fill_field(password)
-    find_element(:css, "input[value='Sign In']")
-    |> submit_element
+    SignInPage.sign_in_through_app(@credentials)
   end
 end

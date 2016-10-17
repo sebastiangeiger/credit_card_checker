@@ -39,6 +39,7 @@ defmodule CreditCardChecker.Mixfile do
      {:cowboy, "~> 1.0"},
      {:timex, "~> 2.1"},
      {:hound, "~> 1.0"},
+     {:page_object, "~> 0.1.0"},
      {:comeonin, "~> 2.4"},
      {:csvlixir, "~> 2.0.3"}]
   end
