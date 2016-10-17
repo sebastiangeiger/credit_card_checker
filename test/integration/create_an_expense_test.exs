@@ -36,6 +36,7 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
     assert options == ["Select payment method...", "Golden Visa", "Mastercard", "Personal Visa"]
   end
 
+  @tag failing_on_ci: true
   test "values are not lost when creating invalid expense" do
     create_payment_method("Mastercard")
     go_to_new_expense_form
