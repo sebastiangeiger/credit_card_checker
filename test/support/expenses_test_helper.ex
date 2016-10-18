@@ -1,12 +1,9 @@
 defmodule CreditCardChecker.ExpensesTestHelper do
   use Hound.Helpers
 
-  import CreditCardChecker.MerchantsTestHelper,
-    only: [create_merchant: 1]
-
   def create_expense(%{amount: amount, merchant: %{name: merchant_name},
       payment_method: %{name: payment_method_name}}) do
-    create_merchant(merchant_name)
+    NewMerchantPage.create(merchant_name)
     NewPaymentMethodPage.create(payment_method_name)
     navigate_to("/expenses")
     find_element(:link_text, "+ New Expense")
