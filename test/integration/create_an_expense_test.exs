@@ -1,8 +1,6 @@
 defmodule CreditCardChecker.CreateAnExpenseTest do
   use CreditCardChecker.IntegrationCase, async: false
 
-  import CreditCardChecker.ExpensesTestHelper,
-    only: [create_expense: 1]
   import CreditCardChecker.AuthTestHelper,
     only: [sign_in_through_app: 0]
 
@@ -13,7 +11,7 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
 
   test "can create an expense" do
     assert Enum.count(expenses_list) == 0
-    create_expense(%{amount: 3.13,
+    NewExpensePage.create(%{amount: 3.13,
       merchant: %{name: "Whole Foods"}, payment_method: %{name: "Amex"}})
     alert_text = find_element(:css, ".alert")
                   |> visible_text
