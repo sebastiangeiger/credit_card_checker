@@ -1,8 +1,6 @@
 defmodule CreditCardChecker.CreateATransactionTest do
   use CreditCardChecker.IntegrationCase, async: false
 
-  import CreditCardChecker.StatementsTestHelper,
-    only: [create_statement_line: 1]
   import CreditCardChecker.AuthTestHelper,
     only: [sign_in_through_app: 0]
 
@@ -14,7 +12,8 @@ defmodule CreditCardChecker.CreateATransactionTest do
   test "can create a transaction for a statement line and a matching expense" do
     NewExpensePage.create %{amount: 3.11, merchant: %{name: "Whole Foods"},
                                    payment_method: %{name: "Amex"}}
-    create_statement_line %{amount: -3.11, payee: "WHOLE FDS", payment_method: %{name: "Amex"}}
+    NewStatementsPage.create %{amount: -3.11, payee: "WHOLE FDS",
+                                   payment_method: %{name: "Amex"}}
     go_to_unclassified_transactions_page
     assert visible_page_text =~ "WHOLE FDS"
     refute visible_page_text =~ "Whole Foods"
@@ -34,7 +33,7 @@ defmodule CreditCardChecker.CreateATransactionTest do
                                    payment_method: %{name: "Amex"}}
     NewExpensePage.create %{amount: 3.11, merchant: %{name: "Walgreens"},
                                    payment_method: %{name: "Amex"}}
-    create_statement_line %{amount: -3.11, payee: "WHOLE FDS", payment_method: %{name: "Amex"}}
+    NewStatementsPage.create %{amount: -3.11, payee: "WHOLE FDS", payment_method: %{name: "Amex"}}
     go_to_unclassified_transactions_page
     find_element(:link_text, "Match")
     |> click
@@ -58,7 +57,7 @@ defmodule CreditCardChecker.CreateATransactionTest do
 
   test "can create a transaction for a statement line without a matching expense" do
     NewPaymentMethodPage.create("Amex")
-    create_statement_line %{amount: -3.11, payee: "WHOLE FDS", payment_method: %{name: "Amex"}}
+    NewStatementsPage.create %{amount: -3.11, payee: "WHOLE FDS", payment_method: %{name: "Amex"}}
     go_to_unclassified_transactions_page
     find_element(:link_text, "Match")
     |> click
