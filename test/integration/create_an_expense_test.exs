@@ -28,8 +28,8 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
     NewPaymentMethodPage.create("Golden Visa")
     NewPaymentMethodPage.create("Mastercard")
     NewExpensePage.visit
-    options = find_all_elements(:css, "select#expense_payment_method_id option")
-    |> Enum.map(&visible_text/1)
+    options = NewExpensePage.PaymentMethods.all
+    |> NewExpensePage.PaymentMethods.name
     assert options == ["Select payment method...", "Golden Visa", "Mastercard", "Personal Visa"]
   end
 
@@ -37,18 +37,11 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
   test "values are not lost when creating invalid expense" do
     NewPaymentMethodPage.create("Mastercard")
     NewExpensePage.visit
-    find_element(:css, ".awesomplete input#expense_merchant_name")
-    |> fill_field("Whole Foods")
-    find_element(:css, "input#expense_amount")
-    |> fill_field("345.60")
-    find_element(:css, "input[value='Submit']")
-    |> submit_element
-    assert visible_page_text =~ "Oops, something went wrong! Please check the errors below."
-    merchant_name = find_element(:css, ".awesomplete input#expense_merchant_name")
-                    |> attribute_value("value")
-    assert merchant_name =~ "Whole Foods"
-    amount = find_element(:css, "input#expense_amount")
-             |> attribute_value("value")
-    assert amount =~ "345.60"
+    NewExpensePage.fill_merchant_name("Whole Foods")
+    NewExpensePage.fill_amount("345.60")
+    NewExpensePage.submit
+    assert NewExpensePage.alert =~ "Oops, something went wrong! Please check the errors below."
+    assert NewExpensePage.merchant_name_value =~ "Whole Foods"
+    assert NewExpensePage.amount_value =~ "345.60"
   end
 end
