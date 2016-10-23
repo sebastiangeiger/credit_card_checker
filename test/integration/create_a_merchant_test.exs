@@ -1,8 +1,6 @@
 defmodule CreditCardChecker.CreateAMerchantTest do
   use CreditCardChecker.IntegrationCase, async: false
 
-  import CreditCardChecker.MerchantsTestHelper,
-    only: [merchants_list: 0, create_merchant: 1]
   import CreditCardChecker.AuthTestHelper,
     only: [sign_in_through_app: 0]
 
@@ -12,9 +10,9 @@ defmodule CreditCardChecker.CreateAMerchantTest do
   end
 
   test "can create merchants" do
-    assert Enum.count(merchants_list) == 0
-    create_merchant("Whole Foods")
-    assert Enum.count(merchants_list) == 1
+    assert Enum.count(MerchantsPage.Merchants.all) == 0
+    NewMerchantPage.create("Whole Foods")
+    assert Enum.count(MerchantsPage.Merchants.all) == 1
     assert visible_page_text =~ "Whole Foods"
   end
 end
