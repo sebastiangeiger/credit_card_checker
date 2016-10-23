@@ -15,7 +15,7 @@ defmodule CreditCardChecker.CreateAnExpenseTest do
     assert ExpensesPage.number_of_expenses == 0
     NewExpensePage.create(%{amount: 3.13,
       merchant: %{name: "Whole Foods"}, payment_method: %{name: "Amex"}})
-    assert ExpensesPage.alert =~ "Expense created successfully."
+    assert ExpensesPage.alert =~ "Created Expense at 'Whole Foods' for '$3.13'"
     assert ExpensesPage.number_of_expenses == 1
     expense = Expenses.get(0)
     assert Expenses.merchant_name(expense) =~ "Whole Foods"

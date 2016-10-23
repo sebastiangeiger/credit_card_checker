@@ -5,6 +5,8 @@ defmodule CreditCardChecker.ExpenseController do
   alias CreditCardChecker.ExpenseForm
   alias CreditCardChecker.Merchant
 
+  import CreditCardChecker.MoneyViewHelpers, only: [in_dollars: 1]
+
   plug :scrub_params, "expense" when action in [:create, :update]
   plug CreditCardChecker.RequireAuthenticated
 
@@ -29,9 +31,9 @@ defmodule CreditCardChecker.ExpenseController do
       _ -> expense_path(conn, :index)
     end
     case ExpenseForm.insert(expense_params, user: conn.assigns.current_user) do
-      {:ok, _expense} ->
+      {:ok, expense} ->
         conn
-        |> put_flash(:info, "Expense created successfully.")
+        |> put_flash(:info, creation_message(expense))
         |> redirect(to: path)
       {:error, changeset} ->
         conn
@@ -75,5 +77,9 @@ defmodule CreditCardChecker.ExpenseController do
               order_by: m.name,
               select: {m.name, m.id}
     assign(conn, :payment_methods, Repo.all(query))
+  end
+
+  defp creation_message(%Expense{merchant: %Merchant{name: merchant_name}, amount_in_cents: amount_in_cents}) do
+    "Created Expense at '#{merchant_name}' for '$#{in_dollars(amount_in_cents)}'"
   end
 end
