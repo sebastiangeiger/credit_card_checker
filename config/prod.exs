@@ -66,6 +66,6 @@ config :credit_card_checker, CreditCardChecker.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
   pool_size: 20,
-  ssl: true
+  ssl: false
 
 config :credit_card_checker, whitelisted_emails: ["sebastian.geiger@gmail.com"]
