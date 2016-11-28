@@ -7,6 +7,14 @@ defmodule CreditCardChecker.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+  end
+
+  pipeline :authentication_required do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
     plug CreditCardChecker.Auth
   end
 
@@ -15,7 +23,7 @@ defmodule CreditCardChecker.Router do
   end
 
   scope "/", CreditCardChecker do
-    pipe_through :browser # Use the default browser stack
+    pipe_through :authentication_required
 
     get "/", PageController, :index
     resources "/payment_methods", PaymentMethodController, only: [:new, :create, :index, :show] do
@@ -29,6 +37,12 @@ defmodule CreditCardChecker.Router do
     resources "/transactions", TransactionController, only: [:create]
     get "/transactions/unmatched", TransactionController, :unmatched
     get "/transactions/match/:id", TransactionController, :match
+    resources "/letsencryptchallenges", LetsencryptchallengeController, only: [:create, :new]
+  end
+
+  scope "/", CreditCardChecker do
+    pipe_through :browser
+    get "/.well-known/acme-challenge/:challenge", LetsencryptchallengeController, :show
   end
 
   # Other scopes may use custom stacks.
